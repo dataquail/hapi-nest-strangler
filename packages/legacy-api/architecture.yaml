@@ -1,11 +1,13 @@
 # yaml-language-server: $schema=https://dataquail.github.io/goodbones/schema/architecture-node.schema.json
 #
 # @org/legacy-api — the hapi server the strangler is emptying. It is declared
-# so the policy knows it exists and can say what it may never reach, and it is
-# declared OPEN and UNRESTRICTED on purpose: its layout is controllers and
-# services by feature folder, its wiring is a string-id container no import
-# graph can see, and nothing here follows the Nest server's taxonomy. Tightening
-# it is the campaign's job, not this file's.
+# OPEN on purpose: its layout is controllers and services by feature folder and
+# its wiring is a string-id container no import graph can see, and nothing here
+# follows the Nest server's taxonomy. What it states is the one boundary that
+# holds from day one — the package reaches itself, the shared contracts and its
+# own dependencies, and none of the Nest code — so that an import of the Nest
+# kernel is refused in the editor and not only by the graph rule at check time.
+# Tightening anything inside is the campaign's job, not this file's.
 #
 # One node of the architecture policy: the root architecture.yaml includes this
 # file at "~/legacy-api/". Patterns are repo-relative and use the root's aliases.
@@ -16,10 +18,31 @@ message: >-
   schema. It is the thing being strangled; new behaviour belongs on the Nest server.
 layout: open
 imports:
-  unrestricted: true
   message: >-
-    The legacy API states no allowlist: its modules reach each other freely, and that coupling
-    is what the campaign measures. It may never reach the Nest server or its kernel packages —
-    the root graph rules say so.
+    The legacy API reaches itself freely — that coupling is what the campaign measures — plus
+    the shared contracts package and its own dependencies. It never reaches the Nest server or
+    the kernel packages: the two servers share a database and an HTTP contract, nothing else.
+  external:
+    - "@hapi/boom"
+    - "@hapi/glue"
+    - "@hapi/hapi"
+    - "@hapipal/confidence"
+    - bookshelf
+    - dotenv
+    - electrolyte
+    - hapi-pino
+    - joi
+    - knex
+    - pino
+    - tsx
+    - vitest
+  # Grows one entry at a time, as a dependency or the contracts package gains
+  # its first import here; a name listed ahead of its use is slack.
+  allow: ["node:**", "~/legacy-api/**", "vitest.shared.ts"]
+surface:
+  - message: >-
+      No `export *` in the legacy API either: a star re-export publishes whatever the origin
+      happens to export, and the campaign needs to read what each module actually offers.
+    kinds: [namespace]
 children:
   "**/": { layout: open, children: {} }

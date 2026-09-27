@@ -10,7 +10,12 @@
     "predev": "lsof -ti:9000 | xargs kill -9 2>/dev/null; true",
     "dev": "tsx watch server.ts",
     "start": "node build/server.js",
-    "test": "vitest"
+    "test": "vitest",
+    "db:migrate": "tsx src/bin/migrate.ts",
+    "db:migrate:test": "tsx src/bin/migrate.ts --test",
+    "db:reset": "tsx src/bin/reset-database.ts --force",
+    "db:reset:test": "tsx src/bin/reset-database.ts --test",
+    "purge-expired-sessions": "tsx src/bin/purge-expired-sessions.ts"
   },
   "dependencies": {
     "@hapi/boom": "^10.0.1",

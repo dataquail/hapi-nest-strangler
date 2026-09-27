@@ -108,17 +108,20 @@ function authUp() {
   return "postgres + zitadel up";
 }
 
-// Ahead of the seed, which writes the admin row into "user".users and needs the
-// schema to exist.
+// Two migrators share each database: the legacy API's, which owns every
+// table in public, and the Nest server's, which owns the wallet schema. Both
+// run ahead of the seed, which writes the admin row into the legacy users table.
 function migrate() {
-  for (const script of ["db:migrate", "db:migrate:test"]) {
-    const result = spawnSync("pnpm", ["--filter", "@org/database", script], {
-      cwd: ROOT,
-      stdio: "inherit",
-    });
-    if (result.status !== 0) throw new Error(`pnpm ${script} failed`);
+  for (const pkg of ["@org/legacy-api", "@org/database"]) {
+    for (const script of ["db:migrate", "db:migrate:test"]) {
+      const result = spawnSync("pnpm", ["--filter", pkg, script], {
+        cwd: ROOT,
+        stdio: "inherit",
+      });
+      if (result.status !== 0) throw new Error(`pnpm --filter ${pkg} ${script} failed`);
+    }
   }
-  return "dev + test databases migrated";
+  return "dev + test databases migrated (legacy public tables + Nest wallet schema)";
 }
 
 async function waitForReady() {

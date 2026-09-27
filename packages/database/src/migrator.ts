@@ -13,7 +13,9 @@ export type MigratorConfig = {
 // module across. Adding a module means a migration and an entry here.
 export const MODULE_SCHEMAS = ["wallet"] as const;
 
-const MIGRATIONS_TABLE = "knex_migrations";
+// Not the default name: the legacy API's migrator owns `knex_migrations` in
+// the same database, and neither history may read, or drop, the other's.
+const MIGRATIONS_TABLE = "knex_migrations_nest";
 
 type Spec = { readonly name: string; readonly module: MigrationModule };
 

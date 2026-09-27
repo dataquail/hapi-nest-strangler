@@ -3,7 +3,7 @@
 // Responsibilities:
 //   1. Create (idempotent) the project + OIDC application in Zitadel.
 //   2. Pre-seed the bootstrap admin in the app DB and grant them the
-//      `super_admin` role in `platform.roles`.
+//      `super_admin` role in `roles` (the legacy API's tables, in public).
 //      before their first login. Roles live app-side, so JIT on first login
 //      would otherwise create the admin with the default role and nobody
 //      would be able to grant the admin role to anyone. See plan §3.6.
@@ -405,16 +405,15 @@ async function ensureAdminInAppDb(subject) {
   const client = new pg.Client({ connectionString: dbUrl });
   await client.connect();
   try {
-    const tableCheck = await client.query(`SELECT to_regclass('auth.auth_identities') AS exists`);
+    const tableCheck = await client.query(`SELECT to_regclass('public.auth_identities') AS exists`);
     if (tableCheck.rows[0].exists === null) {
       return { skipped: true };
     }
 
     await client.query("BEGIN");
-    const existing = await client.query(
-      `SELECT user_id FROM auth.auth_identities WHERE subject = $1`,
-      [subject],
-    );
+    const existing = await client.query(`SELECT user_id FROM auth_identities WHERE subject = $1`, [
+      subject,
+    ]);
     if (existing.rows.length > 0) {
       await client.query("COMMIT");
       return { userId: existing.rows[0].user_id, created: false };
@@ -422,22 +421,20 @@ async function ensureAdminInAppDb(subject) {
 
     const userId = randomUUID();
     await client.query(
-      `INSERT INTO "user".users (id, email, country, street, postal_code, created_at, updated_at)
+      `INSERT INTO users (id, email, country, street, postal_code, created_at, updated_at)
        VALUES ($1, $2, 'N/A', 'N/A', 'N/A', now(), now())
        ON CONFLICT (email) DO NOTHING`,
       [userId, adminEmail],
     );
-    const userRow = await client.query(`SELECT id FROM "user".users WHERE email = $1`, [
-      adminEmail,
-    ]);
+    const userRow = await client.query(`SELECT id FROM users WHERE email = $1`, [adminEmail]);
     const finalUserId = userRow.rows[0].id;
     await client.query(
-      `INSERT INTO auth.auth_identities (subject, user_id, provider, created_at)
+      `INSERT INTO auth_identities (subject, user_id, provider, created_at)
        VALUES ($1, $2, 'zitadel', now())`,
       [subject, finalUserId],
     );
     await client.query(
-      `INSERT INTO platform.roles (user_id, role)
+      `INSERT INTO roles (user_id, role)
        VALUES ($1, 'super_admin')
        ON CONFLICT (user_id, role) DO NOTHING`,
       [finalUserId],

@@ -164,9 +164,11 @@ the full stack (create org in the UI → `wallet.wallets` row exists).
 
 ## 8. goodbones: manifest stance and the rough edges to look for
 
-- `packages/legacy-api/architecture.yaml`: one node, `layout: open`, `imports: { unrestricted: true }`,
-  entries for `server.ts` and `src/bin/*`. `limits.unrestricted` becomes 2; `no-cycles` gets
-  `withinNot: [legacy-api]` (the service hub is cyclic by construction); conformance ceilings re-recorded.
+- `packages/legacy-api/architecture.yaml`: one node, `layout: open`, an `imports` allowlist of itself,
+  `node:**` and its own dependencies (revised from `unrestricted` at step 5 — see findings 4, 5), a
+  no-`export *` surface rule, `no-orphans` entries for the container-scanned folders; `no-cycles`
+  gets `withinNot: [legacy-api]` (the service hub is cyclic by construction); two `reach` rules keep
+  the legacy API and the Nest code apart.
 - Resolution: a new `resolve.scopes` entry for the CJS tsconfig with the `constants/*` alias.
 - Expected edges to record in `docs/plan/goodbones-findings.md`: `require()` and `ioc.create("x/y")`
   edges the graph cannot see; an open, unrestricted package's effect on the coverage floors; whether a

@@ -25,6 +25,7 @@
     "load-env.ts",
     "knexfile.ts",
     "config-files/**/*",
+    "migrations/**/*",
     "src/**/*",
     "test/**/*",
     "type-declarations/**/*"

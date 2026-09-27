@@ -11,6 +11,7 @@ const runIntegration = process.env.TEST_INTEGRATION === "true";
 const config: ViteUserConfig = {
   test: {
     setupFiles: [path.join(import.meta.dirname, "test/setup.ts")],
+    globalSetup: [path.join(import.meta.dirname, "test/global-setup.ts")],
     fileParallelism: false,
     sequence: { concurrent: false },
   },

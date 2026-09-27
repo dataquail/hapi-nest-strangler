@@ -9,6 +9,7 @@ export const testConfig = {
   appUrl: "http://app.test",
   backend: { url: process.env.NEST_SERVER_URL ?? "http://127.0.0.1:18081" },
   mail: { transport: "log" },
+  stripe: { useFake: true },
   auth: {
     interServiceJWTSecret: "test-inter-service-secret-0123456789abcdef",
     sessionCookieSecret: "test-session-cookie-secret",

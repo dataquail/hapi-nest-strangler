@@ -38,6 +38,7 @@ imports:
     - lodash
     - nodemailer
     - pino
+    - stripe
     - tsx
     - virgen-acl
     - vitest

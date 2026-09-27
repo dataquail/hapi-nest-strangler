@@ -5,7 +5,7 @@ import pg from "pg";
 // Mirrors the relevant slice of `infra/zitadel/seed.mjs` against the TEST
 // database: looks up the admin user in Zitadel by email (using the bootstrap
 // PAT) to discover their sub, then INSERTs a corresponding `users` +
-// `auth_identities` row in the test DB. Required so the OIDC `SignIn`
+// `auth_identities` row in the test DB — the legacy API's tables, in public. Required so the OIDC `SignIn`
 // command finds an existing identity at first login (we don't JIT-provision
 // admins — see plan §3.6).
 export type SeedAdminParams = {
@@ -65,13 +65,13 @@ const insertAdminRow = async ({
     await client.query("BEGIN");
     const newId = randomUUID();
     await client.query(
-      `INSERT INTO "user".users (id, email, country, street, postal_code, created_at, updated_at)
+      `INSERT INTO public.users (id, email, country, street, postal_code, created_at, updated_at)
        VALUES ($1, $2, 'N/A', 'N/A', 'N/A', now(), now())
        ON CONFLICT (email) DO NOTHING`,
       [newId, adminEmail],
     );
     const userRow = await client.query<{ id: string }>(
-      `SELECT id FROM "user".users WHERE email = $1`,
+      `SELECT id FROM public.users WHERE email = $1`,
       [adminEmail],
     );
     const finalUserId = userRow.rows[0]?.id;
@@ -79,13 +79,13 @@ const insertAdminRow = async ({
       throw new Error(`[acceptance/admin-seed] failed to read back admin user_id`);
     }
     await client.query(
-      `INSERT INTO auth.auth_identities (subject, user_id, provider, created_at)
+      `INSERT INTO public.auth_identities (subject, user_id, provider, created_at)
        VALUES ($1, $2, 'zitadel', now())
        ON CONFLICT (subject) DO NOTHING`,
       [subject, finalUserId],
     );
     await client.query(
-      `INSERT INTO platform.roles (user_id, role)
+      `INSERT INTO public.roles (user_id, role)
        VALUES ($1, 'super_admin')
        ON CONFLICT (user_id, role) DO NOTHING`,
       [finalUserId],

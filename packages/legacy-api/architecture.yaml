@@ -44,7 +44,7 @@ imports:
     - vitest
   # Grows one entry at a time, as a dependency or the contracts package gains
   # its first import here; a name listed ahead of its use is slack.
-  allow: ["node:**", "~/legacy-api/**", "vitest.shared.ts"]
+  allow: ["node:**", "~/legacy-api/**", "~/contracts/**", "vitest.shared.ts"]
 surface:
   - message: >-
       No `export *` in the legacy API either: a star re-export publishes whatever the origin

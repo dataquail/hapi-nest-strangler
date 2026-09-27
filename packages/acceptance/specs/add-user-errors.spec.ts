@@ -1,17 +1,15 @@
 import { playwrightUsersDriver } from "@org/test-drivers/adapters/playwright/users-page-driver";
 import { test } from "@playwright/test";
 
-import { truncate } from "@/test-utils/database";
+import { DEFAULT_DATABASE_URL_TEST, truncate } from "@/test-utils/database";
 
-const DATABASE_URL_TEST =
-  process.env.DATABASE_URL_TEST ??
-  "postgresql://postgres:postgres@localhost:5432/nest-hexagon-test";
+const DATABASE_URL_TEST = process.env.DATABASE_URL_TEST ?? DEFAULT_DATABASE_URL_TEST;
 
 test.beforeEach(async () => {
-  await truncate(DATABASE_URL_TEST, ["wallet.wallets", "user.users"]);
+  await truncate(DATABASE_URL_TEST, ["wallet.wallets", "public.users"]);
 });
 
-// Negative-path acceptance coverage. The Synapse acceptance-testing guide is
+// Negative-path acceptance coverage. The reference acceptance-testing guide is
 // explicit: "verify both happy and unhappy paths including error scenarios."
 // Happy path lives in add-user.spec.ts; this file is its mirror.
 //

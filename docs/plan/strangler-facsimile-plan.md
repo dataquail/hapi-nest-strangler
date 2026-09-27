@@ -192,5 +192,6 @@ step 8; the acceptance spec lands with step 10, when the suite is re-pointed at 
 8. The seam: `backend-client`, compensation in `organization-service`, its three tests.
 9. hapi todos (+ CLI routes) and billing (Stripe gateway, webhook ingest, subscriptions).
 10. Acceptance/CLI/MCP re-pointed and green; ADR-0034; rules digests and CLAUDE.md updated;
-    findings log.
+    findings log. _Landed 2026-09-27; the acceptance suite is re-pointed and type-checks but was
+    not executed on the authoring machine, which has no `.env` with the Zitadel entries._
 11. (Next engagement) the strangler campaign in `architecture.yaml`.

@@ -5,12 +5,13 @@ import * as dotenv from "dotenv";
 // and propagate via webServer.env to the API server.
 dotenv.config({ path: "../../.env" });
 
-// Acceptance configuration follows the layered architecture from Synapse's
-// `acceptance-testing` doc: specs are business-language only, drivers/pages
-// hide selectors, infrastructure (this file + global-setup.ts) wires real
-// processes. The webServer entries spawn the BFF (against the test DB)
-// and the Next renderer before tests run; global-setup migrates the
-// test DB once and pre-seeds the admin row.
+// Acceptance configuration follows the layered architecture from the
+// reference API's acceptance-testing doc: specs are business-language only,
+// drivers/pages hide selectors, infrastructure (this file + global-setup.ts)
+// wires real processes. The webServer entries spawn the legacy hapi API and
+// the Nest server (both against the test DB) and the Next renderer before
+// tests run; global-setup replays both migrators once and pre-seeds the
+// admin row.
 //
 // Auth: an `auth-setup` project runs the real Zitadel hosted-UI login as
 // admin and stamps the cookie into storageState. The `chromium` project
@@ -25,24 +26,31 @@ const isCi = process.env.CI !== undefined && process.env.CI !== "";
 // to the test origin — the cookie domain MUST match the registered
 // redirect URI.
 const APP_URL = process.env.APP_URL ?? "http://localhost:3000";
-const API_URL = process.env.API_URL ?? "http://localhost:3001";
+// The legacy hapi API is the BFF the browser reaches through Next; the Nest
+// server is reached only from hapi, over the inter-service seam (ADR-0034).
+const API_URL = process.env.API_URL ?? "http://localhost:9000";
+const NEST_URL = process.env.NEST_URL ?? "http://localhost:3001";
 // `WEB_PROBE_URL` and `BFF_PROBE_URL` are *server-side only* readiness
 // probes used by Playwright's `webServer.url`. They go to `127.0.0.1`
 // instead of `localhost` to dodge an IPv6/IPv4 resolution race: Node
 // 18+ uses verbatim `getaddrinfo` order, and on dual-stack runners
-// `localhost` may resolve to `::1` first. The BFF binds on
-// `0.0.0.0:3001` (IPv4 wildcard) — if `fetch` picks `::1` it gets
-// ECONNREFUSED and Playwright's probe times out. Pinning the probes
-// to `127.0.0.1` forces IPv4 and matches the BFF's listener. The
-// browser-side `baseURL` (above) stays `localhost` because that's
-// what Zitadel's redirect URI is registered as.
+// `localhost` may resolve to `::1` first. The servers bind on the IPv4
+// wildcard — if `fetch` picks `::1` it gets ECONNREFUSED and Playwright's
+// probe times out. Pinning the probes to `127.0.0.1` forces IPv4 and
+// matches the listeners. The browser-side `baseURL` (above) stays
+// `localhost` because that's what Zitadel's redirect URI is registered as.
 const toIpv4 = (url: string): string => url.replace(/\/\/localhost(:|\/|$)/, "//127.0.0.1$1");
 const WEB_PROBE_URL = toIpv4(APP_URL);
 const BFF_PROBE_URL = toIpv4(API_URL);
-// Server-side rewrite target (Next → BFF). Also pinned to IPv4 for the
+const NEST_INTERNAL_URL = toIpv4(NEST_URL);
+// Server-side rewrite target (Next → hapi). Also pinned to IPv4 for the
 // same reason; Next's `/api/*` rewrite runs server-side and is not
 // browser-visible.
 const SERVER_INTERNAL_URL = process.env.SERVER_INTERNAL_URL ?? BFF_PROBE_URL;
+// Both servers derive the seam's HS256 token from this secret; the fallback
+// keeps a local run from needing one more entry in .env.
+const INTER_SERVICE_JWT_SECRET =
+  process.env.INTER_SERVICE_JWT_SECRET ?? "acceptance-inter-service-secret-0123456789abcdef";
 const DATABASE_URL_TEST =
   process.env.DATABASE_URL_TEST ??
   "postgresql://postgres:postgres@localhost:5432/nest-hexagon-test";
@@ -113,30 +121,57 @@ export default defineConfig({
 
   webServer: [
     {
-      // BFF, against the TEST database. global-setup has already migrated
-      // it before this command runs. We run `tsx` (no watch) inside
-      // playwright — `tsx watch` would compete with Next's file watcher
-      // for inotify slots in CI and adds no value for a non-mutating
-      // test process.
-      name: "bff",
+      // The Nest server, against the TEST database: the wallet's internal
+      // API, which hapi calls while creating an organization. It has no
+      // public route, so readiness is the listening port. We run `tsx` (no
+      // watch) inside playwright — `tsx watch` would compete with Next's
+      // file watcher for inotify slots in CI and adds no value for a
+      // non-mutating test process.
+      name: "nest",
       command:
         "pnpm -F @org/server exec tsx --tsconfig tsconfig.src.json --import ./src/instrumentation.ts src/main.ts",
-      url: `${BFF_PROBE_URL}/auth/me`,
+      port: Number(new URL(NEST_URL).port),
       wait: { stdout: /Server listening on/ },
       cwd: "../../",
       env: {
         ...process.env,
         DATABASE_URL: DATABASE_URL_TEST,
         ENV: "dev",
-        PORT: "3001",
-        APP_URL,
+        PORT: String(new URL(NEST_URL).port),
+        INTER_SERVICE_JWT_SECRET,
         OTLP_URL: process.env.OTLP_URL ?? "http://localhost:4318/v1/traces",
       },
       // Acceptance always spawns its own server processes — reusing a running
-      // `pnpm -F @org/server dev` would mean the test runs against the *dev*
-      // DB instead of the test DB (the env override below only takes effect
-      // when Playwright actually starts the command). Kill dev servers
-      // before running acceptance.
+      // dev server would mean the test runs against the *dev* DB instead of
+      // the test DB (the env override only takes effect when Playwright
+      // actually starts the command). Kill dev servers before running
+      // acceptance.
+      reuseExistingServer: false,
+      timeout: 60_000,
+      stdout: "pipe",
+      stderr: "pipe",
+    },
+    {
+      // The legacy hapi API, against the TEST database: the BFF that serves
+      // every browser and CLI route and terminates auth. Its Stripe gateway
+      // is the in-memory one; its wallet calls go to the Nest server above.
+      name: "bff",
+      command: "pnpm -F @org/legacy-api exec tsx server.ts",
+      url: `${BFF_PROBE_URL}/health-check`,
+      wait: { stdout: /Server running at/ },
+      cwd: "../../",
+      env: {
+        ...process.env,
+        ENV_FILE: "disabled",
+        DATABASE_URL: DATABASE_URL_TEST,
+        LEGACY_API_PORT: String(new URL(API_URL).port),
+        APP_URL,
+        NEST_SERVER_URL: NEST_INTERNAL_URL,
+        INTER_SERVICE_JWT_SECRET,
+        STRIPE_USE_FAKE: "true",
+        SESSION_COOKIE_SECRET:
+          process.env.SESSION_COOKIE_SECRET ?? "acceptance-session-cookie-secret",
+      },
       reuseExistingServer: false,
       timeout: 60_000,
       stdout: "pipe",
@@ -155,7 +190,7 @@ export default defineConfig({
       // makes subsequent runs fast.
       //
       // SERVER_INTERNAL_URL points the /api/* rewrite at the test-DB-bound
-      // BFF above. APP_URL stays :3000 so the BFF redirects post-sign-in
+      // hapi API above. APP_URL stays :3000 so hapi redirects post-sign-in
       // to the same origin Playwright drives.
       name: "web",
       command: "pnpm -F @org/web start",

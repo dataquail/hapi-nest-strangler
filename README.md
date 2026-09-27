@@ -6,7 +6,7 @@ The repository exists to put the [goodbones](https://dataquail.github.io/goodbon
 
 A monorepo containing:
 
-- `packages/legacy-api`: the hapi server — owns users, auth, organizations, todos and billing (arrives in plan step 4)
+- `packages/legacy-api`: the hapi server — owns users, auth, organizations, todos and billing; the browser, CLI and MCP talk to it ([ADR-0034](docs/adr/0034-the-strangler-facsimile.md))
 - `packages/server`: the NestJS server — owns the wallet module, reached only server-to-server ([ADR-0016](docs/adr/0016-authentication-with-self-hosted-zitadel.md) describes the auth model the hapi server inherits)
 - `packages/web`: Next.js (App Router) renderer; proxies `/api/*` to the hapi server ([ADR-0018](docs/adr/0018-frontend-nextjs-renderer-and-proxy.md))
 - `packages/contracts`: route definitions and zod schemas; generates `openapi.json` and the typed client paths ([ADR-0010](docs/adr/0010-http-only-contracts.md))
@@ -37,17 +37,20 @@ The server runs TypeScript directly through [tsx](https://github.com/privatenumb
 ```bash
 pnpm install
 pnpm bootstrap   # .env, Docker, migrations, Zitadel seed — idempotent
-pnpm dev         # server on :3001, web on :3000
+pnpm dev         # hapi API on :9000, Nest server on :3001, web on :3000
 ```
 
 [docs/dev-setup.md](docs/dev-setup.md) walks through what `pnpm bootstrap` does phase by phase and how to run any step by hand. The pieces you will most often run alone:
 
 ```bash
-# Migrate the dev and test databases (knex, tracked in `knex_migrations`)
-pnpm --filter @org/database db:migrate
-pnpm --filter @org/database db:migrate:test
+# Migrate the dev and test databases. Two migrators share each database:
+# the hapi server's owns every public table (tracked in `knex_migrations`),
+# the Nest server's owns the wallet schema (tracked in `knex_migrations_nest`).
+pnpm --filter @org/legacy-api db:migrate && pnpm --filter @org/database db:migrate
+pnpm --filter @org/legacy-api db:migrate:test && pnpm --filter @org/database db:migrate:test
 
-# Drop every module schema and replay from scratch
+# Replay one side from scratch; each reset leaves the other server's tables standing
+pnpm --filter @org/legacy-api db:reset
 pnpm --filter @org/database db:reset
 
 # Regenerate openapi.json and packages/contracts/src/generated/api.ts after changing a route
@@ -78,25 +81,26 @@ After signing in once at `http://localhost:3000/api/auth/login`, the session coo
 
 ## Billing (Stripe)
 
-The billing module wraps Stripe behind a `BillingGateway` port. Tests run against an in-memory `BillingGatewayFake` (no Stripe account needed); the `.env.example` placeholders for `STRIPE_*` are enough for `pnpm test` and `pnpm check:all`.
+Billing lives on the hapi server, behind one Stripe gateway factory that hands back the SDK or an in-memory stand-in when `STRIPE_USE_FAKE=true` (the `.env.example` default). Tests always use the stand-in; the `STRIPE_*` placeholders are enough for `pnpm test` and `pnpm check:all`.
 
 For the real-Stripe smoke loop against test-mode Stripe:
 
 1. Set `STRIPE_SECRET_KEY` and `STRIPE_PRICE_ID_DEFAULT` from your dashboard.
-2. Run `stripe listen --forward-to localhost:3001/webhooks/stripe`; copy the printed `whsec_…` into `STRIPE_WEBHOOK_SECRET`.
-3. Restart the server.
+2. Run `stripe listen --forward-to localhost:9000/webhooks/stripe`; copy the printed `whsec_…` into `STRIPE_WEBHOOK_SECRET`.
+3. Unset `STRIPE_USE_FAKE` and restart the hapi server.
 4. `POST /api/orgs/:orgId/billing/subscriptions` as an org admin; the CLI forwards `customer.subscription.created` back to your webhook.
 
 ## Development
 
 ```bash
-pnpm --filter @org/server dev   # Nest BFF, watch mode, port 3001 (OTel via tsx --import)
-pnpm --filter @org/web dev      # Next.js on 3000; builds contracts first; /api/* rewrites to :3001
+pnpm --filter @org/legacy-api dev # hapi API, watch mode, port 9000 — the BFF
+pnpm --filter @org/server dev     # Nest server, watch mode, port 3001 — the wallet (OTel via tsx --import)
+pnpm --filter @org/web dev        # Next.js on 3000; builds contracts first; /api/* rewrites to :9000
 ```
 
-Browser → Next.js → `/api/*` rewrite → Nest server; the session cookie scopes to `:3000`. Jaeger is at http://localhost:16686, Mailpit at http://localhost:8025. Run them in separate terminals, or use the **Dev: All** VS Code task.
+Browser → Next.js → `/api/*` rewrite → hapi API → (creating an organization) → Nest server over `/internal/wallets` with the inter-service token; the session cookie scopes to `:3000`. Jaeger is at http://localhost:16686, Mailpit at http://localhost:8025. Run them in separate terminals, or use the **Dev: All** VS Code task.
 
-The OpenAPI document the server serves at `/openapi.json` is the committed `packages/contracts/openapi.json`; the CLI, MCP server, web and the server's own test client are all `openapi-fetch` clients typed by `packages/contracts/src/generated/api.ts`.
+`packages/contracts` is the vocabulary both servers implement: the hapi server serves the domain and CLI routes, the Nest server the internal ones, and a parity test on the hapi side holds its hand-written route table to the contracts. The CLI, MCP server, web and both servers' test clients are `openapi-fetch` clients typed by `packages/contracts/src/generated/api.ts`.
 
 ## Checking and testing
 
@@ -106,6 +110,7 @@ pnpm lint                                         # oxlint, type-aware, includin
 pnpm test                                         # unit suite, no database
 DATABASE_URL_TEST=postgres://… pnpm test:integration
 DATABASE_URL_TEST=postgres://… pnpm coverage      # unit + integration merged; thresholds gate CI
+pnpm test:acceptance                              # Playwright: boots hapi, Nest and web against the test DB; needs the Zitadel entries in .env
 ```
 
 The architecture policy lives in `architecture.yaml` plus one `architecture.yaml` per package and is evaluated by [goodbones](https://dataquail.github.io/goodbones) inside `pnpm lint` and `pnpm lint:architecture`. `pnpm architecture:explain <file>` says what governs a file; `.claude/rules/architecture-rules.md` explains the manifest.

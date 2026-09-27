@@ -137,8 +137,9 @@ Parsed from the `__seed__` line and written to `.env`. If the seed didn't emit o
 After `pnpm bootstrap`:
 
 ```sh
-pnpm --filter @org/server dev    # BFF on :3001
-pnpm --filter @org/web dev       # Next.js renderer on :3000; /api/* rewrites to :3001 (ADR-0018)
+pnpm --filter @org/legacy-api dev # hapi API on :9000 — the BFF the browser talks to (ADR-0034)
+pnpm --filter @org/server dev     # Nest server on :3001 — the wallet, reached from hapi with the inter-service token
+pnpm --filter @org/web dev        # Next.js renderer on :3000; /api/* rewrites to :9000 (ADR-0018)
 ```
 
 Web resolves `@org/contracts` through the built package, so `pnpm -F @org/contracts build` has to run first; web's `predev`, `prebuild` and `pretypecheck` scripts do it. After changing a route, `pnpm contracts:generate` regenerates `openapi.json` and `src/generated/api.ts`.

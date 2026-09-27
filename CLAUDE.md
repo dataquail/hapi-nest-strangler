@@ -1,6 +1,6 @@
 # Project conventions
 
-**What this repository is.** A strangler-fig facsimile derived from `nest-domain-driven-hexagon`: an old hapi server (`packages/legacy-api`, being built) owns everything but the wallet, the NestJS server (`packages/server`) owns the wallet and is reached from hapi over HTTP. It exists to exercise the goodbones campaigns tooling. The plan is `docs/plan/strangler-facsimile-plan.md`; anything the tooling gets wrong or makes hard goes in `docs/plan/goodbones-findings.md` as it is hit. The hapi package deliberately does **not** follow the conventions below — it mirrors a legacy codebase (see the plan, §4) and its own rule file arrives with it.
+**What this repository is.** A strangler-fig facsimile derived from `nest-domain-driven-hexagon`: an old hapi server (`packages/legacy-api`) owns everything but the wallet, the NestJS server (`packages/server`) owns the wallet and is reached from hapi over HTTP. ADR-0034 records the decisions. It exists to exercise the goodbones campaigns tooling. The plan is `docs/plan/strangler-facsimile-plan.md`; anything the tooling gets wrong or makes hard goes in `docs/plan/goodbones-findings.md` as it is hit. The hapi package deliberately does **not** follow the conventions below — it mirrors a legacy codebase (see the plan, §4) and has its own rule file.
 
 The Nest server: NestJS + `@nestjs/cqrs`, hexagonal architecture, DDD, no Effect. Full rationale lives in `docs/adr/`; the working-memory digests live in `.claude/rules/`. ADR-0033 is the index of what changed in the port from the Effect edition.
 
@@ -10,11 +10,11 @@ The Nest server: NestJS + `@nestjs/cqrs`, hexagonal architecture, DDD, no Effect
 | ----------------------------------------------------- | ---------------------------------------------- | --------------------------------------------- |
 | Adding/moving files in a server feature module        | `.claude/rules/server-module-layout.md`        | 0002, 0003, 0013, 0022–0024, 0032             |
 | New file kind, test, fake, stereotype (parity/layout) | `.claude/rules/server-file-taxonomy.md`        | 0008                                          |
-| Writing or running server/jobs tests                  | `.claude/rules/server-testing.md`              | 0009                                          |
+| Writing or running server tests                       | `.claude/rules/server-testing.md`              | 0009                                          |
 | Handlers, modules, event buses, SQL, auth (server)    | `.claude/rules/server-nest-and-persistence.md` | 0004, 0006, 0007, 0012, 0016–0017, 0020, 0033 |
 | Something compiles but fails at boot, or lints oddly  | `.claude/rules/nest-cqrs-notes.md`             | 0033                                          |
 | Frontend (`packages/web`, `packages/components`)      | `.claude/rules/frontend.md`                    | 0015, 0018, 0019, 0026                        |
-| Anything in `packages/legacy-api`                     | `.claude/rules/legacy-api.md`                  | —                                             |
+| Anything in `packages/legacy-api`                     | `.claude/rules/legacy-api.md`                  | 0034                                          |
 | Writing comments (any package)                        | `.claude/rules/comments.md`                    | —                                             |
 | Any architectural boundary, file naming, rule probes  | `.claude/rules/architecture-rules.md`          | 0008, 0025, 0027–0031                         |
 
@@ -53,12 +53,13 @@ The Nest server: NestJS + `@nestjs/cqrs`, hexagonal architecture, DDD, no Effect
 | `pnpm architecture:coverage`                           | how much of the tree each rule family reaches, and the tiers not yet tightened (ADR-0030)                                        |
 | `pnpm architecture:facts <file>`                       | what the parser reads from one file — edges, bindings, members, exports; write new rules against this                            |
 | `pnpm test`                                            | vitest **unit** suite (excludes `*.integration.test.ts`), no DB                                                                  |
-| `DATABASE_URL_TEST=postgres://… pnpm test:integration` | **integration** suite only (`*.integration.test.ts`, server + database); hard-fails if no DB                                     |
+| `DATABASE_URL_TEST=postgres://… pnpm test:integration` | **integration** suite only (`*.integration.test.ts`, server + legacy-api + database); hard-fails if no DB                        |
 | `DATABASE_URL_TEST=postgres://… pnpm coverage`         | unit + integration merged into ONE coverage number; thresholds in `vitest.config.ts` gate CI                                     |
-| `pnpm test:acceptance`                                 | Playwright against a running stack                                                                                               |
+| `pnpm test:acceptance`                                 | Playwright: boots hapi, Nest and web against the test DB (needs the Zitadel entries in `.env`)                                   |
 | `pnpm contracts:generate`                              | regenerates `packages/contracts/openapi.json` and `src/generated/api.ts` from the route definitions                              |
 | `pnpm -F @org/contracts build`                         | must precede a web typecheck or `next dev`; web's `pre*` scripts run it                                                          |
-| `pnpm bootstrap` / `pnpm dev`                          | Docker (postgres, zitadel, jaeger) + migrate + seed; then server on :3001 and web on :3000                                       |
+| `pnpm bootstrap` / `pnpm dev`                          | Docker (postgres, zitadel, jaeger) + both migrators + seed; then hapi on :9000, Nest on :3001 and web on :3000                   |
+| `pnpm -F @org/legacy-api db:migrate` / `db:reset:test` | the hapi migrator: every `public` table, tracked in `knex_migrations`; the Nest one (`@org/database`) owns `wallet` alone        |
 
 ## Always in scope
 

@@ -41,6 +41,7 @@
     "virgen-acl": "^0.0.22"
   },
   "devDependencies": {
+    "@org/contracts": "workspace:^",
     "@types/bookshelf": "^1.2.9",
     "@types/lodash": "^4.17.16",
     "@types/node": "^22.19.0",

@@ -1,11 +1,12 @@
 import { seedAdminInTestDb } from "./test-utils/admin-seed";
-import { runMigrations } from "./test-utils/database";
+import { DEFAULT_DATABASE_URL_TEST, runMigrations } from "./test-utils/database";
 import { seedMemberInZitadel } from "./test-utils/member-seed";
 
 // Runs once before specs (and before the auth-setup project). Three
 // responsibilities:
-//   1. Drop+replay migrations against the test DB so the API server boots
-//      into a known schema.
+//   1. Drop+replay both migrators against the test DB — the legacy API's
+//      public tables, then the Nest server's wallet schema — so both
+//      servers boot into a known schema.
 //   2. Pre-seed the admin row (see plan §3.6 — admins don't JIT-provision)
 //      by looking up the admin's Zitadel `sub` and INSERTing
 //      `users` + `auth_identities` rows. This makes the real OIDC `SignIn`
@@ -14,9 +15,7 @@ import { seedMemberInZitadel } from "./test-utils/member-seed";
 //      project logs it in to mint its storageState). No app-DB seed —
 //      ordinary users JIT-provision on first login.
 export default async (): Promise<void> => {
-  const databaseUrl =
-    process.env.DATABASE_URL_TEST ??
-    "postgresql://postgres:postgres@localhost:5432/nest-hexagon-test";
+  const databaseUrl = process.env.DATABASE_URL_TEST ?? DEFAULT_DATABASE_URL_TEST;
   await runMigrations(databaseUrl);
 
   const zitadelIssuer = process.env.ZITADEL_ISSUER ?? "http://localhost:8080";

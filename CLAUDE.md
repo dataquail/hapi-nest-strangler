@@ -29,7 +29,6 @@ The Nest server: NestJS + `@nestjs/cqrs`, hexagonal architecture, DDD, no Effect
 | `@org/event-bus`    | The domain event bus: `subscribe` / `subscribeAfterCommit` / `stream`, deferral, unhandled failures.    |
 | `@org/unit-of-work` | The transactional boundary over a `TransactionDriver`; rolls back on `Err` (ADR-0007).                  |
 | `@org/authz`        | The authorization DSL: `Check`, policy and resolver registries, `makeHasPermissions` (ADR-0021).        |
-| `@org/jobs`         | Background/cron jobs (croner).                                                                          |
 | `@org/cli`          | Command-line client (device-flow auth, organizations, todos).                                           |
 | `@org/mcp`          | MCP (stdio) server exposing the CLI surface as tools.                                                   |
 | `@org/api-client`   | Shared `openapi-fetch` client + credential store for the CLI and MCP.                                   |
@@ -52,7 +51,7 @@ The Nest server: NestJS + `@nestjs/cqrs`, hexagonal architecture, DDD, no Effect
 | `pnpm architecture:coverage`                           | how much of the tree each rule family reaches, and the tiers not yet tightened (ADR-0030)                                        |
 | `pnpm architecture:facts <file>`                       | what the parser reads from one file — edges, bindings, members, exports; write new rules against this                            |
 | `pnpm test`                                            | vitest **unit** suite (excludes `*.integration.test.ts`), no DB                                                                  |
-| `DATABASE_URL_TEST=postgres://… pnpm test:integration` | **integration** suite only (`*.integration.test.ts`, server + jobs + database); hard-fails if no DB                              |
+| `DATABASE_URL_TEST=postgres://… pnpm test:integration` | **integration** suite only (`*.integration.test.ts`, server + database); hard-fails if no DB                                     |
 | `DATABASE_URL_TEST=postgres://… pnpm coverage`         | unit + integration merged into ONE coverage number; thresholds in `vitest.config.ts` gate CI                                     |
 | `pnpm test:acceptance`                                 | Playwright against a running stack                                                                                               |
 | `pnpm contracts:generate`                              | regenerates `packages/contracts/openapi.json` and `src/generated/api.ts` from the route definitions                              |

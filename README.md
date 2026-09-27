@@ -13,7 +13,6 @@ A monorepo containing:
 - `packages/database`: slonik client, knex migrator and the Nest server's migrations ([ADR-0011](docs/adr/0011-migrations-strategy.md))
 - `packages/event-bus`, `packages/unit-of-work`, `packages/authz`: the framework-free kernel the Nest server is built on ([ADR-0007](docs/adr/0007-unit-of-work-and-one-event-bus.md), [ADR-0021](docs/adr/0021-per-route-authorization-dsl.md))
 - `packages/components`: the component library + Storybook ([ADR-0015](docs/adr/0015-frontend-component-library.md))
-- `packages/jobs`: background-job runner (to be folded into the hapi server's `src/bin/`)
 - `packages/cli`, `packages/mcp`, `packages/api-client`: the command-line client, the MCP server and the client they share
 - `packages/acceptance`, `packages/test-drivers`: Playwright acceptance suite and the tier-agnostic page drivers
 

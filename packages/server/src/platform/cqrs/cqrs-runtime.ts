@@ -4,36 +4,9 @@ import { makeEventBus, makeUnhandledFailures } from "@org/event-bus";
 import { makeUnitOfWork } from "@org/unit-of-work";
 
 import {
-  authCommandSpanAttributes,
-  authQuerySpanAttributes,
-} from "@/modules/auth/auth.platform.js";
-import {
-  billingCommandSpanAttributes,
-  billingEventSpanAttributes,
-  billingQuerySpanAttributes,
-} from "@/modules/billing/billing.platform.js";
-import {
-  organizationCommandSpanAttributes,
-  organizationEventSpanAttributes,
-  organizationQuerySpanAttributes,
-} from "@/modules/organization/organization.platform.js";
-import {
-  roleCommandSpanAttributes,
-  roleEventSpanAttributes,
-  roleQuerySpanAttributes,
-} from "@/modules/role/role.platform.js";
-import {
-  todoCommandSpanAttributes,
-  todoQuerySpanAttributes,
-} from "@/modules/todos/todos.platform.js";
-import {
-  userCommandSpanAttributes,
-  userEventSpanAttributes,
-  userQuerySpanAttributes,
-} from "@/modules/user/user.platform.js";
-import {
   walletCommandSpanAttributes,
   walletEventSpanAttributes,
+  walletQuerySpanAttributes,
 } from "@/modules/wallet/wallet.platform.js";
 import { Database } from "@/platform/database/database.js";
 import { makeTransactionDriver } from "@/platform/database/transaction-driver.js";
@@ -73,14 +46,7 @@ const mergeUnique = <V>(
       useFactory: (unhandledFailures: UnhandledFailures) =>
         makeEventBus({
           unhandledFailures,
-          spanAttributes: mergeUnique(
-            "event span attributes",
-            userEventSpanAttributes,
-            roleEventSpanAttributes,
-            organizationEventSpanAttributes,
-            billingEventSpanAttributes,
-            walletEventSpanAttributes,
-          ),
+          spanAttributes: mergeUnique("event span attributes", walletEventSpanAttributes),
         }),
     },
     {
@@ -91,30 +57,11 @@ const mergeUnique = <V>(
     },
     {
       provide: CommandSpanAttributes,
-      useFactory: () =>
-        mergeUnique(
-          "command span attributes",
-          userCommandSpanAttributes,
-          roleCommandSpanAttributes,
-          organizationCommandSpanAttributes,
-          todoCommandSpanAttributes,
-          authCommandSpanAttributes,
-          billingCommandSpanAttributes,
-          walletCommandSpanAttributes,
-        ),
+      useFactory: () => mergeUnique("command span attributes", walletCommandSpanAttributes),
     },
     {
       provide: QuerySpanAttributes,
-      useFactory: () =>
-        mergeUnique(
-          "query span attributes",
-          userQuerySpanAttributes,
-          roleQuerySpanAttributes,
-          organizationQuerySpanAttributes,
-          todoQuerySpanAttributes,
-          authQuerySpanAttributes,
-          billingQuerySpanAttributes,
-        ),
+      useFactory: () => mergeUnique("query span attributes", walletQuerySpanAttributes),
     },
     AppCommandBus,
     AppQueryBus,

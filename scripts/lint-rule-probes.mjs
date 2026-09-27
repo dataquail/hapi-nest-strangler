@@ -24,7 +24,7 @@ const repoRoot = process.cwd();
 const PROBES = [
   {
     rule: "architecture/structure",
-    file: "packages/server/src/modules/todos/zzprobe-stray.ts",
+    file: "packages/server/src/modules/wallet/zzprobe-stray.ts",
     source: "export const probe = 1;\n",
   },
   {
@@ -37,40 +37,40 @@ const PROBES = [
     // is not. Without this the layout rule admits the file and nothing else
     // looks at the name.
     rule: "architecture/structure",
-    file: "packages/server/src/modules/todos/commands/zzProbeStray.handler.ts",
+    file: "packages/server/src/modules/wallet/commands/zzProbeStray.handler.ts",
     source: "export const probe = 1;\n",
   },
   {
     // Named after its folder: the right shape, the wrong aggregate.
     rule: "architecture/structure",
-    file: "packages/server/src/modules/todos/domain/todo/zzprobe-stray.root.ts",
+    file: "packages/server/src/modules/wallet/domain/wallet/zzprobe-stray.root.ts",
     source: "export const probe = 1;\n",
   },
   {
     // A bus factory outside a composition root: the exports family, which
     // reads the imported name rather than the path.
     rule: "architecture/exports",
-    file: "packages/server/src/modules/todos/commands/zzprobe-bus.handler.ts",
+    file: "packages/server/src/modules/wallet/commands/zzprobe-bus.handler.ts",
     source:
       'import { makeEventBus } from "@org/event-bus";\n\nexport const probe = makeEventBus;\n',
   },
   {
     // Nest's own event bus. There is one bus in this repo, and it is not this one.
     rule: "architecture/exports",
-    file: "packages/server/src/modules/todos/commands/zzprobe-nest-bus.handler.ts",
+    file: "packages/server/src/modules/wallet/commands/zzprobe-nest-bus.handler.ts",
     source: 'import { EventBus } from "@nestjs/cqrs";\n\nexport const probe = EventBus;\n',
   },
   {
     // A namespace binding of a fenced library: the plugin sees `import *
     // as`, `export *`, `import()` and `require()` as the one `*` binding.
     rule: "architecture/exports",
-    file: "packages/server/src/modules/todos/commands/zzprobe-ns.handler.ts",
+    file: "packages/server/src/modules/wallet/commands/zzprobe-ns.handler.ts",
     source: 'import * as Cqrs from "@nestjs/cqrs";\n\nexport const probe = Cqrs;\n',
   },
   {
     // The authz registries built outside platform/.
     rule: "architecture/exports",
-    file: "packages/server/src/modules/todos/policies/zzprobe-registry.policy.ts",
+    file: "packages/server/src/modules/wallet/policies/zzprobe-registry.policy.ts",
     source:
       'import { makePolicyRegistry } from "@org/authz";\n\nexport const probe = makePolicyRegistry;\n',
   },
@@ -83,14 +83,14 @@ const PROBES = [
   },
   {
     rule: "architecture/surface",
-    file: "packages/server/src/modules/todos/commands/zzprobe-star.command.ts",
-    source: 'export * from "@/modules/todos/commands/create-todo.command.js";\n',
+    file: "packages/server/src/modules/wallet/commands/zzprobe-star.command.ts",
+    source: 'export * from "@/modules/wallet/commands/create-wallet.command.js";\n',
   },
   {
     // A handler file with two handler classes in it — the count demand, which
     // is a statement about the file's whole surface rather than any one site.
     rule: "architecture/surface",
-    file: "packages/server/src/modules/todos/commands/zzprobe-two.handler.ts",
+    file: "packages/server/src/modules/wallet/commands/zzprobe-two.handler.ts",
     source: "export class ZzProbeOneHandler {}\nexport class ZzProbeTwoHandler {}\n",
   },
   {
@@ -127,18 +127,18 @@ const PROBES = [
     // typed tag reading another module's schema, with the quotes ADR-0020
     // requires on a reserved word.
     rule: "local/no-cross-schema-sql-access",
-    file: "packages/server/src/modules/todos/queries/zzprobe-cross-schema.handler.ts",
+    file: "packages/server/src/modules/wallet/queries/zzprobe-cross-schema.handler.ts",
     source:
       'import { RowSchemas, sql } from "@org/database";\n\n' +
-      'export const probe = sql.type(RowSchemas.UserRow)`SELECT id FROM "user".users`;\n',
+      'export const probe = sql.type(RowSchemas.WalletRow)`SELECT id FROM "user".users`;\n',
   },
   {
     // The other half of the rule, in the other spelling of the tag: a table
     // with no schema at all, under `sql.unsafe`.
     rule: "local/no-cross-schema-sql-access",
-    file: "packages/server/src/modules/todos/queries/zzprobe-unqualified.handler.ts",
+    file: "packages/server/src/modules/wallet/queries/zzprobe-unqualified.handler.ts",
     source:
-      'import { sql } from "@org/database";\n\nexport const probe = sql.unsafe`SELECT id FROM todos`;\n',
+      'import { sql } from "@org/database";\n\nexport const probe = sql.unsafe`SELECT id FROM wallets`;\n',
   },
   {
     // The alias root differs per package (server: src/, web: package root), so
@@ -162,7 +162,7 @@ const PROBES = [
   },
   {
     rule: "architecture/members",
-    file: "packages/server/src/modules/todos/domain/todo/zzprobe-dumb.repository.ts",
+    file: "packages/server/src/modules/wallet/domain/wallet/zzprobe-dumb.repository.ts",
     source:
       "export type ProbeRepositoryShape = {\n  readonly findOneById: (id: string) => string;\n};\n",
   },
@@ -186,18 +186,18 @@ const PROBES = [
     // mechanisms: the cross-folder port trio, a same-folder {node-name}.test.ts,
     // and the {node-name}.integration.test.ts variant.
     rule: "architecture/structure",
-    file: "packages/server/src/modules/todos/domain/todo/zzprobe-parity.repository.ts",
+    file: "packages/server/src/modules/wallet/domain/wallet/zzprobe-parity.repository.ts",
     source:
       "export type ProbeRepositoryShape = {\n  readonly findOne: (spec: unknown) => unknown;\n};\n",
   },
   {
     rule: "architecture/structure",
-    file: "packages/server/src/modules/todos/commands/zzprobe-parity.handler.ts",
+    file: "packages/server/src/modules/wallet/commands/zzprobe-parity.handler.ts",
     source: "export class ZzProbeParityHandler {}\n",
   },
   {
     rule: "architecture/structure",
-    file: "packages/server/src/modules/todos/interface/http/zzprobe-parity.endpoint.ts",
+    file: "packages/server/src/modules/wallet/interface/http/zzprobe-parity.endpoint.ts",
     source: "export class ZzProbeParityEndpoint {}\n",
   },
   {
@@ -212,15 +212,15 @@ const PROBES = [
     // plugin is loaded, its rule is enabled, its globs match, and resolution is
     // live rather than quietly failing open.
     rule: "architecture/imports",
-    file: "packages/server/src/modules/todos/commands/zzprobe-arch.handler.ts",
+    file: "packages/server/src/modules/wallet/commands/zzprobe-arch.handler.ts",
     source:
-      'import { OrganizationRepository } from "@/modules/organization/domain/organization/organization.repository.js";\n\nexport const probe = OrganizationRepository;\n',
+      'import { WalletRepositoryLive } from "@/modules/wallet/infrastructure/repositories/wallet.repository-live.js";\n\nexport const probe = WalletRepositoryLive;\n',
   },
   {
     // A policy naming the authz library instead of the platform file that
     // carries its augmentation.
     rule: "architecture/imports",
-    file: "packages/server/src/modules/todos/policies/zzprobe-direct.policy.ts",
+    file: "packages/server/src/modules/wallet/policies/zzprobe-direct.policy.ts",
     source: 'import { Check } from "@org/authz";\n\nexport const probe = Check;\n',
   },
   {

@@ -9,10 +9,12 @@ import { z } from "zod";
 import { CliApi } from "../CliApi.js";
 import { DomainApi } from "../DomainApi.js";
 import * as HttpErrors from "../HttpErrors.js";
-import type { ContractGroup, ErrorDefinition, RouteDefinition } from "../Route.js";
+import { InternalApi } from "../InternalApi.js";
+import type { ContractGroup, ErrorDefinition, RouteDefinition, Security } from "../Route.js";
 
 const SESSION_SCHEME = "sessionCookie";
 const BEARER_SCHEME = "apiToken";
+const SERVICE_SCHEME = "interServiceToken";
 
 const errorResponses = (errors: ReadonlyArray<ErrorDefinition>): Record<string, ResponseConfig> => {
   const byStatus = new Map<number, Array<ErrorDefinition>>();
@@ -34,6 +36,12 @@ const errorResponses = (errors: ReadonlyArray<ErrorDefinition>): Record<string, 
     };
   }
   return responses;
+};
+
+const SECURITY: Record<Security, NonNullable<RouteConfig["security"]>> = {
+  session: [{ [SESSION_SCHEME]: [] }, { [BEARER_SCHEME]: [] }],
+  service: [{ [SERVICE_SCHEME]: [] }],
+  public: [],
 };
 
 const toRouteConfig = (group: ContractGroup, route: RouteDefinition): RouteConfig => {
@@ -61,11 +69,10 @@ const toRouteConfig = (group: ContractGroup, route: RouteDefinition): RouteConfi
     responses: {
       [String(route.success.status)]: success,
       ...errorResponses(
-        route.security === "session" ? [...route.errors, HttpErrors.Unauthorized] : route.errors,
+        route.security === "public" ? route.errors : [...route.errors, HttpErrors.Unauthorized],
       ),
     },
-    security:
-      route.security === "session" ? [{ [SESSION_SCHEME]: [] }, { [BEARER_SCHEME]: [] }] : [],
+    security: SECURITY[route.security],
   };
 };
 
@@ -82,7 +89,13 @@ export const buildOpenApiDocument = (): OpenApiDocument => {
     type: "http",
     scheme: "bearer",
   });
-  for (const group of [...DomainApi, ...CliApi]) {
+  registry.registerComponent("securitySchemes", SERVICE_SCHEME, {
+    type: "http",
+    scheme: "bearer",
+    bearerFormat: "JWT",
+    description: "HS256 inter-service token minted by the legacy API",
+  });
+  for (const group of [...DomainApi, ...CliApi, ...InternalApi]) {
     for (const route of Object.values(group.routes)) {
       registry.registerPath(toRouteConfig(group, route));
     }

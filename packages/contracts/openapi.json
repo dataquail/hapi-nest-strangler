@@ -19,6 +19,12 @@
       "apiToken": {
         "type": "http",
         "scheme": "bearer"
+      },
+      "interServiceToken": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "HS256 inter-service token minted by the legacy API"
       }
     },
     "schemas": {
@@ -564,6 +570,33 @@
           }
         },
         "required": ["title"]
+      },
+      "Wallet": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "organizationId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "balance": {
+            "type": "integer"
+          }
+        },
+        "required": ["id", "organizationId", "balance"]
+      },
+      "CreateWalletPayload": {
+        "type": "object",
+        "properties": {
+          "organizationId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "required": ["organizationId"]
       }
     },
     "parameters": {}
@@ -4920,6 +4953,237 @@
                     }
                   },
                   "required": ["_tag", "message"]
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "The server is not ready to handle the request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "_tag": {
+                      "type": "string",
+                      "enum": ["ServiceUnavailable"]
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["_tag"]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/internal/wallets": {
+      "post": {
+        "operationId": "internalWallets.create",
+        "tags": ["internal-wallets"],
+        "security": [
+          {
+            "interServiceToken": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateWalletPayload"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Wallet"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication is required and has failed or has not been provided",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "_tag": {
+                      "type": "string",
+                      "enum": ["Unauthorized"]
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["_tag"]
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "The server is not ready to handle the request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "_tag": {
+                      "type": "string",
+                      "enum": ["ServiceUnavailable"]
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["_tag"]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/internal/wallets/{organizationId}": {
+      "get": {
+        "operationId": "internalWallets.get",
+        "tags": ["internal-wallets"],
+        "security": [
+          {
+            "interServiceToken": []
+          }
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "organizationId",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Wallet"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication is required and has failed or has not been provided",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "_tag": {
+                      "type": "string",
+                      "enum": ["Unauthorized"]
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["_tag"]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No wallet exists for that organization",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "_tag": {
+                      "type": "string",
+                      "enum": ["WalletNotFoundError"]
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["_tag", "message"]
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "The server is not ready to handle the request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "_tag": {
+                      "type": "string",
+                      "enum": ["ServiceUnavailable"]
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["_tag"]
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "internalWallets.delete",
+        "tags": ["internal-wallets"],
+        "security": [
+          {
+            "interServiceToken": []
+          }
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "organizationId",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No content"
+          },
+          "401": {
+            "description": "Authentication is required and has failed or has not been provided",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "_tag": {
+                      "type": "string",
+                      "enum": ["Unauthorized"]
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["_tag"]
                 }
               }
             }

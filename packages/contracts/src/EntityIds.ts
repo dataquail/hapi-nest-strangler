@@ -17,3 +17,6 @@ export type SubscriptionId = z.infer<typeof SubscriptionId>;
 
 export const ApiTokenId = z.guid().brand<"ApiTokenId">();
 export type ApiTokenId = z.infer<typeof ApiTokenId>;
+
+export const WalletId = z.guid().brand<"WalletId">();
+export type WalletId = z.infer<typeof WalletId>;

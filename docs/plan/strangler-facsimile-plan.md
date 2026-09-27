@@ -77,7 +77,7 @@ legacy-api/
       billing/       billing-routes.ts billing-service.ts subscription-model.ts
                      webhook-event-model.ts stripe-gateway.ts billing-access.ts
     lib/
-      access/{acl,can,canAll,canSome,aclQueryPromise}.ts   # @synapsestudios/acl (virgen fork)
+      access/{acl,can,canAll,canSome,aclQueryPromise}.ts   # virgen-acl
       hapi-async-validation/{asyncValidation,ValidationError,bookshelf/row-exists…}.ts
       backend-client/{index,http,domains/wallets}.ts        # → Nest, inter-service JWT
       bookshelf.ts knex.ts joi.ts logger.ts email/ stripe.ts session-constants.ts
@@ -179,10 +179,11 @@ the full stack (create org in the UI → `wallet.wallets` row exists).
 1. New repo from HEAD; rename; README/CLAUDE.md pointers; commit the plan.
 2. Bump goodbones to the latest beta; gate green.
 3. Nest trim: wallet-only modules, internal wallet HTTP + inter-service guard, database package to
-   wallet-only, delete consumer-less platform code, contracts `InternalWalletContract`.
+   wallet-only, delete consumer-less platform code, contracts `InternalWalletContract`. `@org/jobs`
+   goes with it (its one job read the auth schema); the session purge returns in hapi at step 5.
 4. Scaffold `legacy-api`: hapi + glue + electrolyte + bookshelf/knex + config + logger +
    `/health-check`; manifest node; vitest project; env, compose, `pnpm dev`.
-5. hapi migrations for all `public` tables + seeds; session purge moved to `src/bin`; `@org/jobs` removed.
+5. hapi migrations for all `public` tables + seeds; session purge rewritten in `src/bin`.
 6. hapi auth + user + roles + ACL/`can`; web login works against hapi.
 7. hapi organization module; invitation email; domain-event plugin.
 8. The seam: `backend-client`, compensation in `organization-service`, its three tests.

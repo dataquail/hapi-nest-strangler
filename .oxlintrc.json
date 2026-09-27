@@ -473,14 +473,7 @@
       }
     },
     {
-      "files": [
-        "scripts/**",
-        "infra/**",
-        "**/*.mjs",
-        "packages/cli/src/**",
-        "packages/mcp/src/**",
-        "packages/jobs/src/**"
-      ],
+      "files": ["scripts/**", "infra/**", "**/*.mjs", "packages/cli/src/**", "packages/mcp/src/**"],
       "rules": {
         "no-console": "off"
       }

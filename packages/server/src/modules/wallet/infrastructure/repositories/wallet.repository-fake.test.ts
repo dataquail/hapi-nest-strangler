@@ -68,4 +68,18 @@ describe("WalletRepositoryFake", () => {
       null,
     );
   });
+
+  it("deletes the org's wallet and reports WalletNotFound when there is none", async () => {
+    const repo = new WalletRepositoryFake();
+    await repo.insertOne(WalletRootOps.create({ id: walletA, organizationId: acmeId, now }).wallet);
+    (await repo.deleteOne(acmeId)).unwrap();
+    deepStrictEqual(
+      (await repo.findOne(WalletSpecifications.forOrganization(acmeId))).unwrap(),
+      null,
+    );
+    deepStrictEqual(
+      { ...(await repo.deleteOne(acmeId)).unwrapErr() },
+      { _tag: "WalletNotFound", organizationId: acmeId },
+    );
+  });
 });

@@ -10,7 +10,7 @@ export class WalletAlreadyExistsForOrganization extends TaggedError(
 }> {}
 
 export class WalletNotFound extends TaggedError("WalletNotFound")<{
-  readonly walletId: WalletId;
+  readonly organizationId: OrganizationId;
 }> {}
 
 export class WalletInsufficientFunds extends TaggedError("WalletInsufficientFunds")<{

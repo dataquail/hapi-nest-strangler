@@ -7,17 +7,11 @@ export type MigratorConfig = {
   readonly ssl: boolean;
 };
 
-// ADR-0020: each module owns a Postgres schema named after its folder, plus the
-// shared `platform` schema. Adding a module means a migration and an entry here.
-export const MODULE_SCHEMAS = [
-  "user",
-  "todos",
-  "wallet",
-  "auth",
-  "platform",
-  "organization",
-  "billing",
-] as const;
+// ADR-0020: each module of the Nest server owns a Postgres schema named after
+// its folder. Only the wallet lives here; every other table is the legacy
+// API's, in `public`, and arrives schema by schema as the strangler moves a
+// module across. Adding a module means a migration and an entry here.
+export const MODULE_SCHEMAS = ["wallet"] as const;
 
 const MIGRATIONS_TABLE = "knex_migrations";
 

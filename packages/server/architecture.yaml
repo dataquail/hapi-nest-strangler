@@ -1,8 +1,14 @@
 # yaml-language-server: $schema=https://dataquail.github.io/goodbones/schema/architecture-node.schema.json
 #
-# @org/server — the Nest BFF. One node rather than four siblings, so the taxonomy
+# @org/server — the Nest server. One node rather than four siblings, so the taxonomy
 # has a single root, the naming convention is stated once, and a folder nobody
 # declared is a violation rather than a gap.
+#
+# This node describes the DESTINATION architecture. While the strangler runs,
+# only the wallet module lives here, so most of the tree below is vacant and
+# many allowances are slack: `limits.conformance` in the root manifest holds
+# those two numbers where they stand, and they are the measure of how much of
+# the legacy API has yet to arrive. Do not prune a node to make them fall.
 #
 # One node of the architecture policy: the root architecture.yaml includes this
 # file at "~/server/src/". Patterns are repo-relative and use the root's
@@ -171,7 +177,7 @@ defs:
       - "@/platform/cqrs/command-bus.ts"
       - "@/platform/cqrs/query-bus.ts"
       - "@/platform/http/**"
-      - "@/platform/middlewares/user-auth.guard.ts"
+      - "@/platform/middlewares/*.guard.ts"
       - "@/platform/ids/**"
       - "@/modules/{module}/commands/*.command.ts"
       - "@/modules/{module}/queries/*.query.ts"
@@ -489,18 +495,21 @@ children:
 
       "middlewares/":
         message: >-
-          platform/middlewares/ holds the guard every private endpoint names and the
-          Authenticator that resolves a credential through the auth module — the one part of
-          the kernel that legitimately names a module, and only through its platform surface.
+          platform/middlewares/ holds the guards an endpoint names — the user guard every
+          private endpoint will name, and the inter-service guard the internal API names — and
+          the Authenticator that resolves a user credential through the auth module, the one
+          part of the kernel that legitimately names a module, and only through its platform
+          surface.
         imports:
           reset: true
           message: >-
-            The guard names only the Authenticator port, because every endpoint names the guard
-            at decoration time and the auth module's own endpoints are among them. The
+            A guard names only a port or the environment, because every endpoint names its
+            guard at decoration time and the auth module's own endpoints are among them. The
             Authenticator's live resolves the caller before any endpoint runs, so it names the
             auth module through its platform surface — never past it — plus the buses, the
-            cookie codec, the contracts that define the caller, and the environment.
-          external: ["@nestjs/common", cookie]
+            cookie codec, the contracts that define the caller, and the environment. The
+            inter-service guard verifies the shared-secret token with jose.
+          external: ["@nestjs/common", cookie, express, jose]
           allow:
             - "@/common/**"
             - "@/platform/auth/**"
@@ -1380,6 +1389,7 @@ children:
         - oxide.ts
         - openapi-fetch
         - reflect-metadata
+        - jose
         - "@nestjs/common"
         - "@nestjs/testing"
       allow:

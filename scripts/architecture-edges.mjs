@@ -669,13 +669,6 @@ const REFUSED = [
   ],
   ["mcp reaching into the CLI", "packages/mcp/src/main.ts", "packages/cli/src/commands/todos.ts"],
   ["mcp reaching the server", "packages/mcp/src/main.ts", `${P}/http/endpoint.ts`],
-  ["jobs reaching the server", "packages/jobs/src/jobs/cleanup.ts", `${P}/http/endpoint.ts`],
-  ["jobs reaching a module", "packages/jobs/src/jobs/cleanup.ts", `${M}/todos/todos.platform.ts`],
-  [
-    "jobs reaching the contracts",
-    "packages/jobs/src/jobs/cleanup.ts",
-    "packages/contracts/src/Policy.ts",
-  ],
   [
     "the database kernel reaching the contracts",
     "packages/database/src/database.ts",
@@ -896,11 +889,6 @@ const ALLOWED = [
     "the CLI using api-client (LEGAL)",
     "packages/cli/src/main.ts",
     "packages/api-client/src/index.ts",
-  ],
-  [
-    "jobs using the database kernel (LEGAL)",
-    "packages/jobs/src/jobs/cleanup.ts",
-    "packages/database/src/index.ts",
   ],
   [
     "the unit of work using the event bus (LEGAL)",

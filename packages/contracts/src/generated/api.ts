@@ -229,6 +229,38 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/internal/wallets": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations["internalWallets.create"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/internal/wallets/{organizationId}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations["internalWallets.get"];
+    put?: never;
+    post?: never;
+    delete: operations["internalWallets.delete"];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/invitations/{token}/accept": {
     parameters: {
       query?: never;
@@ -590,6 +622,10 @@ export interface components {
       /** Format: uuid */
       id: string;
     };
+    CreateWalletPayload: {
+      /** Format: uuid */
+      organizationId: string;
+    };
     CurrentUserResponse: {
       isSuperAdmin: boolean;
       /** Format: uuid */
@@ -712,6 +748,13 @@ export interface components {
       id: string;
       /** Format: date-time */
       updatedAt: string;
+    };
+    Wallet: {
+      balance: number;
+      /** Format: uuid */
+      id: string;
+      /** Format: uuid */
+      organizationId: string;
     };
   };
   responses: never;
@@ -1606,6 +1649,163 @@ export interface operations {
             /** @enum {string} */
             _tag: "CliTodoNotFoundError";
             message: string;
+          };
+        };
+      };
+      /** @description The server is not ready to handle the request */
+      503: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @enum {string} */
+            _tag: "ServiceUnavailable";
+            message?: string;
+          };
+        };
+      };
+    };
+  };
+  "internalWallets.create": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: {
+      content: {
+        "application/json": components["schemas"]["CreateWalletPayload"];
+      };
+    };
+    responses: {
+      /** @description Success */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["Wallet"];
+        };
+      };
+      /** @description Authentication is required and has failed or has not been provided */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @enum {string} */
+            _tag: "Unauthorized";
+            message?: string;
+          };
+        };
+      };
+      /** @description The server is not ready to handle the request */
+      503: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @enum {string} */
+            _tag: "ServiceUnavailable";
+            message?: string;
+          };
+        };
+      };
+    };
+  };
+  "internalWallets.get": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        organizationId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Success */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["Wallet"];
+        };
+      };
+      /** @description Authentication is required and has failed or has not been provided */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @enum {string} */
+            _tag: "Unauthorized";
+            message?: string;
+          };
+        };
+      };
+      /** @description No wallet exists for that organization */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @enum {string} */
+            _tag: "WalletNotFoundError";
+            message: string;
+          };
+        };
+      };
+      /** @description The server is not ready to handle the request */
+      503: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @enum {string} */
+            _tag: "ServiceUnavailable";
+            message?: string;
+          };
+        };
+      };
+    };
+  };
+  "internalWallets.delete": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        organizationId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description No content */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Authentication is required and has failed or has not been provided */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @enum {string} */
+            _tag: "Unauthorized";
+            message?: string;
           };
         };
       };

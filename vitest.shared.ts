@@ -48,7 +48,6 @@ const config: ViteUserConfig = {
       ...alias("contracts"),
       ...alias("database"),
       ...alias("event-bus"),
-      ...alias("jobs"),
       ...alias("server"),
       ...alias("unit-of-work"),
     },

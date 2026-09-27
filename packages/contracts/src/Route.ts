@@ -24,7 +24,8 @@ export type ErrorOf<D> =
       }
     : never;
 
-export type Security = "session" | "public";
+/** `service` is a machine caller presenting the inter-service token; no user is attached. */
+export type Security = "session" | "public" | "service";
 
 export type RouteInput = {
   readonly method: HttpMethod;

@@ -4,6 +4,7 @@ export { DomainApi } from "./DomainApi.js";
 export * as EntityIds from "./EntityIds.js";
 export type { components, operations, paths } from "./generated/api.js";
 export * as HttpErrors from "./HttpErrors.js";
+export { InternalApi } from "./InternalApi.js";
 export { type CurrentUser } from "./Policy.js";
 export {
   type BodyOf,

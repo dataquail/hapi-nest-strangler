@@ -10,9 +10,8 @@ import { WalletRepository } from "../domain/wallet/wallet.repository.js";
 import { WalletRootOps } from "../domain/wallet/wallet.root-ops.js";
 import { CreateWalletCommand, type CreateWalletResult } from "./create-wallet.command.js";
 
-// Idempotent: a duplicate trigger for an org that already has a wallet is a
-// no-op, and WalletCreated fires only on a fresh insert. Dispatched inside the
-// publisher's transaction, so the run nests and the wallet commits with the org.
+// Idempotent: the legacy API may retry, so a duplicate for an org that already
+// has a wallet is a no-op and WalletCreated fires only on a fresh insert.
 @CommandHandler(CreateWalletCommand)
 export class CreateWalletHandler implements ICommandHandler<CreateWalletCommand> {
   constructor(

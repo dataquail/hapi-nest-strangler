@@ -1,11 +1,15 @@
 import { Err, Ok, type Result } from "oxide.ts";
 
-import { WalletAlreadyExistsForOrganization } from "@/modules/wallet/domain/wallet/wallet.errors.js";
+import {
+  WalletAlreadyExistsForOrganization,
+  WalletNotFound,
+} from "@/modules/wallet/domain/wallet/wallet.errors.js";
 import type { WalletId } from "@/modules/wallet/domain/wallet/wallet.id.js";
 import { WalletRepository } from "@/modules/wallet/domain/wallet/wallet.repository.js";
 import type { WalletRoot } from "@/modules/wallet/domain/wallet/wallet.root.js";
 import type { PersistenceUnavailable } from "@/platform/ddd/contracts/persistence-unavailable.js";
 import type { Specification } from "@/platform/ddd/contracts/specification.js";
+import type { OrganizationId } from "@/platform/ids/organization-id.js";
 
 export class WalletRepositoryFake extends WalletRepository {
   private readonly store = new Map<WalletId, WalletRoot>();
@@ -22,6 +26,17 @@ export class WalletRepositoryFake extends WalletRepository {
       );
     }
     this.store.set(wallet.id, wallet);
+    return Promise.resolve(Ok(undefined));
+  }
+
+  public deleteOne(
+    organizationId: OrganizationId,
+  ): Promise<Result<void, WalletNotFound | PersistenceUnavailable>> {
+    const stored = [...this.store.values()].find(
+      (wallet) => wallet.organizationId === organizationId,
+    );
+    if (stored === undefined) return Promise.resolve(Err(new WalletNotFound({ organizationId })));
+    this.store.delete(stored.id);
     return Promise.resolve(Ok(undefined));
   }
 

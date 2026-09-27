@@ -29,9 +29,6 @@
     },
     {
       "path": "packages/mcp"
-    },
-    {
-      "path": "packages/jobs"
     }
   ]
 }

@@ -18,7 +18,6 @@ const BUCKETS = [
   ["@org/web", "packages/web/"],
   ["@org/database", "packages/database/"],
   ["@org/contracts", "packages/contracts/"],
-  ["@org/jobs", "packages/jobs/"],
 ];
 const METRICS = ["statements", "branches", "functions", "lines"];
 

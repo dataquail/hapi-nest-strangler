@@ -1,6 +1,6 @@
 import { deepStrictEqual } from "node:assert";
 
-import { type Database, sql } from "@org/database";
+import type { Database } from "@org/database";
 import { afterAll, beforeAll, beforeEach, describe, it } from "vitest";
 
 import { WalletId } from "@/modules/wallet/domain/wallet/wallet.id.js";
@@ -19,14 +19,8 @@ const now = new Date("2025-01-01T00:00:00Z");
 
 const acmeWallet = WalletRootOps.create({ id: walletId, organizationId, now }).wallet;
 
-// FK precondition only: creating the org through its endpoint would fire the
-// organization → wallet adapter and create a wallet as a side effect.
-const seedOrgRow = (db: Database, id: OrganizationId) =>
-  db.exec(sql.unsafe`
-    INSERT INTO "organization".organizations (id, name, created_at, updated_at, deleted_at)
-    VALUES (${id}, 'Acme', NOW(), NOW(), null)
-  `);
-
+// No organization row is seeded: the organization lives in the legacy API's
+// database, and the wallet table carries no foreign key to it.
 describe.sequential("WalletRepositoryLive (integration)", () => {
   let db: Database;
   let repo: WalletRepositoryLive;
@@ -41,11 +35,10 @@ describe.sequential("WalletRepositoryLive (integration)", () => {
   });
 
   beforeEach(async () => {
-    await truncate(db, "wallet.wallets", "organization.organizations");
+    await truncate(db, "wallet.wallets");
   });
 
   it("persists the wallet and decodes it back via findOne", async () => {
-    await seedOrgRow(db, organizationId);
     (await repo.insertOne(acmeWallet)).unwrap();
     const found = (
       await repo.findOne(WalletSpecifications.forOrganization(organizationId))
@@ -54,7 +47,6 @@ describe.sequential("WalletRepositoryLive (integration)", () => {
   });
 
   it("fails WalletAlreadyExistsForOrganization on a duplicate organization_id", async () => {
-    await seedOrgRow(db, organizationId);
     (await repo.insertOne(acmeWallet)).unwrap();
     const clashing = WalletRootOps.create({ id: otherWalletId, organizationId, now }).wallet;
     const result = await repo.insertOne(clashing);
@@ -68,6 +60,19 @@ describe.sequential("WalletRepositoryLive (integration)", () => {
     deepStrictEqual(
       (await repo.findOne(WalletSpecifications.forOrganization(otherOrgId))).unwrap(),
       null,
+    );
+  });
+
+  it("deletes the org's wallet and reports WalletNotFound when there is none", async () => {
+    (await repo.insertOne(acmeWallet)).unwrap();
+    (await repo.deleteOne(organizationId)).unwrap();
+    deepStrictEqual(
+      (await repo.findOne(WalletSpecifications.forOrganization(organizationId))).unwrap(),
+      null,
+    );
+    deepStrictEqual(
+      { ...(await repo.deleteOne(organizationId)).unwrapErr() },
+      { _tag: "WalletNotFound", organizationId },
     );
   });
 });

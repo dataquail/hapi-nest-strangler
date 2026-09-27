@@ -24,6 +24,6 @@ describe("migrations record", () => {
       .filter((n) => n.includes("create_schema"))
       .map((n) => n.replace(/^\d{4}_create_schema_/, ""));
     deepStrictEqual(new Set(schemasCreated), new Set(MODULE_SCHEMAS));
-    deepStrictEqual(lastSchema < firstTable || names[lastSchema]?.includes("billing"), true);
+    deepStrictEqual(lastSchema < firstTable, true);
   });
 });

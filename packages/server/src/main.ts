@@ -9,10 +9,11 @@ import { AppModule } from "@/platform/modules/application-modules.js";
 
 dotenv.config({ path: "../../.env" });
 
+// No CORS: nothing in a browser reaches this server. Its only caller is the
+// legacy API, server to server.
 const bootstrap = async (): Promise<void> => {
   const env = EnvVars.load();
   const app = await NestFactory.create<NestExpressApplication>(AppModule, { rawBody: true });
-  app.enableCors({ origin: env.APP_URL, credentials: true });
   app.enableShutdownHooks();
   await app.listen(env.PORT);
   process.stdout.write(`Server listening on http://localhost:${env.PORT}\n`);

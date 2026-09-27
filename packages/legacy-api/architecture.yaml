@@ -1,0 +1,25 @@
+# yaml-language-server: $schema=https://dataquail.github.io/goodbones/schema/architecture-node.schema.json
+#
+# @org/legacy-api — the hapi server the strangler is emptying. It is declared
+# so the policy knows it exists and can say what it may never reach, and it is
+# declared OPEN and UNRESTRICTED on purpose: its layout is controllers and
+# services by feature folder, its wiring is a string-id container no import
+# graph can see, and nothing here follows the Nest server's taxonomy. Tightening
+# it is the campaign's job, not this file's.
+#
+# One node of the architecture policy: the root architecture.yaml includes this
+# file at "~/legacy-api/". Patterns are repo-relative and use the root's aliases.
+
+message: >-
+  @org/legacy-api is the legacy hapi API: routes, services and bookshelf models per feature
+  folder under src/application/, shared helpers under src/lib/, knex migrations in one public
+  schema. It is the thing being strangled; new behaviour belongs on the Nest server.
+layout: open
+imports:
+  unrestricted: true
+  message: >-
+    The legacy API states no allowlist: its modules reach each other freely, and that coupling
+    is what the campaign measures. It may never reach the Nest server or its kernel packages —
+    the root graph rules say so.
+children:
+  "**/": { layout: open, children: {} }

@@ -1,8 +1,8 @@
 import type { NextConfig } from "next";
 
-// Same-origin proxy to the Nest server: the browser only sees the Next origin,
+// Same-origin proxy to the legacy API: the browser only sees the Next origin,
 // so the session cookie scopes here and there is no CORS (ADR-0018).
-const SERVER_INTERNAL_URL = process.env.SERVER_INTERNAL_URL ?? "http://localhost:3001";
+const SERVER_INTERNAL_URL = process.env.SERVER_INTERNAL_URL ?? "http://localhost:9000";
 
 const nextConfig: NextConfig = {
   allowedDevOrigins: ["*.app.github.dev"],

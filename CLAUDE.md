@@ -14,26 +14,28 @@ The Nest server: NestJS + `@nestjs/cqrs`, hexagonal architecture, DDD, no Effect
 | Handlers, modules, event buses, SQL, auth (server)    | `.claude/rules/server-nest-and-persistence.md` | 0004, 0006, 0007, 0012, 0016–0017, 0020, 0033 |
 | Something compiles but fails at boot, or lints oddly  | `.claude/rules/nest-cqrs-notes.md`             | 0033                                          |
 | Frontend (`packages/web`, `packages/components`)      | `.claude/rules/frontend.md`                    | 0015, 0018, 0019, 0026                        |
+| Anything in `packages/legacy-api`                     | `.claude/rules/legacy-api.md`                  | —                                             |
 | Writing comments (any package)                        | `.claude/rules/comments.md`                    | —                                             |
 | Any architectural boundary, file naming, rule probes  | `.claude/rules/architecture-rules.md`          | 0008, 0025, 0027–0031                         |
 
 ## Monorepo map
 
-| Package             | What it is                                                                                              |
-| ------------------- | ------------------------------------------------------------------------------------------------------- |
-| `@org/server`       | The Nest BFF backend (`src/modules/`, `src/platform/`, HTTP). Bulk of the rules.                        |
-| `@org/web`          | Next.js App Router renderer + `/api/*` proxy; TanStack Query + MVVM (ADR-0026, 0018).                   |
-| `@org/components`   | Bespoke component library (primitives + patterns) + Storybook (ADR-0015).                               |
-| `@org/contracts`    | Route definitions, zod schemas, errors, the generated `openapi.json` and `generated/api.ts` (ADR-0010). |
-| `@org/database`     | slonik client (`createDatabase`, `sql`, `RowSchemas`), knex migrator + migrations (ADR-0011).           |
-| `@org/event-bus`    | The domain event bus: `subscribe` / `subscribeAfterCommit` / `stream`, deferral, unhandled failures.    |
-| `@org/unit-of-work` | The transactional boundary over a `TransactionDriver`; rolls back on `Err` (ADR-0007).                  |
-| `@org/authz`        | The authorization DSL: `Check`, policy and resolver registries, `makeHasPermissions` (ADR-0021).        |
-| `@org/cli`          | Command-line client (device-flow auth, organizations, todos).                                           |
-| `@org/mcp`          | MCP (stdio) server exposing the CLI surface as tools.                                                   |
-| `@org/api-client`   | Shared `openapi-fetch` client + credential store for the CLI and MCP.                                   |
-| `@org/acceptance`   | Playwright acceptance tests (specs / drivers / pages / infrastructure).                                 |
-| `@org/test-drivers` | Tier-agnostic page-driver contracts + per-tier adapters (Playwright / RTL).                             |
+| Package             | What it is                                                                                                     |
+| ------------------- | -------------------------------------------------------------------------------------------------------------- |
+| `@org/legacy-api`   | The hapi server being strangled: routes/services/bookshelf models in `public`. Own rule file.                  |
+| `@org/server`       | The Nest server (`src/modules/`, `src/platform/`, HTTP): the wallet today, the destination. Bulk of the rules. |
+| `@org/web`          | Next.js App Router renderer + `/api/*` proxy; TanStack Query + MVVM (ADR-0026, 0018).                          |
+| `@org/components`   | Bespoke component library (primitives + patterns) + Storybook (ADR-0015).                                      |
+| `@org/contracts`    | Route definitions, zod schemas, errors, the generated `openapi.json` and `generated/api.ts` (ADR-0010).        |
+| `@org/database`     | slonik client (`createDatabase`, `sql`, `RowSchemas`), knex migrator + migrations (ADR-0011).                  |
+| `@org/event-bus`    | The domain event bus: `subscribe` / `subscribeAfterCommit` / `stream`, deferral, unhandled failures.           |
+| `@org/unit-of-work` | The transactional boundary over a `TransactionDriver`; rolls back on `Err` (ADR-0007).                         |
+| `@org/authz`        | The authorization DSL: `Check`, policy and resolver registries, `makeHasPermissions` (ADR-0021).               |
+| `@org/cli`          | Command-line client (device-flow auth, organizations, todos).                                                  |
+| `@org/mcp`          | MCP (stdio) server exposing the CLI surface as tools.                                                          |
+| `@org/api-client`   | Shared `openapi-fetch` client + credential store for the CLI and MCP.                                          |
+| `@org/acceptance`   | Playwright acceptance tests (specs / drivers / pages / infrastructure).                                        |
+| `@org/test-drivers` | Tier-agnostic page-driver contracts + per-tier adapters (Playwright / RTL).                                    |
 
 **Workspace kernel, installed engine.** The CQRS, unit-of-work and authorization patterns are the three `@org/*` workspace packages above, written from scratch for this edition and held apart from the server by their own manifest nodes (ADR-0029). The architecture engine is installed: `@goodbones/{core,typescript,cli,oxlint}` pinned to `0.1.0-beta.6`.
 

@@ -50,6 +50,10 @@ resolve:
     - files: "^packages/acceptance/"
       language: typescript
       options: { tsconfig: packages/acceptance/tsconfig.json }
+    # The legacy API is CommonJS TypeScript with its own module resolution.
+    - files: "^packages/legacy-api/"
+      language: typescript
+      options: { tsconfig: packages/legacy-api/tsconfig.json }
     - files: ""
       language: typescript
       options: { tsconfig: tsconfig.resolve.json }
@@ -74,9 +78,15 @@ resolve:
 # these four numbers are the distance the legacy API has yet to travel: the
 # floors go back up and the ceilings back down as each module arrives.
 limits:
-  unrestricted: 1
+  # main.ts, and the whole legacy API — admitted unrestricted on purpose (see
+  # packages/legacy-api/architecture.yaml); the campaign is what tightens it.
+  unrestricted: 2
   partial: 0
-  coverage: { imports: 0.98, structure: 0.37, members: 0.04, surface: 0.89, graph: 1 }
+  # Lowered again for the legacy API (step 4): an unrestricted, open package
+  # with no surface rule is invisible to the imports, structure and surface
+  # families, so its files count against every ratio. The number to watch as
+  # the campaign runs is these three climbing back.
+  coverage: { imports: 0.93, structure: 0.35, members: 0.04, surface: 0.84, graph: 1 }
   # Conformance ceilings, gated by `architecture check`: residue (files no
   # family reaches), vacant nodes (an allowlist selecting no file), slack
   # (allowances nothing imports through) and concentration (a fragment entry
@@ -190,6 +200,11 @@ graph:
         without the rest. Break the cycle by moving the shared piece below both, or by inverting
         one edge through a port.
       within: "~/**"
+      # The legacy API's service hub is cyclic by construction (a model that
+      # constructs the service that loads it, an ACL that requires every
+      # module's access file). Its cycles are the campaign's to count down,
+      # not this rule's to refuse.
+      withinNot: "~/legacy-api/**"
   orphans:
     - name: no-orphans
       message: >-
@@ -216,11 +231,22 @@ graph:
         - "**/vitest.config.ts"
         - "**/global-setup.ts"
         - "@/test-utils/setup.ts"
+        - "~/legacy-api/test/setup.ts"
         - "~/web/test/setup.ts"
         - "~/acceptance/playwright.config.ts"
         # Process entrypoints and package bins.
         - "@/main.ts"
         - "@/instrumentation.ts"
+        - "~/legacy-api/server.ts"
+        - "~/legacy-api/knexfile.ts"
+        - "~/legacy-api/migrations/**"
+        - "~/legacy-api/seeds/**"
+        - "~/legacy-api/src/bin/**"
+        # The legacy API's container loads these by directory scan and string
+        # id, an edge no import graph carries; every file under them is an
+        # entry to the graph whether or not anything imports it.
+        - "~/legacy-api/src/application/**"
+        - "~/legacy-api/src/lib/**"
         - "~/cli/src/main.ts"
         - "~/mcp/src/main.ts"
         - "~/database/src/scripts/**"
@@ -282,6 +308,21 @@ graph:
         package both depend on has grown a server dependency.
       from: "~/web/**"
       to: "~/server/**"
+    - name: legacy-api-reaches-no-nest-code
+      message: >-
+        The legacy API transitively reaches the Nest server or one of its kernel packages. The
+        two servers share a database and an HTTP contract and nothing else; the legacy API
+        talks to the wallet over HTTP through its backend client. A route from it into the Nest
+        code is the strangler running backwards.
+      from: "~/legacy-api/**"
+      to: ["~/server/**", "~/database/**", "~/event-bus/**", "~/unit-of-work/**", "~/authz/**"]
+    - name: server-never-reaches-the-legacy-api
+      message: >-
+        The Nest server transitively reaches the legacy API. The destination must not depend on
+        the thing being emptied; what a Nest module needs from the legacy side arrives as a row
+        in the shared database or a call it does not make.
+      from: "~/server/**"
+      to: "~/legacy-api/**"
     - name: contracts-reach-nothing
       message: >-
         @org/contracts transitively reaches the server, web or the database. It is the root of
@@ -363,3 +404,4 @@ tree:
   "~/test-drivers/": { include: packages/test-drivers/architecture.yaml }
   "~/acceptance/": { include: packages/acceptance/architecture.yaml }
   "~/server/src/": { include: packages/server/architecture.yaml }
+  "~/legacy-api/": { include: packages/legacy-api/architecture.yaml }

@@ -676,6 +676,11 @@ const REFUSED = [
   ],
   ["contracts reaching an undeclared package", "packages/contracts/src/Policy.ts", NPM("lodash")],
   [
+    "the Nest server reaching the legacy API",
+    `${M}/wallet/commands/create-wallet.handler.ts`,
+    "packages/legacy-api/src/lib/knex.ts",
+  ],
+  [
     "the event bus reaching the unit of work",
     "packages/event-bus/src/event-bus.ts",
     "packages/unit-of-work/src/unit-of-work.ts",
@@ -884,6 +889,11 @@ const ALLOWED = [
     "api-client using the contracts (LEGAL)",
     "packages/api-client/src/client.ts",
     "packages/contracts/src/index.ts",
+  ],
+  [
+    "a legacy route file reaching a legacy service two folders away (LEGAL)",
+    "packages/legacy-api/src/application/user/user-routes.ts",
+    "packages/legacy-api/src/lib/access/can.ts",
   ],
   [
     "the CLI using api-client (LEGAL)",
@@ -1098,6 +1108,32 @@ const GRAPH = [
     "the contracts package reaching the database kernel",
     "contracts-reach-nothing",
     [["packages/contracts/src/Policy.ts", "packages/database/src/index.ts"]],
+  ],
+  [
+    "the legacy API reaching the Nest server through its backend client",
+    "legacy-api-reaches-no-nest-code",
+    [
+      [
+        "packages/legacy-api/src/application/organization/organization-service.ts",
+        "packages/legacy-api/src/lib/backend-client/index.ts",
+      ],
+      ["packages/legacy-api/src/lib/backend-client/index.ts", `${P}/http/endpoint.ts`],
+    ],
+  ],
+  [
+    "the legacy API reaching the database kernel",
+    "legacy-api-reaches-no-nest-code",
+    [["packages/legacy-api/src/lib/knex.ts", "packages/database/src/index.ts"]],
+  ],
+  [
+    "the legacy API reaching the contracts package (LEGAL)",
+    null,
+    [["packages/legacy-api/test/route-parity.test.ts", "packages/contracts/src/Policy.ts"]],
+  ],
+  [
+    "the Nest server reaching the legacy API",
+    "server-never-reaches-the-legacy-api",
+    [[`${P}/database/database.module.ts`, "packages/legacy-api/src/lib/knex.ts"]],
   ],
   [
     "two platform files importing each other",

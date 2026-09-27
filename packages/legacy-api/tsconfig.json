@@ -1,0 +1,33 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "node16",
+    "moduleResolution": "node16",
+    "lib": ["ES2022"],
+    "types": ["node"],
+    "strict": true,
+    "noImplicitAny": false,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "sourceMap": true,
+    "declaration": true,
+    "composite": true,
+    "rootDir": ".",
+    "outDir": "build",
+    "tsBuildInfoFile": ".tsbuildinfo/legacy-api.tsbuildinfo"
+  },
+  "include": [
+    "server.ts",
+    "manifest.ts",
+    "bootstrap.ts",
+    "config.ts",
+    "load-env.ts",
+    "knexfile.ts",
+    "config-files/**/*",
+    "src/**/*",
+    "test/**/*",
+    "type-declarations/**/*"
+  ],
+  "exclude": ["build", "node_modules"]
+}

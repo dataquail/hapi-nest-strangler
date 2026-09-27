@@ -484,6 +484,27 @@
         "react/button-has-type": "off"
       },
       "plugins": ["react"]
+    },
+    {
+      "files": ["packages/legacy-api/**"],
+      "rules": {
+        "typescript/no-explicit-any": "off",
+        "typescript/no-unsafe-assignment": "off",
+        "typescript/no-unsafe-member-access": "off",
+        "typescript/no-unsafe-call": "off",
+        "typescript/no-unsafe-return": "off",
+        "typescript/no-unsafe-argument": "off",
+        "typescript/no-require-imports": "off",
+        "typescript/explicit-member-accessibility": "off",
+        "typescript/strict-boolean-expressions": "off",
+        "typescript/prefer-nullish-coalescing": "off",
+        "typescript/no-unnecessary-condition": "off",
+        "typescript/consistent-type-definitions": "off",
+        "typescript/array-type": "off",
+        "no-implicit-coercion": "off",
+        "no-plusplus": "off",
+        "local/no-deep-relative-imports": "off"
+      }
     }
   ]
 }

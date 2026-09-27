@@ -1,0 +1,41 @@
+{
+  "name": "@org/legacy-api",
+  "version": "0.0.0",
+  "private": true,
+  "description": "The legacy hapi API: controllers and services over bookshelf models in one public schema. Owns everything but the wallet.",
+  "main": "build/server.js",
+  "scripts": {
+    "check": "tsc --noEmit -p tsconfig.json",
+    "build": "tsc -p tsconfig.build.json",
+    "predev": "lsof -ti:9000 | xargs kill -9 2>/dev/null; true",
+    "dev": "tsx watch server.ts",
+    "start": "node build/server.js",
+    "test": "vitest"
+  },
+  "dependencies": {
+    "@hapi/boom": "^10.0.1",
+    "@hapi/glue": "^9.0.1",
+    "@hapi/hapi": "^21.4.10",
+    "@hapi/hoek": "^11.0.7",
+    "@hapipal/confidence": "^6.0.2",
+    "bookshelf": "1.2.0",
+    "dotenv": "^17.4.2",
+    "electrolyte": "^0.7.1",
+    "hapi-pino": "^12.1.0",
+    "joi": "^17.13.3",
+    "knex": "2.5.1",
+    "lodash": "^4.17.21",
+    "pg": "^8.23.0",
+    "pino": "^9.6.0",
+    "pino-pretty": "^13.0.0",
+    "uuid": "^11.1.0",
+    "virgen-acl": "^0.0.22"
+  },
+  "devDependencies": {
+    "@types/bookshelf": "^1.2.9",
+    "@types/lodash": "^4.17.16",
+    "@types/node": "^22.19.0",
+    "tsx": "^4.23.0",
+    "typescript": "5.9.3"
+  }
+}

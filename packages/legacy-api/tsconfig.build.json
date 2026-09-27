@@ -1,0 +1,5 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": { "tsBuildInfoFile": ".tsbuildinfo/legacy-api.build.tsbuildinfo" },
+  "exclude": ["build", "node_modules", "test", "**/*.spec.ts"]
+}

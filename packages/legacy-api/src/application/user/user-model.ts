@@ -15,6 +15,14 @@ export default (_bookshelf: Bookshelf) => ({
     return this.hasMany("role", "user_id");
   },
 
+  memberships(this: any) {
+    return this.hasMany("membership", "user_id");
+  },
+
+  organizationRoles(this: any) {
+    return this.hasMany("organizationRole", "user_id");
+  },
+
   getRoleId(this: any): string[] {
     const granted = this.related("roles")
       .toJSON()
@@ -28,5 +36,20 @@ export default (_bookshelf: Bookshelf) => ({
 
   isSuperAdmin(this: any): boolean {
     return this.getRoleId().includes(roleConstants.SUPER_ADMIN);
+  },
+
+  isMemberOf(this: any, organizationId: string): boolean {
+    return this.related("memberships")
+      .toJSON()
+      .some((row: { organization_id: string }) => row.organization_id === organizationId);
+  },
+
+  isAdminOf(this: any, organizationId: string): boolean {
+    return this.related("organizationRoles")
+      .toJSON()
+      .some(
+        (row: { organization_id: string; role: string }) =>
+          row.organization_id === organizationId && row.role === "admin",
+      );
   },
 });

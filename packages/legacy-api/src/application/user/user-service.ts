@@ -103,7 +103,7 @@ class UserService {
   fetchUserWithRoles(userId: string) {
     return (this.bookshelf.model("user") as any)
       .where({ id: userId })
-      .fetch({ require: false, withRelated: ["roles"] });
+      .fetch({ require: false, withRelated: ["roles", "memberships", "organizationRoles"] });
   }
 
   async isSuperAdmin(userId: string): Promise<boolean> {

@@ -7,6 +7,7 @@ export const testConfig = {
   },
   log: { level: "silent", pretty: false },
   appUrl: "http://app.test",
+  mail: { transport: "log" },
   auth: {
     sessionCookieSecret: "test-session-cookie-secret",
     sessionTouchThresholdSeconds: 0,

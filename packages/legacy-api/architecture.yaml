@@ -30,11 +30,13 @@ imports:
     - bookshelf
     - dotenv
     - electrolyte
+    - handlebars
     - hapi-pino
     - joi
     - jose
     - knex
     - lodash
+    - nodemailer
     - pino
     - tsx
     - virgen-acl

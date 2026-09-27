@@ -67,6 +67,8 @@ const bootstrap: Plugin<Record<string, never>> = {
     });
 
     (server.app as any).bookshelf = await ioc.create("bookshelf");
+    (server.app as any).emailService = await ioc.create("email/email-service");
+    (server.app as any).organizationService = await ioc.create("organization/organization-service");
 
     server.auth.scheme("session", await ioc.create("auth/session-scheme"));
     server.auth.strategy("session", "session");
@@ -75,6 +77,8 @@ const bootstrap: Plugin<Record<string, never>> = {
       ioc.create("user/user-routes"),
       ioc.create("auth/auth-routes"),
       ioc.create("auth/cli-auth-routes"),
+      ioc.create("organization/organization-routes"),
+      ioc.create("organization/organization-cli-routes"),
     ]);
 
     server.validator(Joi);

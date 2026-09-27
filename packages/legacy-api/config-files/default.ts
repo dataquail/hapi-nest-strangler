@@ -7,6 +7,17 @@ export const defaultConfig = {
   },
   log: { level: "info", pretty: true },
   appUrl: process.env.APP_URL ?? "http://localhost:3000",
+  mail: {
+    transport: process.env.MAILER === "smtp" ? "smtp" : "log",
+    from: process.env.MAIL_FROM ?? "Legacy API <noreply@localhost>",
+    smtp: {
+      host: process.env.MAIL_SMTP_HOST ?? "localhost",
+      port: Number(process.env.MAIL_SMTP_PORT ?? 1025),
+      secure: process.env.MAIL_SMTP_SECURE === "true",
+      user: process.env.MAIL_SMTP_USER ?? "",
+      password: process.env.MAIL_SMTP_PASSWORD ?? "",
+    },
+  },
   auth: {
     interServiceJWTSecret: process.env.INTER_SERVICE_JWT_SECRET ?? "",
     sessionCookieName: process.env.SESSION_COOKIE_NAME ?? "session",

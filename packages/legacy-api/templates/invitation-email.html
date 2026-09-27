@@ -1,0 +1,51 @@
+<!doctype html>
+<html>
+  <body
+    style="
+      background-color: #f6f7f9;
+      font-family:
+        -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, Roboto, Helvetica, Arial,
+        sans-serif;
+    "
+  >
+    <div
+      style="
+        background-color: #ffffff;
+        margin: 0 auto;
+        padding: 32px;
+        max-width: 480px;
+        border-radius: 8px;
+      "
+    >
+      <h1 style="font-size: 22px; font-weight: 600; color: #111827">You're invited</h1>
+      <p style="font-size: 14px; line-height: 22px; color: #374151">
+        You've been invited to join an organization. Click the button below to accept the invitation
+        and become a member.
+      </p>
+      <p style="text-align: center; margin: 28px 0">
+        <a
+          href="{{acceptUrl}}"
+          style="
+            background-color: #111827;
+            border-radius: 6px;
+            color: #ffffff;
+            font-size: 14px;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+            padding: 12px 20px;
+          "
+          >Accept invitation</a
+        >
+      </p>
+      <p style="font-size: 12px; line-height: 18px; color: #6b7280">
+        This invitation expires on {{expiresLabel}}.
+      </p>
+      <hr style="border-color: #e5e7eb; margin: 24px 0" />
+      <p style="font-size: 12px; line-height: 18px; color: #6b7280">
+        If the button doesn't work, copy and paste this link into your browser:<br />
+        <a href="{{acceptUrl}}" style="color: #2563eb">{{acceptUrl}}</a>
+      </p>
+    </div>
+  </body>
+</html>

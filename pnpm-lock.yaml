@@ -311,6 +311,9 @@ importers:
       joi:
         specifier: ^17.13.3
         version: 17.13.8
+      jose:
+        specifier: ^6.2.12
+        version: 6.2.12
       knex:
         specifier: 2.5.1
         version: 2.5.1(pg@8.23.0)

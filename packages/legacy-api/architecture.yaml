@@ -32,9 +32,12 @@ imports:
     - electrolyte
     - hapi-pino
     - joi
+    - jose
     - knex
+    - lodash
     - pino
     - tsx
+    - virgen-acl
     - vitest
   # Grows one entry at a time, as a dependency or the contracts package gains
   # its first import here; a name listed ahead of its use is slack.

@@ -14,6 +14,9 @@ const server: Manifest["server"] = {
     security: {
       xframe: "sameorigin",
     },
+    // Cookies from other origins (Next's, the IdP's) share the browser; a
+    // malformed one must not fail a request.
+    state: { parse: true, failAction: "ignore" },
     validate: {
       options: { abortEarly: false },
       failAction: (_request, _h, error) => {

@@ -2,7 +2,9 @@ import type { Plugin, Server } from "@hapi/hapi";
 import * as ioc from "electrolyte";
 import path from "path";
 
+import config = require("./config");
 import Joi = require("./src/lib/joi");
+import { tagBoomPayload } from "./src/lib/problem";
 
 // The container loads modules by string id from these two directories. The
 // extensions list is what lets the same code run from TypeScript source (tsx
@@ -38,9 +40,42 @@ const bootstrap: Plugin<Record<string, never>> = {
       return h.continue;
     });
 
+    server.ext("onPreResponse", (request, h) => {
+      const response = request.response as any;
+      if (response?.isBoom) tagBoomPayload(response);
+      return h.continue;
+    });
+
+    const authConfig = config("/auth");
+    server.state(authConfig.sessionCookieName, {
+      ttl: null,
+      isSecure: false,
+      isHttpOnly: true,
+      isSameSite: "Strict",
+      path: "/",
+      encoding: "none",
+      strictHeader: false,
+    });
+    server.state("oidc_pkce", {
+      ttl: 300_000,
+      isSecure: false,
+      isHttpOnly: true,
+      isSameSite: "Lax",
+      path: "/",
+      encoding: "none",
+      strictHeader: false,
+    });
+
     (server.app as any).bookshelf = await ioc.create("bookshelf");
 
-    const routeArrays = await Promise.all([]);
+    server.auth.scheme("session", await ioc.create("auth/session-scheme"));
+    server.auth.strategy("session", "session");
+
+    const routeArrays = await Promise.all([
+      ioc.create("user/user-routes"),
+      ioc.create("auth/auth-routes"),
+      ioc.create("auth/cli-auth-routes"),
+    ]);
 
     server.validator(Joi);
 

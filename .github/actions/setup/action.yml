@@ -1,0 +1,28 @@
+name: Setup
+description: Check out tooling versions, install pnpm, hydrate the pnpm store cache, and install dependencies.
+
+runs:
+  using: composite
+  steps:
+    - name: Install pnpm
+      uses: pnpm/action-setup@v5
+
+    - name: Install Node
+      uses: actions/setup-node@v6
+      with:
+        node-version-file: .nvmrc
+        cache: pnpm
+
+    - name: Install dependencies
+      shell: bash
+      run: pnpm install --frozen-lockfile
+
+    # @org/contracts ships its built ESM as the resolution target for
+    # @org/web's tsconfig paths and vitest aliases (matching the
+    # runtime exports map). Locally `predev`/`prebuild` keep this
+    # fresh; CI jobs don't run those, so build once here so every
+    # consuming job (lint, typecheck, unit, storybook) sees a
+    # populated packages/contracts/build/ tree.
+    - name: Build @org/contracts (typed client for web)
+      shell: bash
+      run: pnpm --filter @org/contracts build

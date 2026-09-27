@@ -1,0 +1,35 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    // Resolution-only config, consumed by the `architecture` lint plugin
+    // (`architecture.yaml`, `resolve.scopes`). These mirror tsconfig.base.json's
+    // paths WITHOUT the trailing `.js` those carry: a mapped target is a template,
+    // so `@/x/y.js` against a `.js`-suffixed mapping would look for `y.js.js`. Keep
+    // these extensionless — the resolver maps `.js` to `.ts` on the specifier.
+    // An import that fails to resolve is a hard lint error precisely because a
+    // silently unresolved import voids every path rule about that package.
+    "paths": {
+      "@/*": ["./packages/server/src/*"],
+      "@org/contracts": ["./packages/contracts/src/index.ts"],
+      "@org/contracts/*": ["./packages/contracts/src/*"],
+      "@org/database": ["./packages/database/src/index.ts"],
+      "@org/database/*": ["./packages/database/src/*"],
+      "@org/event-bus": ["./packages/event-bus/src/index.ts"],
+      "@org/event-bus/*": ["./packages/event-bus/src/*"],
+      "@org/unit-of-work": ["./packages/unit-of-work/src/index.ts"],
+      "@org/unit-of-work/*": ["./packages/unit-of-work/src/*"],
+      "@org/authz": ["./packages/authz/src/index.ts"],
+      "@org/authz/*": ["./packages/authz/src/*"],
+      "@org/api-client": ["./packages/api-client/src/index.ts"],
+      "@org/api-client/*": ["./packages/api-client/src/*"],
+      "@org/jobs": ["./packages/jobs/src/main.ts"],
+      "@org/jobs/*": ["./packages/jobs/src/*"],
+      "@org/server/*": ["./packages/server/src/*"],
+      "@org/test-drivers": ["./packages/test-drivers/src/index.ts"],
+      "@org/test-drivers/*": ["./packages/test-drivers/src/*"]
+    },
+    "moduleResolution": "NodeNext",
+    "module": "NodeNext",
+    "target": "ES2022"
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "extends": "../../tsconfig.base.json",
+  // `platform/auth/authz.ts` carries the `@org/authz` AuthzConfig augmentation,
+  // which has to be in every program that names a policy check.
+  "include": ["src/**/*.test.ts", "src/**/*.test.tsx", "src/platform/auth/authz.ts"],
+  "references": [
+    { "path": "tsconfig.src.json" },
+    { "path": "../authz" },
+    { "path": "../contracts" },
+    { "path": "../database" },
+    { "path": "../event-bus" },
+    { "path": "../unit-of-work" }
+  ],
+  "compilerOptions": {
+    "types": ["node"],
+    "jsx": "react-jsx",
+    "tsBuildInfoFile": ".tsbuildinfo/test.tsbuildinfo",
+    "rootDir": ".",
+    "noEmit": true,
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "name": "@org/authz",
+  "version": "0.0.0",
+  "type": "module",
+  "license": "MIT",
+  "description": "Declarative per-route authorization: policy checks registered against (resource, action) pairs, per-request resource resolution, and composable check combinators.",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    },
+    "./config": {
+      "types": "./src/config.ts",
+      "default": "./src/config.ts"
+    },
+    "./policy-registry": {
+      "types": "./src/policy-registry.ts",
+      "default": "./src/policy-registry.ts"
+    },
+    "./resource-resolver-registry": {
+      "types": "./src/resource-resolver-registry.ts",
+      "default": "./src/resource-resolver-registry.ts"
+    }
+  },
+  "scripts": {
+    "check": "tsc -b tsconfig.json",
+    "build": "tsc -b tsconfig.build.json",
+    "test": "vitest"
+  },
+  "dependencies": {
+    "@opentelemetry/api": "^1.9.0",
+    "oxide.ts": "^1.1.0"
+  }
+}

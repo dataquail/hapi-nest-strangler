@@ -1,0 +1,26 @@
+{
+  "name": "@org/cli",
+  "version": "0.0.0",
+  "type": "module",
+  "license": "MIT",
+  "description": "Command-line client for the nest-monorepo: device-flow auth, organizations, todos.",
+  "bin": {
+    "org": "build/esm/main.js"
+  },
+  "scripts": {
+    "check": "tsc -b tsconfig.json",
+    "clean": "rm -rf build .tsbuildinfo",
+    "build": "tsc -b tsconfig.build.json",
+    "dev": "tsx src/main.ts",
+    "start": "node build/esm/main.js"
+  },
+  "dependencies": {
+    "@org/api-client": "workspace:^",
+    "@org/contracts": "workspace:^",
+    "commander": "^14.0.3"
+  },
+  "devDependencies": {
+    "@types/node": "^25.9.4",
+    "tsx": "^4.23.0"
+  }
+}

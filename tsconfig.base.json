@@ -1,0 +1,60 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "exactOptionalPropertyTypes": true,
+    "moduleDetection": "force",
+    "composite": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "declaration": true,
+    "skipLibCheck": true,
+    // Nest's decorators. Constructor injection names its token explicitly
+    // (`@Inject(TOKEN)`) everywhere, so `emitDecoratorMetadata` is deliberately
+    // absent: nothing here needs design:paramtypes, which is what keeps tsx and
+    // esbuild (vitest) able to run the source directly.
+    "experimentalDecorators": true,
+    "moduleResolution": "NodeNext",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "types": [],
+    "isolatedModules": true,
+    "sourceMap": true,
+    "declarationMap": true,
+    "noImplicitReturns": false,
+    "noUnusedLocals": true,
+    "noUnusedParameters": false,
+    "noFallthroughCasesInSwitch": true,
+    "noEmitOnError": false,
+    "noErrorTruncation": false,
+    "allowJs": false,
+    "checkJs": false,
+    "forceConsistentCasingInFileNames": true,
+    "noImplicitAny": true,
+    "noImplicitThis": true,
+    "noUncheckedIndexedAccess": true,
+    "strictNullChecks": true,
+    "target": "ES2022",
+    "module": "NodeNext",
+    "incremental": true,
+    "removeComments": false,
+    "paths": {
+      "@org/contracts": ["./packages/contracts/src/index.js"],
+      "@org/contracts/*": ["./packages/contracts/src/*.js"],
+      "@org/database": ["./packages/database/src/index.js"],
+      "@org/database/*": ["./packages/database/src/*.js"],
+      "@org/event-bus": ["./packages/event-bus/src/index.js"],
+      "@org/event-bus/*": ["./packages/event-bus/src/*.js"],
+      "@org/unit-of-work": ["./packages/unit-of-work/src/index.js"],
+      "@org/unit-of-work/*": ["./packages/unit-of-work/src/*.js"],
+      "@org/authz": ["./packages/authz/src/index.js"],
+      "@org/authz/*": ["./packages/authz/src/*.js"],
+      "@org/api-client": ["./packages/api-client/src/index.js"],
+      "@org/api-client/*": ["./packages/api-client/src/*.js"],
+      "@org/jobs": ["./packages/jobs/src/main.js"],
+      "@org/jobs/*": ["./packages/jobs/src/*.js"],
+      "@org/cli": ["./packages/cli/src/main.js"],
+      "@org/cli/*": ["./packages/cli/src/*.js"],
+      "@org/mcp": ["./packages/mcp/src/main.js"],
+      "@org/mcp/*": ["./packages/mcp/src/*.js"]
+    }
+  }
+}

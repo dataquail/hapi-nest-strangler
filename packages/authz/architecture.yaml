@@ -1,0 +1,27 @@
+# yaml-language-server: $schema=https://dataquail.github.io/goodbones/schema/architecture-node.schema.json
+#
+# @org/authz — one of the three hand-rolled application libraries. No internal
+# tiers: a src/ of kebab-case files, a test beside each, and a testing entry.
+#
+# One node of the architecture policy: the root architecture.yaml includes this
+# file at "~/authz/". Patterns are repo-relative and use the root's
+# aliases; a fragment defined under `defs` here joins the one namespace every file
+# shares, so name it for what it is.
+
+name: kebab-case
+message: >-
+  @org/authz is the authorization DSL: the policy and resource-resolver registries a host augments by declaration merging, the check combinators, and hasPermissions. It depends on nothing in the repo.
+layout: open
+surface: [{ use: no-default-exports }]
+imports:
+  message: >-
+    A kernel library names its own files and the libraries it is built on. It never reaches
+    the server, the database or the contracts: it is what those depend on.
+  external: [oxide.ts, vitest, "@opentelemetry/api"]
+  allow: ["~/authz/**", "vitest.shared.ts"]
+children:
+  "src/":
+    layout: open
+    children:
+      "*.test.ts": { use: authz-test-file }
+  "**/": { layout: open, children: {} }

@@ -1,0 +1,352 @@
+# yaml-language-server: $schema=https://dataquail.github.io/goodbones/schema/architecture.schema.json
+#
+# The architecture policy: every boundary in this monorepo, as one manifest.
+# This file holds what is true of the whole repository — resolution, the
+# prohibitions, the export restrictions, the graph rules, the ratchets and the
+# fragments every package shares — and includes one node file per package,
+# kept beside the package it governs. Read the `tree` at the bottom and you
+# have seen every file that takes part.
+#
+# It reads like a directory listing — a key ending in `/` is a folder, anything
+# else is a file — and everything the architecture says about a part of the tree
+# is written at that part of the tree: what it may import, who may import it,
+# which names it may declare, and which siblings its files owe.
+#
+# Patterns are globs over repo-relative paths, matched against FULLY RESOLVED
+# targets:
+#
+#   *          part of one path segment          {name}   captures one segment
+#   **         any number of segments            [A-Z]    a character class
+#   a/**       `a` itself as well as a/b/c       |        several patterns, one node
+#
+# Every glob and every message is quoted: `*`, `@`, a backtick and `{` all mean
+# something to YAML when bare.
+#
+# The default is tight. A folder admits only the children it lists; a file may
+# import only what it or an ancestor allows. Laxity is opted into by name:
+# `reset` drops inherited allowances, `unrestricted` says a tier has no
+# allowlist yet, `layout: open` says a folder does not enumerate its files.
+# Prohibitions are the exception — a `deny` always accumulates, so no node can
+# make a subtree quieter than its ancestors.
+#
+# Every rule this compiles to carries a probe it must report, generated from
+# the node's own path. The plugin refuses to load if any rule fails its own —
+# a rule that has drifted into matching nothing is the failure this whole
+# apparatus exists to prevent. See `.claude/rules/architecture-rules.md`.
+
+# Where a repository adopting this policy records the violations it is
+# carrying. This one has none, so the file is absent — and `architecture
+# baseline` would write an empty list rather than a place to hide.
+baseline: .architecture-baseline.json
+
+resolve:
+  # Web and components resolve `@/*` and `@org/components/*` to their own
+  # roots; acceptance has its own alias root; everything else resolves through
+  # the server-side mapping. The catch-all must come last.
+  scopes:
+    - files: "^packages/(web|components)/"
+      language: typescript
+      options: { tsconfig: tsconfig.resolve-web.json }
+    - files: "^packages/acceptance/"
+      language: typescript
+      options: { tsconfig: packages/acceptance/tsconfig.json }
+    - files: ""
+      language: typescript
+      options: { tsconfig: tsconfig.resolve.json }
+  # An import nobody can resolve is an import no rule can police. Loud by
+  # default; anything listed here needs a reason next to it.
+  unresolved: error
+  ignoreUnresolved: []
+
+# Ratchets on the policy itself. The ceilings are how many tiers may say
+# "not tightened yet"; the floors are how much of the tree each family must
+# reach, as `architecture coverage packages` reported it on the day the
+# floor was written, rounded down. Raise a floor when coverage rises; never
+# lower one to make a red run green — the fix is a rule that reaches the
+# files, or a file moved under one. Structure counts enumerated folders
+# only: an open folder is claimed, not policed by name.
+limits:
+  unrestricted: 1
+  partial: 0
+  coverage: { imports: 0.99, structure: 0.71, members: 0.03, surface: 0.95, graph: 1 }
+
+aliases:
+  "@": packages/server/src
+  "~": packages
+
+# Prohibitions that hold for every file in the repo.
+deny:
+  # A list, not a `|` string: the alternation shorthand is a tree-key
+  # feature, and in a pattern the pipe is a literal.
+  - match: ["**/*.test.ts", "**/*.test.tsx"]
+    message: >-
+      This file depends on a spec (test) file. The sole responsibility of a spec file is to test
+      code — if two tests need the same fixture, the fixture belongs beside them in a harness,
+      not inside one of the tests.
+  - match: ["**/node_modules/slonik/**", "**/node_modules/@slonik/**"]
+    except: ["~/database/src/**"]
+    message: >-
+      The SQL driver is an implementation detail of @org/database. Everything else speaks the
+      `Database` client, the `sql` tag and the row schemas that package publishes; reaching for
+      slonik directly puts driver types in a signature the rest of the repo has to live with.
+
+# Which importers may name a given exported symbol. A path rule cannot say
+# this: every importer of a barrel resolves to the same file, so only the
+# imported name separates a bus factory from the port beside it.
+exports:
+  - name: bus-factories-at-composition-roots
+    message: >-
+      Constructing the event bus, the unit of work or the unhandled-failure sink outside a
+      composition root gives the application a second instance: subscribers nobody notifies, a
+      transaction nobody joins, or reports nobody reads. Only platform/cqrs/ and test-utils/ may
+      (ADR-0007); everything else depends on the DomainEventBus and UnitOfWork tokens.
+    module: ["~/event-bus/src/**", "~/unit-of-work/src/**"]
+    symbols:
+      - makeEventBus
+      - makeUnitOfWork
+      - makeUnhandledFailures
+    except:
+      - "@/platform/cqrs/**"
+      - "@/test-utils/**"
+      - "**/*.test.ts"
+      - "~/event-bus/src/**"
+      - "~/unit-of-work/src/**"
+    probe:
+      source: 'import { makeEventBus } from "@org/event-bus";'
+      symbol: makeEventBus
+  - name: authz-registries-at-composition-roots
+    message: >-
+      The policy and resource-resolver registries are folded from every module's contribution
+      exactly once, in platform/modules/, and the authorizer is built over them in
+      platform/auth/. A second registry answers a check with a different module's policy than
+      the composed application would. Depend on the Authz service instead.
+    module: "~/authz/src/**"
+    symbols:
+      - makePolicyRegistry
+      - makeResourceResolverRegistry
+      - makeHasPermissions
+    except:
+      - "@/platform/auth/**"
+      - "@/platform/modules/**"
+      - "**/*.test.ts"
+      - "~/authz/src/**"
+    probe:
+      source: 'import { makePolicyRegistry } from "@org/authz";'
+      symbol: makePolicyRegistry
+  - name: no-nest-event-bus
+    message: >-
+      @nestjs/cqrs ships its own EventBus, EventsHandler, Saga and ofType. This repo does not use
+      them: there is one domain event bus, the hand-rolled @org/event-bus, whose subscribe /
+      subscribeAfterCommit / stream is what gives an event its consistency model and its place
+      inside the unit of work (ADR-0007). Reach the DomainEventBus token instead.
+    module: "**/node_modules/@nestjs/cqrs/**"
+    symbols:
+      - EventBus
+      - EventsHandler
+      - Saga
+      - ofType
+      - IEvent
+      - IEventHandler
+    probe:
+      source: 'import { EventBus } from "@nestjs/cqrs";'
+      symbol: EventBus
+  - name: no-whole-nest-cqrs-imports
+    message: >-
+      Taking @nestjs/cqrs whole — `import * as`, `export *`, `import()` or `require()` — binds
+      every name it publishes at once, including the EventBus and Saga the previous restriction
+      forbids; a namespace binding would carry them past it unnamed. Import the names you use.
+    module: "**/node_modules/@nestjs/cqrs/**"
+    kinds: [namespace]
+    probe:
+      source: 'import * as Cqrs from "@nestjs/cqrs";'
+      symbol: "*"
+
+# Rules about the shape of the whole import graph — cycles, files nothing
+# imports, and what a tier can reach transitively. A per-edge allowlist cannot
+# say these: they need every file resolved at once, so `architecture check`
+# evaluates them and the plugin, which sees one file at a time, only compiles
+# and probes them. A vacuous graph rule still fails `pnpm lint`; a violated
+# one fails `pnpm lint:architecture`.
+graph:
+  cycles:
+    - name: no-cycles
+      message: >-
+        These files import each other, so none of them can be understood, tested or loaded
+        without the rest. Break the cycle by moving the shared piece below both, or by inverting
+        one edge through a port.
+      within: "~/**"
+  orphans:
+    - name: no-orphans
+      message: >-
+        Nothing imports this file and it is not an entry point, so it is code the type checker,
+        the linter and the reader still pay for. Delete it — or, if something outside the walked
+        tree loads it by design, list it under `entry` beside this rule.
+      within: "~/**"
+      # A fake is owed to its port by the taxonomy, not to a consumer:
+      # whether a test takes it is that test's business, so an unused one is
+      # not an orphan. Everything else nothing imports is dead.
+      withinNot: "**/*-fake.ts"
+      # Imported by nothing, on purpose: what a process, a framework, a test
+      # runner or a package manifest loads directly rather than through an
+      # import. Each entry is a claim that something outside the graph reaches
+      # the file; a path listed here to silence a finding is a lie the
+      # policy then repeats.
+      entry:
+        # Test runners load these by glob.
+        - "**/*.test.ts"
+        - "**/*.test.tsx"
+        - "**/*.spec.ts"
+        - "**/*.setup.ts"
+        - "**/*.stories.tsx"
+        - "**/vitest.config.ts"
+        - "**/global-setup.ts"
+        - "@/test-utils/setup.ts"
+        - "~/web/test/setup.ts"
+        - "~/acceptance/playwright.config.ts"
+        # Process entrypoints and package bins.
+        - "@/main.ts"
+        - "@/instrumentation.ts"
+        - "~/cli/src/main.ts"
+        - "~/jobs/src/main.ts"
+        - "~/mcp/src/main.ts"
+        - "~/database/src/scripts/**"
+        - "~/contracts/src/scripts/**"
+        # Framework-loaded by convention.
+        - "~/web/app/**"
+        - "~/web/instrumentation.ts"
+        - "~/web/next.config.ts"
+        - "~/components/.storybook/**"
+        # A package's published entry: reached by its dependants through the
+        # package.json exports map rather than a repo-internal import.
+        - "~/api-client/src/index.ts"
+        - "~/test-drivers/src/**"
+  reach:
+    - name: domain-reaches-no-adapter
+      message: >-
+        A module's domain transitively reaches an adapter. The domain may only ever see zod,
+        oxide, the DDD contracts tier and platform/ids; a path from it to infrastructure/,
+        interface/ or a platform Live means one of the tiers it names has widened past what the
+        domain is allowed to know about.
+      from: "@/modules/*/domain/**"
+      fromNot: "**/*.test.ts"
+      to:
+        - "@/modules/*/infrastructure/**"
+        - "@/modules/*/interface/**"
+        - "@/platform/**/*-live.ts"
+    - name: use-cases-reach-no-adapter
+      message: >-
+        A use case transitively reaches an adapter. Commands, queries, event handlers and sagas
+        depend on ports and messages; an adapter is wired against them in a module's @Module()
+        and nowhere beneath them. Whichever file on the route named the adapter has stepped
+        outside its tier.
+      from:
+        - "@/modules/*/commands/**"
+        - "@/modules/*/queries/**"
+        - "@/modules/*/event-handlers/**"
+        - "@/modules/*/sagas/**"
+      fromNot: "**/*.test.ts"
+      to: ["@/modules/*/infrastructure/**", "@/modules/*/interface/**"]
+    # The `via` shape: a path is fine as long as it steps onto the
+    # mediating tier. platform/cqrs/, platform/modules/ and
+    # platform/middlewares/ name a module's platform surface, and the surface
+    # may reach whatever it publishes; only a route that avoids every surface
+    # is the violation.
+    - name: platform-reaches-modules-only-through-barrels
+      message: >-
+        The platform kernel reaches inside a module without passing through its platform surface.
+        platform/cqrs/, platform/modules/ and platform/middlewares/ may name a module's
+        <feature>.platform.ts; anything a route from platform/ touches without going through one
+        is a module internal the module is free to change without telling the kernel.
+      from: "@/platform/**"
+      fromNot: "**/*.test.ts"
+      to: "@/modules/*/**"
+      via: "@/modules/*/*.platform.ts"
+    - name: web-never-reaches-the-server
+      message: >-
+        packages/web transitively reaches packages/server. The browser talks to the BFF over HTTP
+        through the contracts package and nothing else; a route from web to the server means a
+        package both depend on has grown a server dependency.
+      from: "~/web/**"
+      to: "~/server/**"
+    - name: contracts-reach-nothing
+      message: >-
+        @org/contracts transitively reaches the server, web or the database. It is the root of
+        the dependency graph — every package depends on it — so anything it reaches becomes a
+        dependency of the whole repo.
+      from: "~/contracts/**"
+      to: ["~/server/**", "~/web/**", "~/database/**"]
+
+# Fragments the tree reuses. `{ use: <name> }` anywhere below is replaced by a
+# copy of the fragment before the manifest is decoded; a key written beside
+# `use` overrides the fragment's key of the same name, shallowly — a list
+# replaces the list. A fragment that needs partial override is two fragments.
+defs:
+  # ── shared by every root ──────────────────────────────────────────────
+  # A default export has no canonical name — every importer invents one and
+  # the symbol becomes ungreppable — so it is admitted only where a framework
+  # demands one. Each root that exempts more repeats the vitest config beside
+  # its own exemptions, since an override replaces the list.
+  no-default-exports:
+    message: >-
+      No default exports: a default has no canonical name, so every importer invents one and the
+      symbol becomes ungreppable. Export it by name. Only a file a framework requires a default
+      from — a Next route, a story, a vitest globalSetup — is exempt, and the exemption is listed
+      beside this rule in the manifest.
+    kinds: [default]
+    except: ["**/vitest.config.ts"]
+
+  # Nothing may import a test, so an export from one has no consumer. A fixture
+  # two tests share belongs in a harness beside them.
+  test-exports-nothing:
+    message: >-
+      A test exports nothing. Nothing may import a test, so an export here has no consumer; a
+      fixture two tests share belongs in a harness beside them, not inside one of them.
+    count: { max: 0 }
+
+  # ── kernel packages (event-bus, unit-of-work, authz) ──────────────────
+  # The three hand-rolled application libraries share one shape: a src/ of
+  # kebab-case files, a test beside each, and a testing entry point. Each
+  # states its own test fragment so an allowance is granted where it is used.
+  event-bus-test-file:
+    surface: [{ use: test-exports-nothing }]
+    imports:
+      reset: true
+      message: "An event-bus test names its subject, its siblings, node's assert and vitest."
+      external: [vitest, zod]
+      allow: ["node:**", "~/event-bus/**"]
+  unit-of-work-test-file:
+    surface: [{ use: test-exports-nothing }]
+    imports:
+      reset: true
+      message: >-
+        A unit-of-work test names its subject, the event bus it drains, node's assert and
+        vitest.
+      external: [vitest, oxide.ts, zod]
+      allow: ["node:**", "~/unit-of-work/**", "~/event-bus/**"]
+  authz-test-file:
+    surface: [{ use: test-exports-nothing }]
+    imports:
+      reset: true
+      message: "An authz test names its subject, its siblings, node's assert and vitest."
+      external: [vitest, oxide.ts]
+      allow: ["node:**", "~/authz/**"]
+
+# The tree, one file per package beside the package it governs. An `include` is
+# replaced whole by the node that file holds; the policy is still evaluated as
+# one, so an inbound rule and a repo-wide prohibition reach every file in the
+# repo, and this list is the index of every file that takes part.
+tree:
+  "~/contracts/": { include: packages/contracts/architecture.yaml }
+  "~/database/": { include: packages/database/architecture.yaml }
+  "~/event-bus/": { include: packages/event-bus/architecture.yaml }
+  "~/unit-of-work/": { include: packages/unit-of-work/architecture.yaml }
+  "~/authz/": { include: packages/authz/architecture.yaml }
+  "~/api-client/": { include: packages/api-client/architecture.yaml }
+  "~/cli/": { include: packages/cli/architecture.yaml }
+  "~/mcp/": { include: packages/mcp/architecture.yaml }
+  "~/jobs/": { include: packages/jobs/architecture.yaml }
+  "~/components/": { include: packages/components/architecture.yaml }
+  "~/web/": { include: packages/web/architecture.yaml }
+  "~/test-drivers/": { include: packages/test-drivers/architecture.yaml }
+  "~/acceptance/": { include: packages/acceptance/architecture.yaml }
+  "~/server/src/": { include: packages/server/architecture.yaml }

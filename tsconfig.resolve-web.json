@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    // Resolution-only config for the web and components scope of the architecture
+    // plugin (`architecture.yaml`, `resolve.scopes`). `@/` is the web package
+    // root, not a src/ folder.
+    "paths": {
+      "@/*": ["./packages/web/*"],
+      "@org/components/*": ["./packages/components/*"],
+      "@org/contracts": ["./packages/contracts/src/index.ts"],
+      "@org/contracts/*": ["./packages/contracts/src/*"],
+      "@org/test-drivers": ["./packages/test-drivers/src/index.ts"],
+      "@org/test-drivers/*": ["./packages/test-drivers/src/*"]
+    },
+    "moduleResolution": "Bundler",
+    "module": "ESNext",
+    "target": "ES2022",
+    "jsx": "react-jsx"
+  }
+}

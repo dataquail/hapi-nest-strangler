@@ -1,0 +1,172 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Docker: Up",
+      "detail": "Start postgres + jaeger + zitadel + mailpit in the background",
+      // `zitadel` depends on postgres being healthy (see docker-compose.yml),
+      // so compose orders the startup; we just list everything we need.
+      // `mailpit` is the local SMTP sink Zitadel's notification provider
+      // points at; it isn't profile-gated, but naming services means compose
+      // starts only the ones listed, so it has to be named here too.
+      "type": "shell",
+      "command": "bash scripts/local-only.sh --skip docker-compose up -d postgres jaeger zitadel mailpit",
+      "options": { "cwd": "${workspaceFolder}" },
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true,
+        "close": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Docker: Down",
+      "detail": "Stop all docker-compose services (keeps the postgres volume)",
+      "type": "shell",
+      "command": "bash scripts/local-only.sh --skip docker-compose down",
+      "options": { "cwd": "${workspaceFolder}" },
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Docker: Migrate (dev DB)",
+      "detail": "Apply migrations to nest-hexagon",
+      "type": "shell",
+      "command": "pnpm --filter @org/database db:migrate",
+      "options": { "cwd": "${workspaceFolder}" },
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Docker: Migrate (test DB)",
+      "detail": "Apply migrations to nest-hexagon-test",
+      "type": "shell",
+      "command": "pnpm --filter @org/database db:migrate:test",
+      "options": { "cwd": "${workspaceFolder}" },
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Auth: Seed",
+      "detail": "Idempotent Zitadel seed (project + OIDC client + admin user → app DB)",
+      // Brings up the one-shot `seed-zitadel` compose profile, which waits
+      // for Zitadel to be reachable, creates the OIDC client if missing,
+      // and writes the admin row into the app DB. Safe to re-run; second
+      // run prints `[exists]` for everything and exits clean.
+      "type": "shell",
+      "command": "bash scripts/local-only.sh --skip pnpm auth:seed",
+      "options": { "cwd": "${workspaceFolder}" },
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Server: Dev",
+      "detail": "Run the server in watch mode",
+      "type": "shell",
+      // The `predev` script in packages/server/package.json frees port
+      // 3001 before `tsx watch` tries to bind, so an orphan from a
+      // previously-closed terminal doesn't block the next start. Port
+      // 3000 belongs to the Next.js renderer (see ADR-0018); the Effect
+      // server runs on 3001 and is reached by the browser through Next's
+      // `/api/*` rewrite, never directly.
+      "command": "pnpm --filter server dev",
+      "options": { "cwd": "${workspaceFolder}" },
+      "isBackground": true,
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "group": "dev",
+        "clear": true
+      },
+      "problemMatcher": {
+        "owner": "server",
+        "pattern": { "regexp": "^$" },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": "^.*$",
+          "endsPattern": "(Listening on|Server listening|listening on port|HttpServer)"
+        }
+      }
+    },
+    {
+      "label": "Jobs: Dev",
+      "detail": "Run the cron-style background jobs runner in watch mode (purges stale sessions hourly + on boot)",
+      "type": "shell",
+      "command": "pnpm --filter @org/jobs dev",
+      "options": { "cwd": "${workspaceFolder}" },
+      "isBackground": true,
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "group": "dev",
+        "clear": true
+      },
+      "problemMatcher": {
+        "owner": "jobs",
+        "pattern": { "regexp": "^$" },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": "^.*$",
+          "endsPattern": "first run immediate, subsequent runs hourly"
+        }
+      }
+    },
+    {
+      "label": "Web: Dev",
+      "detail": "Run the Next.js renderer in watch mode (proxies /api/* to the Effect server)",
+      "type": "shell",
+      // The `predev` in packages/web/package.json frees port 3000 before
+      // `next dev` binds. Same kill-the-orphan motivation as Server: Dev /
+      // Client: Dev.
+      "command": "pnpm --filter @org/web dev",
+      "options": { "cwd": "${workspaceFolder}" },
+      "isBackground": true,
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "group": "dev",
+        "clear": true
+      },
+      "problemMatcher": {
+        "owner": "next",
+        "pattern": { "regexp": "^$" },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": "^.*$",
+          "endsPattern": "Ready in"
+        }
+      }
+    },
+    {
+      "label": "Dev: Servers",
+      "detail": "Run server + Next.js web + jobs side-by-side",
+      "dependsOn": ["Server: Dev", "Web: Dev", "Jobs: Dev"],
+      "dependsOrder": "parallel",
+      "problemMatcher": []
+    },
+    {
+      "label": "Dev: All",
+      "detail": "Docker (postgres + jaeger + zitadel) → migrate → seed Zitadel → server + web + jobs",
+      "dependsOn": ["Docker: Up", "Docker: Migrate (dev DB)", "Auth: Seed", "Dev: Servers"],
+      "dependsOrder": "sequence",
+      "problemMatcher": []
+    }
+  ]
+}

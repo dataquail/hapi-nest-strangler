@@ -1,0 +1,19 @@
+{
+  "extends": "./tsconfig.src.json",
+  "references": [
+    { "path": "../authz/tsconfig.build.json" },
+    { "path": "../contracts/tsconfig.build.json" },
+    { "path": "../database/tsconfig.build.json" },
+    { "path": "../event-bus/tsconfig.build.json" },
+    { "path": "../unit-of-work/tsconfig.build.json" }
+  ],
+  "compilerOptions": {
+    "types": ["node"],
+    "tsBuildInfoFile": ".tsbuildinfo/build.tsbuildinfo",
+    "outDir": "build/esm",
+    "declarationDir": "build/dts",
+    "stripInternal": true
+  },
+  "include": ["src/**/*.ts", "src/**/*.tsx"],
+  "exclude": ["src/**/*.test.ts", "src/**/*.test.tsx"]
+}

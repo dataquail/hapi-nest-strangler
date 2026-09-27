@@ -1,0 +1,44 @@
+{
+  "name": "@org/web",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "predev": "lsof -ti:3000 | xargs kill -9 2>/dev/null; true; pnpm --filter @org/contracts build",
+    "dev": "dotenv -e ../../.env -- next dev -p 3000",
+    "build": "next build",
+    "start": "next start -p 3000",
+    "test": "vitest",
+    "typecheck": "tsc --noEmit",
+    "prebuild": "pnpm --filter @org/contracts build",
+    "pretypecheck": "pnpm --filter @org/contracts build"
+  },
+  "dependencies": {
+    "@org/components": "workspace:^",
+    "@org/contracts": "workspace:^",
+    "@tanstack/react-query": "^5.90.0",
+    "@vercel/otel": "^2.1.3",
+    "next": "16.2.6",
+    "openapi-fetch": "^0.17.0",
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
+    "server-only": "^0.0.1",
+    "sonner": "^2.0.7",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@org/test-drivers": "workspace:^",
+    "@tailwindcss/postcss": "4.2.4",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@testing-library/user-event": "^14.6.1",
+    "@types/node": "^25.9.4",
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
+    "dotenv-cli": "8.0.0",
+    "jsdom": "^26.1.0",
+    "msw": "^2.14.7",
+    "tailwindcss": "4.2.4",
+    "tailwindcss-animate": "^1.0.7",
+    "typescript": "^5.9.3"
+  }
+}

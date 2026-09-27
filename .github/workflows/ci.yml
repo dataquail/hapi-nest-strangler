@@ -1,0 +1,107 @@
+name: CI
+
+on:
+  workflow_dispatch:
+  workflow_call:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+      - uses: ./.github/actions/setup
+      - name: Prettier
+        run: pnpm format:check
+      - name: Oxlint
+        run: pnpm lint
+      - name: Lint rule probes
+        run: pnpm lint:rules
+      - name: Architecture edges
+        run: pnpm lint:edges
+      - name: Architecture check
+        run: pnpm lint:architecture
+      - name: Architecture conformance
+        run: pnpm lint:conformance
+
+  typecheck:
+    name: Typecheck
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+      - uses: ./.github/actions/setup
+      - run: pnpm check
+
+  unit:
+    name: Unit tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+      - uses: ./.github/actions/setup
+      - name: Run the unit suite with coverage
+        run: pnpm test:coverage:unit
+        env:
+          NODE_OPTIONS: --max_old_space_size=8192
+      - name: Upload unit coverage blob
+        uses: actions/upload-artifact@v7
+        with:
+          name: coverage-blob-unit
+          path: .vitest-reports/
+          include-hidden-files: true
+          retention-days: 1
+
+  storybook:
+    name: Storybook build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+      - uses: ./.github/actions/setup
+      - run: pnpm -F @org/components run build-storybook
+
+  integration:
+    name: Integration
+    uses: ./.github/workflows/integration.yml
+
+  coverage:
+    name: Coverage thresholds
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: [unit, integration]
+    steps:
+      - uses: actions/checkout@v6
+      - uses: ./.github/actions/setup
+      - name: Download coverage blobs
+        uses: actions/download-artifact@v8
+        with:
+          pattern: coverage-blob-*
+          merge-multiple: true
+          path: .vitest-reports/
+      - name: Merge coverage and check thresholds
+        run: pnpm coverage:merge
+        env:
+          NODE_OPTIONS: --max_old_space_size=8192
+      - name: Write coverage summary
+        if: always()
+        run: node scripts/coverage-step-summary.mjs
+      - name: Upload merged coverage report
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: coverage-report
+          path: coverage/
+          retention-days: 14

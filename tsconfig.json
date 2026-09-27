@@ -1,0 +1,37 @@
+{
+  "extends": "./tsconfig.base.json",
+  "include": [],
+  "exclude": [],
+  "references": [
+    {
+      "path": "packages/contracts"
+    },
+    {
+      "path": "packages/database"
+    },
+    {
+      "path": "packages/event-bus"
+    },
+    {
+      "path": "packages/unit-of-work"
+    },
+    {
+      "path": "packages/authz"
+    },
+    {
+      "path": "packages/server"
+    },
+    {
+      "path": "packages/api-client"
+    },
+    {
+      "path": "packages/cli"
+    },
+    {
+      "path": "packages/mcp"
+    },
+    {
+      "path": "packages/jobs"
+    }
+  ]
+}

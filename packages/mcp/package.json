@@ -1,0 +1,27 @@
+{
+  "name": "@org/mcp",
+  "version": "0.0.0",
+  "type": "module",
+  "license": "MIT",
+  "description": "Model Context Protocol (stdio) server exposing the nest-monorepo CLI surface as tools.",
+  "bin": {
+    "org-mcp": "build/esm/main.js"
+  },
+  "scripts": {
+    "check": "tsc -b tsconfig.json",
+    "clean": "rm -rf build .tsbuildinfo",
+    "build": "tsc -b tsconfig.build.json",
+    "dev": "tsx src/main.ts",
+    "start": "node build/esm/main.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "@org/api-client": "workspace:^",
+    "@org/contracts": "workspace:^",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@types/node": "^25.9.4",
+    "tsx": "^4.23.0"
+  }
+}

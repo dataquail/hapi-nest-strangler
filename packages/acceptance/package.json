@@ -1,0 +1,23 @@
+{
+  "name": "@org/acceptance",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "description": "Playwright acceptance tests with layered architecture (specs / drivers / pages / infrastructure).",
+  "scripts": {
+    "test": "pnpm -F @org/web build && playwright test",
+    "test:ui": "pnpm -F @org/web build && playwright test --ui",
+    "check": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@org/contracts": "workspace:^",
+    "@org/database": "workspace:^",
+    "@org/test-drivers": "workspace:^",
+    "@playwright/test": "^1.61.1",
+    "@types/node": "^25.9.4",
+    "@types/pg": "^8.20.0",
+    "dotenv": "^16.6.1",
+    "pg": "^8.20.0",
+    "typescript": "^5.9.3"
+  }
+}

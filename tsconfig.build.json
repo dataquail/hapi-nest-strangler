@@ -1,0 +1,25 @@
+{
+  "extends": "./tsconfig.base.json",
+  "include": [],
+  "exclude": [],
+  "references": [
+    {
+      "path": "packages/contracts/tsconfig.build.json"
+    },
+    {
+      "path": "packages/database/tsconfig.build.json"
+    },
+    {
+      "path": "packages/event-bus/tsconfig.build.json"
+    },
+    {
+      "path": "packages/unit-of-work/tsconfig.build.json"
+    },
+    {
+      "path": "packages/authz/tsconfig.build.json"
+    },
+    {
+      "path": "packages/server/tsconfig.build.json"
+    }
+  ]
+}

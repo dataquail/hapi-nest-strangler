@@ -1,0 +1,38 @@
+{
+  "name": "@org/database",
+  "version": "0.0.0",
+  "type": "module",
+  "license": "MIT",
+  "description": "The database kernel: a slonik pool with an ambient transaction, zod row schemas, the error vocabulary the ports translate, and the knex migrations.",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    },
+    "./*": {
+      "types": "./src/*.ts",
+      "default": "./src/*.ts"
+    }
+  },
+  "scripts": {
+    "check": "tsc -b tsconfig.json",
+    "build": "tsc -b tsconfig.build.json",
+    "test": "vitest",
+    "db:migrate": "tsx ./src/scripts/migrate.ts",
+    "db:migrate:test": "tsx ./src/scripts/migrate.ts --test",
+    "db:reset": "tsx ./src/scripts/reset-database.ts"
+  },
+  "dependencies": {
+    "@slonik/pg-driver": "^49.10.9",
+    "knex": "^3.3.0",
+    "pg": "^8.23.0",
+    "slonik": "^49.10.9",
+    "zod": "^4.3.6",
+    "@standard-schema/spec": "^1.0.0"
+  },
+  "devDependencies": {
+    "@types/pg": "^8.20.0",
+    "dotenv": "^17.4.2",
+    "tsx": "^4.23.0"
+  }
+}

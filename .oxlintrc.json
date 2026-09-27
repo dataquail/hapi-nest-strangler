@@ -1,0 +1,496 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["typescript", "import"],
+  "jsPlugins": [
+    {
+      "name": "local",
+      "specifier": "./scripts/lint-rules/index.mjs"
+    },
+    {
+      "name": "architecture",
+      "specifier": "@goodbones/oxlint/plugin"
+    },
+    "eslint-plugin-simple-import-sort",
+    "eslint-plugin-sort-destructure-keys",
+    "eslint-plugin-storybook"
+  ],
+  "categories": {
+    "correctness": "off"
+  },
+  "options": {
+    "typeAware": true
+  },
+  "env": {
+    "builtin": true,
+    "es2022": true
+  },
+  "ignorePatterns": [
+    "**/dist",
+    "**/build",
+    "**/docs",
+    "**/*.md",
+    "**/vitest.config.ts",
+    "**/setupTests.ts",
+    "**/vitest.shared.ts",
+    "**/knexfile.ts",
+    "packages/contracts/src/generated/**",
+    "scratchpad/**",
+    "**/.tmp-*/**",
+    "**/.next/**",
+    "**/postcss.config.mjs"
+  ],
+  "rules": {
+    "architecture/imports": "error",
+    "architecture/exports": "error",
+    "architecture/members": "error",
+    "architecture/structure": "error",
+    "architecture/surface": "error",
+    "import/no-cycle": "error",
+    "constructor-super": "error",
+    "for-direction": "error",
+    "getter-return": "error",
+    "no-async-promise-executor": "error",
+    "no-case-declarations": "error",
+    "no-class-assign": "error",
+    "no-compare-neg-zero": "error",
+    "no-cond-assign": "error",
+    "no-const-assign": "error",
+    "no-constant-binary-expression": "error",
+    "no-constant-condition": "error",
+    "no-control-regex": "error",
+    "no-debugger": "error",
+    "no-delete-var": "error",
+    "no-dupe-class-members": "error",
+    "no-dupe-else-if": "error",
+    "no-dupe-keys": "error",
+    "no-duplicate-case": "error",
+    "no-empty": "error",
+    "no-empty-character-class": "error",
+    "no-empty-pattern": "error",
+    "no-empty-static-block": "error",
+    "no-ex-assign": "error",
+    "no-extra-boolean-cast": "error",
+    "no-func-assign": "error",
+    "no-global-assign": "error",
+    "no-import-assign": "error",
+    "no-invalid-regexp": "error",
+    "no-loss-of-precision": "error",
+    "no-misleading-character-class": "error",
+    "no-new-native-nonconstructor": "error",
+    "no-nonoctal-decimal-escape": "error",
+    "no-obj-calls": "error",
+    "no-prototype-builtins": "error",
+    "no-redeclare": "off",
+    "no-regex-spaces": "error",
+    "no-self-assign": "error",
+    "no-setter-return": "error",
+    "no-shadow-restricted-names": "error",
+    "no-sparse-arrays": "error",
+    "no-this-before-super": "error",
+    "no-undef": "off",
+    "no-unexpected-multiline": "error",
+    "no-unreachable": "error",
+    "no-unsafe-finally": "error",
+    "no-unsafe-negation": "error",
+    "no-unsafe-optional-chaining": "error",
+    "no-unused-labels": "error",
+    "no-unused-private-class-members": "error",
+    "no-unused-vars": [
+      "error",
+      {
+        "argsIgnorePattern": "^_",
+        "vars": "all",
+        "args": "all",
+        "varsIgnorePattern": "^_"
+      }
+    ],
+    "no-useless-backreference": "error",
+    "no-useless-catch": "error",
+    "no-useless-escape": "error",
+    "no-with": "error",
+    "require-yield": "error",
+    "use-isnan": "error",
+    "valid-typeof": "error",
+    "no-unused-expressions": "error",
+    "object-shorthand": "error",
+    "no-console": "error",
+    "local/no-relative-import-outside-package": "error",
+    "local/no-deep-relative-imports": "error",
+    "local/no-cross-schema-sql-access": "error",
+    "local/no-array-push-spread": "error",
+    "local/lucide-icon-suffix": "error",
+    "import/first": "error",
+    "import/newline-after-import": "error",
+    "import/no-duplicates": "error",
+    "simple-import-sort/imports": "error",
+    "simple-import-sort/exports": "error",
+    "sort-destructure-keys/sort-destructure-keys": "error",
+    "prefer-const": "error",
+    "no-var": "error",
+    "no-else-return": "error",
+    "eqeqeq": "error",
+    "no-lonely-if": "error",
+    "no-unneeded-ternary": "error",
+    "no-plusplus": [
+      "error",
+      {
+        "allowForLoopAfterthoughts": true
+      }
+    ],
+    "no-implicit-coercion": "error",
+    "no-shadow": "warn",
+    "no-self-compare": "error",
+    "typescript/no-duplicate-enum-values": "error",
+    "typescript/no-empty-object-type": "error",
+    "typescript/no-explicit-any": "warn",
+    "typescript/no-extra-non-null-assertion": "error",
+    "typescript/no-misused-new": "error",
+    "typescript/no-non-null-asserted-optional-chain": "error",
+    "typescript/no-require-imports": "error",
+    "typescript/no-this-alias": "error",
+    "typescript/no-unnecessary-type-constraint": "error",
+    "typescript/no-unsafe-declaration-merging": "error",
+    "typescript/no-unsafe-function-type": "error",
+    "typescript/no-wrapper-object-types": "error",
+    "typescript/prefer-as-const": "error",
+    "typescript/prefer-namespace-keyword": "error",
+    "typescript/triple-slash-reference": "error",
+    "typescript/array-type": [
+      "warn",
+      {
+        "default": "generic",
+        "readonly": "generic"
+      }
+    ],
+    "typescript/consistent-type-imports": [
+      "error",
+      {
+        "prefer": "type-imports",
+        "fixStyle": "inline-type-imports"
+      }
+    ],
+    "typescript/consistent-type-exports": [
+      "error",
+      {
+        "fixMixedExportsWithInlineTypeSpecifier": true
+      }
+    ],
+    "typescript/no-floating-promises": "error",
+    "typescript/no-unsafe-assignment": "error",
+    "typescript/no-unsafe-member-access": "error",
+    "typescript/no-unsafe-call": "error",
+    "typescript/no-unsafe-return": "error",
+    "typescript/no-unsafe-argument": "error",
+    "typescript/no-non-null-assertion": "error",
+    "typescript/no-unnecessary-type-assertion": "error",
+    "typescript/no-empty-interface": "error",
+    "typescript/no-misused-promises": [
+      "error",
+      {
+        "checksVoidReturn": {
+          "attributes": false
+        }
+      }
+    ],
+    "typescript/return-await": "error",
+    "typescript/consistent-type-definitions": ["warn", "type"],
+    "typescript/explicit-member-accessibility": [
+      "error",
+      {
+        "accessibility": "explicit",
+        "overrides": {
+          "accessors": "off",
+          "constructors": "no-public",
+          "methods": "explicit",
+          "properties": "explicit",
+          "parameterProperties": "explicit"
+        }
+      }
+    ],
+    "typescript/consistent-generic-constructors": "error",
+    "typescript/prefer-nullish-coalescing": "error",
+    "typescript/no-unnecessary-condition": "error",
+    "typescript/prefer-optional-chain": "error",
+    "typescript/no-confusing-non-null-assertion": "error",
+    "typescript/no-confusing-void-expression": "error",
+    "typescript/no-meaningless-void-operator": "error",
+    "typescript/strict-boolean-expressions": [
+      "error",
+      {
+        "allowString": false,
+        "allowNumber": false,
+        "allowNullableObject": false,
+        "allowNullableBoolean": false,
+        "allowNullableString": false,
+        "allowNullableNumber": false,
+        "allowNullableEnum": false,
+        "allowAny": false
+      }
+    ],
+    "typescript/dot-notation": "error",
+    "typescript/consistent-return": "warn",
+    "no-use-before-define": "warn"
+  },
+  "overrides": [
+    {
+      "files": [
+        "packages/authz/src/config.ts",
+        "packages/authz/src/policy-registry.ts",
+        "packages/authz/src/resource-resolver-registry.ts"
+      ],
+      "rules": {
+        "typescript/no-empty-interface": "off",
+        "typescript/no-empty-object-type": "off",
+        "typescript/consistent-type-definitions": "off"
+      }
+    },
+    {
+      "files": ["packages/authz/src/authz.ts"],
+      "rules": {
+        "typescript/no-unnecessary-type-assertion": "off"
+      }
+    },
+    {
+      "files": [
+        "packages/server/src/common/env-vars.ts",
+        "packages/server/src/platform/auth/authz.ts",
+        "packages/server/src/platform/cqrs/command-bus.ts",
+        "packages/server/src/platform/cqrs/query-bus.ts",
+        "packages/server/src/platform/database/database.ts",
+        "packages/server/src/platform/ddd/event-bus.ts",
+        "packages/server/src/platform/ddd/unhandled-failures.ts",
+        "packages/server/src/platform/ddd/unit-of-work.ts"
+      ],
+      "rules": {
+        "typescript/no-empty-interface": "off",
+        "typescript/no-empty-object-type": "off",
+        "typescript/no-unsafe-declaration-merging": "off",
+        "typescript/consistent-type-definitions": "off"
+      }
+    },
+    {
+      "files": [
+        "packages/server/src/modules/*/policies/*.ts",
+        "packages/server/src/platform/auth/authz.ts",
+        "packages/authz/src/**/*.test.ts"
+      ],
+      "rules": {
+        "typescript/consistent-type-definitions": "off",
+        "typescript/no-empty-interface": "off",
+        "typescript/no-empty-object-type": "off"
+      }
+    },
+    {
+      "files": ["packages/web/**/*.{ts,tsx,js,jsx}", "packages/components/**/*.{ts,tsx,js,jsx}"],
+      "rules": {
+        "react/function-component-definition": [
+          "warn",
+          {
+            "namedComponents": ["arrow-function"],
+            "unnamedComponents": "arrow-function"
+          }
+        ],
+        "react/display-name": "error",
+        "react/jsx-key": "error",
+        "react/jsx-no-comment-textnodes": "error",
+        "react/jsx-no-duplicate-props": "error",
+        "react/jsx-no-target-blank": "error",
+        "react/jsx-no-useless-fragment": "warn",
+        "react/no-children-prop": "off",
+        "react/no-danger-with-children": "error",
+        "react/no-direct-mutation-state": "error",
+        "react/no-find-dom-node": "error",
+        "react/no-is-mounted": "error",
+        "react/no-render-return-value": "error",
+        "react/no-string-refs": "error",
+        "react/no-unescaped-entities": "error",
+        "react/no-unknown-property": "error",
+        "react/no-unsafe": "error",
+        "react/require-render-return": "error",
+        "react/no-array-index-key": "warn",
+        "react/button-has-type": "error",
+        "react/hook-use-state": "error",
+        "react/jsx-fragments": ["error", "element"],
+        "react/react-in-jsx-scope": "off",
+        "react/jsx-curly-brace-presence": "error",
+        "react/jsx-boolean-value": "error",
+        "react/self-closing-comp": "error",
+        "react/no-unstable-nested-components": "error",
+        "local/enforce-react-namespace": "error",
+        "react/rules-of-hooks": "error",
+        "react/exhaustive-deps": "warn",
+        "react/only-export-components": [
+          "warn",
+          {
+            "allowConstantExport": true
+          }
+        ]
+      },
+      "plugins": ["react"]
+    },
+    {
+      "files": [
+        "packages/web/features/**/*.tsx",
+        "packages/web/app/**/*.tsx",
+        "packages/components/patterns/**/*.tsx"
+      ],
+      "rules": {
+        "local/no-inline-styling": "error",
+        "react/forbid-elements": [
+          "error",
+          {
+            "forbid": [
+              {
+                "element": "div",
+                "message": "Use Stack or Surface from @org/components/primitives instead (ADR-0015)."
+              },
+              {
+                "element": "span",
+                "message": "Use Text (as='span') from @org/components/primitives/text instead (ADR-0015)."
+              },
+              {
+                "element": "p",
+                "message": "Use Text from @org/components/primitives/text instead (ADR-0015)."
+              },
+              {
+                "element": "h1",
+                "message": "Use Heading from @org/components/primitives/heading instead (ADR-0015)."
+              },
+              {
+                "element": "h2",
+                "message": "Use Heading from @org/components/primitives/heading instead (ADR-0015)."
+              },
+              {
+                "element": "h3",
+                "message": "Use Heading from @org/components/primitives/heading instead (ADR-0015)."
+              },
+              {
+                "element": "h4",
+                "message": "Use Heading from @org/components/primitives/heading instead (ADR-0015)."
+              },
+              {
+                "element": "ul",
+                "message": "Use List from @org/components/primitives/list instead (ADR-0015)."
+              },
+              {
+                "element": "ol",
+                "message": "Use List (as='ol') from @org/components/primitives/list instead (ADR-0015)."
+              },
+              {
+                "element": "li",
+                "message": "Use List.Item from @org/components/primitives/list instead (ADR-0015)."
+              },
+              {
+                "element": "nav",
+                "message": "Use Nav from @org/components/primitives/nav instead (ADR-0015)."
+              },
+              {
+                "element": "a",
+                "message": "Use Link from @org/components/primitives/link instead (ADR-0015)."
+              },
+              {
+                "element": "button",
+                "message": "Use Button from @org/components/primitives/button instead (ADR-0015)."
+              },
+              {
+                "element": "input",
+                "message": "Use Input from @org/components/primitives/input instead (ADR-0015)."
+              },
+              {
+                "element": "label",
+                "message": "Use Label from @org/components/primitives/label instead (ADR-0015)."
+              },
+              {
+                "element": "select",
+                "message": "Use Select from @org/components/primitives/select instead (ADR-0015)."
+              },
+              {
+                "element": "form",
+                "message": "Use Form from @org/components/primitives/form instead (ADR-0015)."
+              },
+              {
+                "element": "section",
+                "message": "Use Stack or Surface (as='section') from @org/components/primitives instead (ADR-0015)."
+              },
+              {
+                "element": "header",
+                "message": "Use Stack or Surface (as='header') from @org/components/primitives instead (ADR-0015)."
+              },
+              {
+                "element": "footer",
+                "message": "Use Stack or Surface (as='footer') from @org/components/primitives instead (ADR-0015)."
+              },
+              {
+                "element": "main",
+                "message": "Use Container (as='main') from @org/components/primitives/container instead (ADR-0015)."
+              },
+              {
+                "element": "table",
+                "message": "No primitive yet \u2014 add one to @org/components/primitives and prove it in a story (ADR-0015)."
+              },
+              {
+                "element": "img",
+                "message": "No primitive yet \u2014 add one to @org/components/primitives and prove it in a story (ADR-0015)."
+              }
+            ]
+          }
+        ]
+      },
+      "plugins": ["react"]
+    },
+    {
+      "files": [
+        "packages/web/features/**/*.test.tsx",
+        "packages/web/app/layout.tsx",
+        "packages/components/patterns/**/*.stories.tsx"
+      ],
+      "rules": {
+        "react/forbid-elements": "off",
+        "local/no-inline-styling": "off"
+      },
+      "plugins": ["react"]
+    },
+    {
+      "files": ["packages/components/**/*.stories.tsx"],
+      "rules": {
+        "storybook/await-interactions": "error",
+        "storybook/context-in-play-function": "error",
+        "storybook/default-exports": "error",
+        "storybook/hierarchy-separator": "warn",
+        "storybook/no-redundant-story-name": "warn",
+        "storybook/prefer-pascal-case": "warn",
+        "storybook/story-exports": "error",
+        "storybook/use-storybook-expect": "error",
+        "storybook/use-storybook-testing-library": "error"
+      }
+    },
+    {
+      "files": ["**/*.test.ts", "**/*.test.tsx", "**/test-utils/**", "**/test/**"],
+      "rules": {
+        "typescript/explicit-member-accessibility": "off",
+        "typescript/no-non-null-assertion": "off",
+        "typescript/no-unnecessary-condition": "off"
+      }
+    },
+    {
+      "files": [
+        "scripts/**",
+        "infra/**",
+        "**/*.mjs",
+        "packages/cli/src/**",
+        "packages/mcp/src/**",
+        "packages/jobs/src/**"
+      ],
+      "rules": {
+        "no-console": "off"
+      }
+    },
+    {
+      "files": ["packages/components/primitives/button.tsx"],
+      "rules": {
+        "react/button-has-type": "off"
+      },
+      "plugins": ["react"]
+    }
+  ]
+}

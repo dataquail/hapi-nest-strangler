@@ -1,0 +1,27 @@
+# yaml-language-server: $schema=https://dataquail.github.io/goodbones/schema/architecture-node.schema.json
+#
+# @org/unit-of-work — one of the three hand-rolled application libraries. No internal
+# tiers: a src/ of kebab-case files, a test beside each, and a testing entry.
+#
+# One node of the architecture policy: the root architecture.yaml includes this
+# file at "~/unit-of-work/". Patterns are repo-relative and use the root's
+# aliases; a fragment defined under `defs` here joins the one namespace every file
+# shares, so name it for what it is.
+
+name: kebab-case
+message: >-
+  @org/unit-of-work is the transaction boundary: a re-entrant run over a host's transaction driver that rolls back on a typed Err and drains the event bus's deferred reactions after commit. It names the event bus and nothing else in the repo.
+layout: open
+surface: [{ use: no-default-exports }]
+imports:
+  message: >-
+    A kernel library names its own files and the libraries it is built on. It never reaches
+    the server, the database or the contracts: it is what those depend on.
+  external: [oxide.ts, vitest]
+  allow: ["node:**", "~/unit-of-work/**", "~/event-bus/**", "vitest.shared.ts"]
+children:
+  "src/":
+    layout: open
+    children:
+      "*.test.ts": { use: unit-of-work-test-file }
+  "**/": { layout: open, children: {} }

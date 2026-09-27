@@ -1,0 +1,34 @@
+{
+  "name": "@org/event-bus",
+  "version": "0.0.0",
+  "type": "module",
+  "license": "MIT",
+  "description": "One domain event bus, three delivery contracts chosen at subscription: immediate (in the publisher's transaction), after-commit (deferred through a DeferralSink), and stream (never awaited).",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    },
+    "./event": {
+      "types": "./src/event.ts",
+      "default": "./src/event.ts"
+    },
+    "./deferral": {
+      "types": "./src/deferral.ts",
+      "default": "./src/deferral.ts"
+    },
+    "./testing": {
+      "types": "./src/testing.ts",
+      "default": "./src/testing.ts"
+    }
+  },
+  "scripts": {
+    "check": "tsc -b tsconfig.json",
+    "build": "tsc -b tsconfig.build.json",
+    "test": "vitest"
+  },
+  "dependencies": {
+    "@opentelemetry/api": "^1.9.0",
+    "zod": "^4.3.6"
+  }
+}

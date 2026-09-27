@@ -1,0 +1,22 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "include": ["src"],
+  "exclude": ["vitest.config.ts", "src/**/*.test.ts", "src/**/*.test.tsx"],
+  "references": [
+    { "path": "../authz" },
+    { "path": "../contracts" },
+    { "path": "../database" },
+    { "path": "../event-bus" },
+    { "path": "../unit-of-work" }
+  ],
+  "compilerOptions": {
+    "types": ["node"],
+    "jsx": "react-jsx",
+    "outDir": "build/src",
+    "tsBuildInfoFile": ".tsbuildinfo/src.tsbuildinfo",
+    "rootDir": "src",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  }
+}

@@ -1,0 +1,210 @@
+# yaml-language-server: $schema=https://dataquail.github.io/goodbones/schema/architecture-node.schema.json
+#
+# @org/web — the Next renderer over the Nest BFF. MVVM, and the arrow points one
+# way: Model (services/) ← ViewModel (*.view-model.ts) ← View (*.view.tsx).
+#
+# One node of the architecture policy: the root architecture.yaml includes this
+# file at "~/web/". Patterns are repo-relative and use the root's
+# aliases; a fragment defined under `defs` here joins the one namespace every file
+# shares, so name it for what it is.
+
+defs:
+  # The two MVVM tiers. Named because a feature folder nests — the real shape
+  # is features/<area>/<feature>/ — and the rules hold at every depth.
+  view-file:
+    members:
+      - message: >-
+          `{name}` puts state or behaviour in the View, where it can only be tested through a
+          renderer. A View's whole contract is "given what the ViewModel returns, render this;
+          on this interaction, call that" — move it to the sibling *.view-model.ts and read it
+          here through the feature's use<Feature>ViewModel hook (ADR-0026).
+        subject: calls
+        # Anything in `use*` position. The allowlist is the View's own ViewModel
+        # hook plus the two hooks that carry no state of their own: an SSR-safe
+        # unique id, and a memo over a handler that already delegates.
+        match: "use[A-Z]*"
+        allow: ["use*ViewModel", useId, useCallback]
+    imports:
+      reset: true
+      message: >-
+        A View depends on its ViewModel, and on nothing else (ADR-0026). It may not reach past it
+        into services/ — not the query options, not the notification or navigation stores, not
+        TanStack itself. Everything it renders or dispatches arrives from the hook its own
+        ViewModel exposes; that is what lets the ViewModel be tested with renderHook and the View
+        with a stubbed ViewModel and no server.
+      external: [react]
+      allow:
+        - "~/web/features/{feature}/**"
+        - "~/web/services/api/types.ts"
+        - "~/components/**"
+        - "~/contracts/**"
+
+  # A feature's unit tests run under renderHook or a stubbed ViewModel; its
+  # integration tests under __tests__/ render a route through the harness.
+  web-unit-test-file:
+    surface: [{ use: test-exports-nothing }]
+    imports:
+      reset: true
+      message: >-
+        A web unit test reaches the tier it exercises, the harnesses under test/, the renderer
+        testing library and the contracts it asserts against. It never reaches the server, and
+        it never renders a route — that is the integration test under __tests__/.
+      external: [vitest, "@testing-library/react", "@testing-library/user-event"]
+      allow: ["~/web/**", "~/contracts/**"]
+
+  web-integration-test-file:
+    surface: [{ use: test-exports-nothing }]
+    imports:
+      reset: true
+      message: >-
+        A feature integration test renders a route through the integration harness and drives
+        it through the tier-agnostic page drivers, so it names react and @org/test-drivers
+        beside what a unit test may.
+      external: [vitest, react, "@testing-library/react", "@testing-library/user-event"]
+      allow: ["~/web/**", "~/contracts/**", "~/test-drivers/**"]
+
+  view-model-file:
+    message: >-
+      Every *.view-model.ts needs a sibling *.view-model.test.ts (ADR-0026 — the ViewModel holds
+      all of a feature's behaviour and runs under renderHook with MSW, so it is the tier that
+      must be unit-tested).
+    requires: ["{base}.test.ts"]
+    imports:
+      reset: true
+      message: >-
+        A ViewModel is a hook over TanStack Query, React state and the Model (ADR-0026). It may
+        not import a View or the component library — the arrow points View → ViewModel → Model
+        and never back — and it reaches the API only through services/.
+      external: [react, "@tanstack/react-query"]
+      allow: ["~/web/services/**", "~/contracts/**"]
+
+name: kebab-case
+message: >-
+  packages/web is the Next App Router renderer: app/ holds the routes, features/ the MVVM
+  tiers, services/ the Model, and test/ the supporting code. There is no fifth folder — a new
+  one is a new tier.
+surface:
+  # Next loads a route file and the config by their default exports.
+  - use: no-default-exports
+    except: ["**/vitest.config.ts", "~/web/app/**", "~/web/next.config.ts"]
+  - message: >-
+      No `export *` in web. A star re-export republishes every name of its target, so a barrel
+      stops saying what it publishes. Re-export by name. The one exemption is the test fixtures
+      barrel, a harness that exists to gather them.
+    kinds: [namespace]
+    except: ["~/web/test/fixtures/index.ts"]
+imports:
+  message: >-
+    packages/web consumes the component library and the shared contracts. It reaches a
+    third-party visual library only through @org/components (ADR-0015); state is TanStack Query
+    plus two small external stores (ADR-0026).
+  external: [react, next]
+  allow: ["~/web/**", "~/components/**", "~/contracts/**"]
+children:
+  # Build configuration. Declared rather than left to fall through to the
+  # taxonomy root, and narrow: a config file names the tool it configures.
+  "instrumentation.ts | next.config.ts | vitest.config.ts | next-env.d.ts":
+    imports:
+      reset: true
+      message: >-
+        A build-configuration file names the tool it configures and nothing else — no features,
+        no services, no components.
+      external: [next, vitest, "@vercel/otel"]
+      allow: ["node:**"]
+
+  # Framework surface: routes compose the Model directly (prefetch and the
+  # hydration boundary), which is why the View restrictions stop here.
+  "app/":
+    layout: open
+    message: >-
+      app/ holds the Next file-based routes. It is framework surface: it composes the Model
+      directly and keeps its intrinsics, so the View restrictions do not apply here.
+    children:
+      "**/": { layout: open, children: {} }
+
+  "features/":
+    message: >-
+      Files in packages/web/features/** must carry a view-tier stereotype (ADR-0026): a naked
+      component is *.view.tsx, all behaviour is *.view-model.ts, and tests are *.test.{ts,tsx}.
+      A bare component file has no stereotype — rename it *.view.tsx. There is no presenter
+      tier.
+    children:
+      "{feature}/":
+        # __root holds the chrome every route shares — a slot in the
+        # layout rather than a feature, and the one folder here that is
+        # not named after one.
+        name:
+          regex: "^(?:__root|[a-z0-9]+(?:-[a-z0-9]+)*)$"
+          message: >-
+            A feature folder is kebab-case, named after the feature. The one exception is
+            __root, the chrome every route shares.
+        message: >-
+          Files in packages/web/features/** must carry a view-tier stereotype (ADR-0026):
+          *.view.tsx, *.view-model.ts, or *.test.{ts,tsx}. There is no presenter tier.
+        children:
+          "*.view.tsx": { use: view-file }
+          "*.view-model.ts": { use: view-model-file }
+          "*.test.ts | *.test.tsx": { use: web-unit-test-file }
+          "__tests__/":
+            message: >-
+              __tests__/ holds a feature's integration tests, *.integration.test.tsx: a route
+              rendered through the integration harness and driven through the page drivers.
+            children:
+              "*.integration.test.ts | *.integration.test.tsx": { use: web-integration-test-file }
+          "**/":
+            children:
+              "*.view.tsx": { use: view-file }
+              "*.view-model.ts": { use: view-model-file }
+              "*.test.ts | *.test.tsx": { use: web-unit-test-file }
+
+  "services/":
+    layout: open
+    message: >-
+      services/ is the Model: the API client and its error, the query keys, the query options
+      and mutations per feature, the QueryClient plumbing, the two stores and their bridges, and
+      the formatters. It is the innermost tier and knows nothing about the features that read it.
+    imports:
+      reset: true
+      message: >-
+        The Model is the innermost tier (ADR-0026). A services/ file importing from features/
+        inverts the arrow and couples the API surface to a screen.
+      external: [react, next, server-only, "@tanstack/react-query", openapi-fetch, zod]
+      allow: ["~/web/services/**", "~/components/**", "~/contracts/**"]
+    children:
+      # The form-validation test is the one Model test that builds a schema of
+      # its own, so it names zod beside what a unit test may.
+      "*.test.ts | *.test.tsx":
+        surface: [{ use: test-exports-nothing }]
+        imports:
+          reset: true
+          message: >-
+            A Model test names the tier it exercises, vitest and the renderer testing library;
+            the validation test also builds a zod schema to validate against.
+          external: [vitest, zod]
+          allow: ["~/web/**"]
+      "**/":
+        layout: open
+        children:
+          "*.test.ts | *.test.tsx": { use: web-unit-test-file }
+
+  "test/":
+    layout: open
+    message: >-
+      test/ holds the harnesses: the query harness, the integration harness, MSW handlers and
+      fixtures.
+    imports:
+      reset: true
+      message: >-
+        A web harness reaches the tier it stages, the component library and the contracts it
+        serves. It never reaches the server.
+      external:
+        - react
+        - msw
+        - vitest
+        - zod
+        - "@tanstack/react-query"
+        - "@testing-library/react"
+        - "@testing-library/jest-dom"
+      allow: ["~/web/**", "~/components/**", "~/contracts/**"]
+    children:
+      "**/": { layout: open, children: {} }

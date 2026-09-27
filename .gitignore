@@ -1,0 +1,48 @@
+coverage/
+.vitest-reports/
+*.tsbuildinfo
+.tsbuildinfo/
+node_modules/
+.DS_Store
+tmp/
+dist/
+build/
+docs/scratch/
+scratchpad/
+.direnv/
+.idea/
+.claude/settings.local.json
+
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Storybook (per-build static output)
+storybook-static/
+
+# Acceptance (Playwright)
+test-results/
+playwright-report/
+playwright/.cache/
+packages/acceptance/playwright/.auth/
+
+# Next
+.next/
+
+# Compiled output emitted beside its own source. A build misconfigured to write
+# into `src/` shadows the `.ts` it came from; ignoring keeps the artifacts out of
+# a commit.
+packages/*/src/**/*.js
+packages/*/src/**/*.jsx
+packages/*/src/**/*.mjs
+packages/*/src/**/*.cjs
+packages/*/src/**/*.map
+!packages/contracts/src/generated/**
+
+# Scratch git worktrees created by tooling; never part of the repo.
+.claude/worktrees/
+
+# Config fixtures written by the architecture-rules loader tests.
+.tmp-*/

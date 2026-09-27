@@ -1,0 +1,29 @@
+# yaml-language-server: $schema=https://dataquail.github.io/goodbones/schema/architecture-node.schema.json
+#
+# @org/acceptance — the Playwright suite: specs / drivers / setup / infrastructure.
+#
+# One node of the architecture policy: the root architecture.yaml includes this
+# file at "~/acceptance/". Patterns are repo-relative and use the root's
+# aliases; a fragment defined under `defs` here joins the one namespace every file
+# shares, so name it for what it is.
+
+name: kebab-case
+message: >-
+  @org/acceptance drives the running application through a browser: specs in business
+  language, page drivers that hide selectors, and the infrastructure that boots the processes
+  and seeds the test database.
+layout: open
+# Playwright loads the config and the global setup by their default exports.
+surface:
+  - use: no-default-exports
+    except:
+      ["**/vitest.config.ts", "~/acceptance/playwright.config.ts", "~/acceptance/global-setup.ts"]
+imports:
+  message: >-
+    An acceptance spec drives the deployed application from the outside. It names Playwright,
+    the tier-agnostic drivers and the database kernel it seeds through — never the server, the
+    web or the contracts, which would let a spec pass on a shape the browser never sees.
+  external: ["@playwright/test", dotenv, pg]
+  allow: ["node:**", "~/acceptance/**", "~/test-drivers/**", "~/database/**"]
+children:
+  "**/": { layout: open, children: {} }

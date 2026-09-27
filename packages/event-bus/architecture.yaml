@@ -1,0 +1,27 @@
+# yaml-language-server: $schema=https://dataquail.github.io/goodbones/schema/architecture-node.schema.json
+#
+# @org/event-bus — one of the three hand-rolled application libraries. No internal
+# tiers: a src/ of kebab-case files, a test beside each, and a testing entry.
+#
+# One node of the architecture policy: the root architecture.yaml includes this
+# file at "~/event-bus/". Patterns are repo-relative and use the root's
+# aliases; a fragment defined under `defs` here joins the one namespace every file
+# shares, so name it for what it is.
+
+name: kebab-case
+message: >-
+  @org/event-bus is the one domain event bus: immediate and after-commit subscriptions, the post-commit stream, the deferral sink a unit of work attaches, and the unhandled-failure sink. It depends on nothing in the repo.
+layout: open
+surface: [{ use: no-default-exports }]
+imports:
+  message: >-
+    A kernel library names its own files and the libraries it is built on. It never reaches
+    the server, the database or the contracts: it is what those depend on.
+  external: [zod, vitest, "@opentelemetry/api"]
+  allow: ["~/event-bus/**", "vitest.shared.ts"]
+children:
+  "src/":
+    layout: open
+    children:
+      "*.test.ts": { use: event-bus-test-file }
+  "**/": { layout: open, children: {} }

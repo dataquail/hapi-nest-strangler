@@ -1,0 +1,42 @@
+# yaml-language-server: $schema=https://dataquail.github.io/goodbones/schema/architecture-node.schema.json
+#
+# @org/database — the DB access kernel and the migrations. No internal tiers: it
+# states what it may reach and leaves its file layout open.
+#
+# One node of the architecture policy: the root architecture.yaml includes this
+# file at "~/database/". Patterns are repo-relative and use the root's
+# aliases; a fragment defined under `defs` here joins the one namespace every file
+# shares, so name it for what it is.
+
+name: kebab-case
+message: >-
+  @org/database is the DB access kernel: the slonik pool with its ambient transaction, the
+  shared zod row schemas, the error vocabulary the ports translate, and the knex migrations.
+layout: open
+# vitest loads a globalSetup by its default export.
+surface:
+  - use: no-default-exports
+    except: ["**/vitest.config.ts", "~/database/src/test-utils/global-setup.ts"]
+imports:
+  message: >-
+    @org/database is the one package that may name the SQL driver — encapsulating it is the
+    package's job. It depends on nothing else in the repo: it publishes a client, it does not
+    consume one.
+  external:
+    - slonik
+    - "@slonik/pg-driver"
+    - "@standard-schema/spec"
+    - knex
+    - zod
+    - dotenv
+    - vitest
+  allow: ["node:**", "~/database/**", "vitest.shared.ts"]
+children:
+  "src/":
+    layout: open
+    children:
+      # A migration's name is its ordinal and what it does, in the order
+      # the migrator runs them.
+      "migrations/": { name: snake_case, layout: open, children: {} }
+      "**/": { layout: open, children: {} }
+  "**/": { layout: open, children: {} }

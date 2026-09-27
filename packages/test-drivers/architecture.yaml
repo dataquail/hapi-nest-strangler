@@ -1,0 +1,25 @@
+# yaml-language-server: $schema=https://dataquail.github.io/goodbones/schema/architecture-node.schema.json
+#
+# @org/test-drivers — tier-agnostic page-driver contracts and their per-tier
+# adapters. No internal tiers beyond contracts/ and adapters/.
+#
+# One node of the architecture policy: the root architecture.yaml includes this
+# file at "~/test-drivers/". Patterns are repo-relative and use the root's
+# aliases; a fragment defined under `defs` here joins the one namespace every file
+# shares, so name it for what it is.
+
+name: kebab-case
+message: >-
+  @org/test-drivers holds the page-driver contracts, expressed in business intent, and one
+  adapter per tier: Playwright for acceptance, React Testing Library for the web integration
+  tier. The same spec body runs at both.
+layout: open
+surface: [{ use: no-default-exports }]
+imports:
+  message: >-
+    A page driver names the contract it adapts and the testing library of its tier. It never
+    reaches the web, the server or the contracts: a driver speaks in test ids and intent.
+  external: ["@playwright/test", "@testing-library/react", "@testing-library/user-event"]
+  allow: ["~/test-drivers/**"]
+children:
+  "**/": { layout: open, children: {} }

@@ -1,0 +1,55 @@
+name: Integration tests
+
+on:
+  workflow_call:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  integration:
+    name: Integration (server + jobs + database)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: nest-hexagon-test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      DATABASE_URL_TEST: postgresql://postgres:postgres@localhost:5432/nest-hexagon-test
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/nest-hexagon-test
+      ZITADEL_ISSUER: http://localhost:8080
+      ZITADEL_CLIENT_ID: ci-integration-tests-placeholder
+      ZITADEL_CLIENT_SECRET: ci-integration-tests-placeholder
+      SESSION_COOKIE_SECRET: 0000000000000000000000000000000000000000000000000000000000000000
+      STRIPE_SECRET_KEY: sk_test_ci_placeholder
+      STRIPE_WEBHOOK_SECRET: whsec_test_ci_placeholder
+      STRIPE_PRICE_ID_DEFAULT: price_test_ci_placeholder
+
+    steps:
+      - uses: actions/checkout@v6
+      - uses: ./.github/actions/setup
+      - name: Run integration suite with coverage
+        run: pnpm test:coverage:integration
+        env:
+          NODE_OPTIONS: --max_old_space_size=8192
+      - name: Upload integration coverage blobs
+        uses: actions/upload-artifact@v7
+        with:
+          name: coverage-blob-integration
+          path: .vitest-reports/
+          include-hidden-files: true
+          retention-days: 1

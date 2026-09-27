@@ -1,0 +1,33 @@
+{
+  "name": "@org/unit-of-work",
+  "version": "0.0.0",
+  "type": "module",
+  "license": "MIT",
+  "description": "The unit-of-work boundary: a re-entrant atomicity port over your own transaction primitive, and the after-commit delivery it gives @org/event-bus.",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    },
+    "./persistence-unavailable": {
+      "types": "./src/persistence-unavailable.ts",
+      "default": "./src/persistence-unavailable.ts"
+    },
+    "./testing": {
+      "types": "./src/testing.ts",
+      "default": "./src/testing.ts"
+    }
+  },
+  "scripts": {
+    "check": "tsc -b tsconfig.json",
+    "build": "tsc -b tsconfig.build.json",
+    "test": "vitest"
+  },
+  "dependencies": {
+    "@org/event-bus": "workspace:^",
+    "oxide.ts": "^1.1.0"
+  },
+  "devDependencies": {
+    "zod": "^4.3.6"
+  }
+}

@@ -149,7 +149,8 @@ hapi organization-service.create(payload, actor)
 
 Tests: a unit spec with the client stubbed (rollback on wallet failure; delete called on commit
 failure); an integration test with a local fake wallet HTTP server; one acceptance spec through
-the full stack (create org in the UI → `wallet.wallets` row exists).
+the full stack (create org in the UI → `wallet.wallets` row exists). The first two landed with
+step 8; the acceptance spec lands with step 10, when the suite is re-pointed at both servers.
 
 ## 7. Cross-cutting changes
 

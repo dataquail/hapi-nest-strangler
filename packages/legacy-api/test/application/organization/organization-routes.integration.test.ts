@@ -2,7 +2,9 @@ import { deepStrictEqual, ok } from "node:assert";
 
 import { afterAll, beforeAll, beforeEach, describe, it } from "vitest";
 
+import config = require("../../../config");
 import { closeKnex, getKnex, truncateAll } from "../../helpers/db";
+import { startFakeWalletServer } from "../../helpers/fake-wallet-server";
 import { signedInAs } from "../../helpers/sessions";
 import { getServer } from "../../server";
 
@@ -10,16 +12,19 @@ type Session = Awaited<ReturnType<typeof signedInAs>>;
 
 describe.sequential("organization routes (integration)", () => {
   let server: Awaited<ReturnType<typeof getServer>>;
+  let wallets: Awaited<ReturnType<typeof startFakeWalletServer>>;
   const emailService = () =>
     (server.app as any).emailService as { sent: Array<{ to: string; html: string }> };
 
   beforeAll(async () => {
+    wallets = await startFakeWalletServer(config("/auth/interServiceJWTSecret"));
     server = await getServer();
     await server.initialize();
   });
 
   afterAll(async () => {
     await server.stop();
+    await wallets.stop();
     await closeKnex();
   });
 

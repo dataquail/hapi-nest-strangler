@@ -4,6 +4,9 @@ import { randomBytes, randomUUID } from "crypto";
 import type { Knex } from "knex";
 
 import { domainEvents } from "../../constants/domain-events";
+import type { BackendClient } from "../../lib/backend-client/create-backend-client";
+import { isBackendClientError } from "../../lib/backend-client/http";
+import * as logger from "../../lib/logger";
 import { problem } from "../../lib/problem";
 import type UserService = require("../user/user-service");
 
@@ -54,11 +57,18 @@ class OrganizationService {
   public bookshelf: Bookshelf;
   public server: Server;
   public userService: UserService;
+  public backendClient: BackendClient;
 
-  constructor(bookshelf: Bookshelf, server: Server, userService: UserService) {
+  constructor(
+    bookshelf: Bookshelf,
+    server: Server,
+    userService: UserService,
+    backendClient: BackendClient,
+  ) {
     this.bookshelf = bookshelf;
     this.server = server;
     this.userService = userService;
+    this.backendClient = backendClient;
   }
 
   // @types/bookshelf is typed against knex 0.21; the instance is knex 2.
@@ -66,25 +76,49 @@ class OrganizationService {
     return this.bookshelf.knex as unknown as Knex;
   }
 
+  // The wallet lives on the other server, and it is opened from inside this
+  // transaction: a refusal there rolls the organization back, and a failure
+  // here after the wallet exists is undone by deleting it again, best effort.
   async createOrganization(name: string, actorUserId: string) {
     const id = randomUUID();
     const now = new Date();
-    await this.knex.transaction(async (t) => {
-      await this.knex("organizations")
-        .transacting(t)
-        .insert({ id, name, created_at: now, updated_at: now, deleted_at: null });
-      await this.knex("memberships")
-        .transacting(t)
-        .insert({ user_id: actorUserId, organization_id: id, created_at: now });
-      await this.knex("organization_roles").transacting(t).insert({
-        organization_id: id,
-        user_id: actorUserId,
-        role: ORG_ADMIN_ROLE,
-        issued_by: actorUserId,
+    let walletOpened = false;
+    try {
+      await this.knex.transaction(async (t) => {
+        await this.knex("organizations")
+          .transacting(t)
+          .insert({ id, name, created_at: now, updated_at: now, deleted_at: null });
+        await this.knex("memberships")
+          .transacting(t)
+          .insert({ user_id: actorUserId, organization_id: id, created_at: now });
+        await this.backendClient.wallets.create({ organizationId: id });
+        walletOpened = true;
+        await this.knex("organization_roles").transacting(t).insert({
+          organization_id: id,
+          user_id: actorUserId,
+          role: ORG_ADMIN_ROLE,
+          issued_by: actorUserId,
+        });
       });
-    });
+    } catch (error) {
+      if (walletOpened) await this.compensateWallet(id);
+      if (isBackendClientError(error)) {
+        throw problem(502, "BadGateway", {
+          message: `The wallet service refused to open a wallet for the new organization: ${error.message}`,
+        });
+      }
+      throw error;
+    }
     this.server.events.emit(domainEvents.ORGANIZATION_CREATED, { organizationId: id, name });
     return id;
+  }
+
+  async compensateWallet(organizationId: string) {
+    try {
+      await this.backendClient.wallets.remove(organizationId);
+    } catch (error) {
+      logger.error(`wallet compensation failed for organization ${organizationId}`, error);
+    }
   }
 
   async softDelete(organization: any) {
@@ -367,6 +401,11 @@ class OrganizationService {
 }
 
 OrganizationService["@singleton"] = true;
-OrganizationService["@require"] = ["bookshelf", "server", "user/user-service"];
+OrganizationService["@require"] = [
+  "bookshelf",
+  "server",
+  "user/user-service",
+  "backend-client/index",
+];
 
 export = OrganizationService;

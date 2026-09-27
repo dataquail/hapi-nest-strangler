@@ -7,8 +7,10 @@ export const testConfig = {
   },
   log: { level: "silent", pretty: false },
   appUrl: "http://app.test",
+  backend: { url: process.env.NEST_SERVER_URL ?? "http://127.0.0.1:18081" },
   mail: { transport: "log" },
   auth: {
+    interServiceJWTSecret: "test-inter-service-secret-0123456789abcdef",
     sessionCookieSecret: "test-session-cookie-secret",
     sessionTouchThresholdSeconds: 0,
     zitadel: {

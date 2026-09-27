@@ -12,7 +12,6 @@ Architectural enforcement runs inside `pnpm lint`, from one assembled manifest �
 | `@goodbones/{core,typescript,cli,oxlint}` (npm) | the engine: lowering, matching, the graph, the anti-vacuity guard; the TS pack; the two hosts                        |
 | `scripts/lint-rule-probes.mjs`                  | `pnpm lint:rules` — each rule id still fires on a planted violation                                                  |
 | `scripts/architecture-edges.mjs`                | `pnpm lint:edges` — the policy still refuses and allows the edges and shapes it should                               |
-| `scripts/architecture-conformance.mjs`          | `pnpm lint:conformance` — residue, slack and cycles held to ceilings that only ratchet down                          |
 | `scripts/lint-rules/`                           | the hand-rolled `local/*` AST rules that are not boundary rules                                                      |
 
 **The engine is an installed dependency, not source here.** It ships from `dataquail/goodbones` as four packages, each pinned to the same exact beta (`0.1.0-beta.6`) in the root `package.json`. Its reference documentation lives at <https://dataquail.github.io/goodbones>. This repo owns the **policy** — the manifest, the probes, the edge table — and nothing below describes the library. Changing how a rule family behaves means a release there, not an edit here (ADR-0029). **The three kernel packages (`@org/event-bus`, `@org/unit-of-work`, `@org/authz`) are the opposite: workspace source, each with its own manifest node.**
@@ -118,7 +117,7 @@ The ceilings cap the tiers that say "not tightened yet" (`main.ts`). The floors 
 
 ## Conformance: what `check` measures but does not gate
 
-`pnpm architecture:conformance` never fails; it names **residue** (files no family reaches), **vacant** nodes (an allowlist selecting no file — `event-handlers/`, `sagas/`), **slack** (allowances no import uses), **concentration** (a fragment entry used at fewer than half its nodes) and **cycles**. `pnpm lint:conformance` holds all five to ceilings in `scripts/architecture-conformance.mjs`, ratcheted like the coverage floors: lower a ceiling when the number falls, never raise one. `residue` and `cycles` sit at zero.
+`pnpm architecture:conformance` never fails; it names **residue** (files no family reaches), **vacant** nodes (an allowlist selecting no file — `event-handlers/`, `sagas/`), **slack** (allowances no import uses), **concentration** (a fragment entry used at fewer than half its nodes) and **cycles**. `limits.conformance` in `architecture.yaml` holds the first four to ceilings that `pnpm lint:architecture` gates, ratcheted like the coverage floors: lower a ceiling when the number falls, never raise one. `residue` sits at zero; cycles are held at zero by the `no-cycles` graph rule.
 
 ## Every rule proves itself
 

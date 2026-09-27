@@ -20,7 +20,7 @@ Depend on the published engine. `@goodbones/core`, `@goodbones/typescript`, `@go
 | ---------------------------------------------------------------- | ---------------------------------------------- |
 | `architecture.yaml` + one `architecture.yaml` per package        | resolution, lowering, glob matching, the graph |
 | `scripts/lint-rule-probes.mjs`, `scripts/architecture-edges.mjs` | the five rule families and their probes        |
-| `scripts/architecture-conformance.mjs` and its ceilings          | the CLI, the baseline, `explain`, `facts`      |
+| the `limits.conformance` ceilings (once a script of this repo's) | the CLI, the baseline, `explain`, `facts`      |
 | `.architecture-baseline.json` (absent — no violations)           | the library's own tests and documentation      |
 
 Three seams carry the dependency: `.oxlintrc.json` names `@goodbones/oxlint/plugin`; the `lint:architecture` and `architecture:*` scripts call the `architecture` bin; the edge table imports the engine's public loading and evaluation functions.

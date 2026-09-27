@@ -69,6 +69,13 @@ limits:
   unrestricted: 1
   partial: 0
   coverage: { imports: 0.99, structure: 0.71, members: 0.03, surface: 0.95, graph: 1 }
+  # Conformance ceilings, gated by `architecture check`: residue (files no
+  # family reaches), vacant nodes (an allowlist selecting no file), slack
+  # (allowances nothing imports through) and concentration (a fragment entry
+  # used at fewer than half its nodes). Set each to what `architecture
+  # conformance` reports; lower one when the number falls, never raise one.
+  # Cycles are held at zero by the `no-cycles` graph rule below.
+  conformance: { residue: 0, vacant: 15, slack: 0, concentration: 0 }
 
 aliases:
   "@": packages/server/src

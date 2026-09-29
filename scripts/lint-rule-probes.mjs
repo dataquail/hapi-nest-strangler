@@ -232,6 +232,15 @@ const PROBES = [
     source: 'import { probe } from "@org/definitely-not-a-real-package";\n\nexport { probe };\n',
   },
   {
+    // The campaigns family: a hapi module reaching into a sibling module is a
+    // holdout of the strangler campaign, and one the ledger does not carry is
+    // reported in the editor.
+    rule: "architecture/campaigns",
+    file: "packages/legacy-api/src/application/todo/zzprobe-reach.ts",
+    source:
+      'import type UserService = require("../user/user-service");\n\nexport const probe: UserService | null = null;\n',
+  },
+  {
     // Circularity is the one dependency-cruiser rule with no per-file
     // equivalent; oxlint's own rule replaced it, so it needs the same proof.
     rule: "import/no-cycle",

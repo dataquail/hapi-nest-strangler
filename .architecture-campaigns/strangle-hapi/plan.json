@@ -1,0 +1,42 @@
+{
+  "version": 1,
+  "campaign": "strangle-hapi",
+  "phases": [
+    {
+      "id": "fenced",
+      "hash": "10388130",
+      "defined": true,
+      "concessions": 0
+    },
+    {
+      "id": "rebuilt",
+      "hash": "043a364f",
+      "defined": true,
+      "concessions": 0
+    },
+    {
+      "id": "routes-moved",
+      "hash": "40d76fa7",
+      "defined": true,
+      "concessions": 0
+    },
+    {
+      "id": "data-moved",
+      "hash": "5ff07476",
+      "defined": true,
+      "concessions": 0
+    },
+    {
+      "id": "gone",
+      "hash": "a10ebb31",
+      "defined": true,
+      "concessions": 0
+    },
+    {
+      "id": "settled",
+      "hash": "cddbef9a",
+      "defined": false,
+      "concessions": 0
+    }
+  ]
+}

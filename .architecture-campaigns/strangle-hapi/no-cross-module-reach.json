@@ -1,0 +1,67 @@
+{
+  "version": 2,
+  "campaign": "strangle-hapi",
+  "objective": "no-cross-module-reach",
+  "created": "2026-09-29T14:11:00.373Z",
+  "sectors": {
+    "auth": {
+      "entered": "2026-09-29T14:11:00.373Z",
+      "initial": 4,
+      "cleared": 0,
+      "closed": 0,
+      "lastCleared": "2026-09-29T14:11:00.373Z",
+      "holdouts": [
+        "auth-service.ts#imports:../user/user-service",
+        "auth-service.ts#requires:user/user-service",
+        "session-scheme.ts#imports:../user/user-service",
+        "session-scheme.ts#requires:user/user-service"
+      ]
+    },
+    "billing": {
+      "entered": "2026-09-29T14:11:00.373Z",
+      "initial": 1,
+      "cleared": 0,
+      "closed": 0,
+      "lastCleared": "2026-09-29T14:11:00.373Z",
+      "holdouts": [
+        "billing-access.ts#imports:../organization/organization-access"
+      ]
+    },
+    "organization": {
+      "entered": "2026-09-29T14:11:00.373Z",
+      "initial": 2,
+      "cleared": 0,
+      "closed": 0,
+      "lastCleared": "2026-09-29T14:11:00.373Z",
+      "holdouts": [
+        "organization-service.ts#imports:../user/user-service",
+        "organization-service.ts#requires:user/user-service"
+      ]
+    },
+    "todo": {
+      "entered": "2026-09-29T14:11:00.373Z",
+      "initial": 0,
+      "cleared": 0,
+      "closed": 0,
+      "lastCleared": "2026-09-29T14:11:00.373Z",
+      "holdouts": []
+    },
+    "user": {
+      "entered": "2026-09-29T14:11:00.373Z",
+      "initial": 0,
+      "cleared": 0,
+      "closed": 0,
+      "lastCleared": "2026-09-29T14:11:00.373Z",
+      "holdouts": []
+    },
+    "legacy": {
+      "entered": "2026-09-29T14:11:00.373Z",
+      "initial": 0,
+      "cleared": 0,
+      "closed": 0,
+      "lastCleared": "2026-09-29T14:11:00.373Z",
+      "holdouts": []
+    }
+  },
+  "concessions": []
+}

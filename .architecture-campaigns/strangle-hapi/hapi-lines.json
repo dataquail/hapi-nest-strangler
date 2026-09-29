@@ -1,0 +1,59 @@
+{
+  "version": 2,
+  "kind": "measure",
+  "campaign": "strangle-hapi",
+  "objective": "hapi-lines",
+  "created": "2026-09-29T14:11:00.373Z",
+  "direction": "down",
+  "sectors": {
+    "auth": {
+      "entered": "2026-09-29T14:11:00.373Z",
+      "initial": 1157,
+      "recorded": 1157,
+      "improved": 0,
+      "closed": null,
+      "lastImproved": "2026-09-29T14:11:00.373Z"
+    },
+    "billing": {
+      "entered": "2026-09-29T14:11:00.373Z",
+      "initial": 791,
+      "recorded": 791,
+      "improved": 0,
+      "closed": null,
+      "lastImproved": "2026-09-29T14:11:00.373Z"
+    },
+    "organization": {
+      "entered": "2026-09-29T14:11:00.373Z",
+      "initial": 1471,
+      "recorded": 1471,
+      "improved": 0,
+      "closed": null,
+      "lastImproved": "2026-09-29T14:11:00.373Z"
+    },
+    "todo": {
+      "entered": "2026-09-29T14:11:00.373Z",
+      "initial": 591,
+      "recorded": 591,
+      "improved": 0,
+      "closed": null,
+      "lastImproved": "2026-09-29T14:11:00.373Z"
+    },
+    "user": {
+      "entered": "2026-09-29T14:11:00.373Z",
+      "initial": 373,
+      "recorded": 373,
+      "improved": 0,
+      "closed": null,
+      "lastImproved": "2026-09-29T14:11:00.373Z"
+    },
+    "legacy": {
+      "entered": "2026-09-29T14:11:00.373Z",
+      "initial": 1474,
+      "recorded": 1474,
+      "improved": 0,
+      "closed": null,
+      "lastImproved": "2026-09-29T14:11:00.373Z"
+    }
+  },
+  "concessions": []
+}

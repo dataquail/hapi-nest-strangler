@@ -384,6 +384,151 @@ defs:
       external: [vitest, oxide.ts]
       allow: ["node:**", "~/authz/**"]
 
+# The strangler campaign (ADR-0035). One sector per hapi module, marked by
+# the `sector.ts` in its folder, which also claims the module's tests, its
+# migrations and the Nest module it becomes. Every other hapi file is the
+# legacy substrate, which stays at the first phase until the package goes.
+# Ledgers live in `.architecture-campaigns/`; `pnpm campaigns` reads them.
+ledger: .architecture-campaigns
+campaigns:
+  strangle-hapi:
+    title: Strangle the hapi API into the Nest server
+    why: >-
+      Every module but the wallet still lives on the hapi server, in the shape of a long-lived
+      codebase: services reaching each other directly, permission checks in route files, bookshelf
+      models over one public schema. Each module leaves by being rebuilt on the Nest server, and
+      this campaign is where that departure is counted.
+    how: >-
+      Move the module one phase at a time; the nudge names the holdouts nearest your change and
+      the phase the sector is at. Paydown belongs in its own commit.
+    owner: "@dataquail"
+    scope: ["~/legacy-api/**", "~/server/src/modules/**"]
+    legacy: "~/legacy-api/**"
+    perimeter:
+      marker: "~/legacy-api/src/application/*/sector.ts"
+    onTouch: ratchet
+    staleAfter: 30d
+    onComplete: remove
+    phases:
+      - id: fenced
+        intent: >-
+          The module names no sibling module: what it needs from a peer arrives through the
+          substrate, and its role checks live in its access file, not its routes.
+        objectives: [no-cross-module-reach, no-role-checks-in-routes]
+      - id: rebuilt
+        intent: The module exists on the Nest server in the hexagonal layout, with hapi still serving its routes.
+        objectives: [has-nest-module]
+      - id: routes-moved
+        intent: The web proxy sends the module's routes to the Nest server and the hapi routes are deleted.
+        objectives: [no-hapi-routes]
+      - id: data-moved
+        intent: The module's tables belong to its Nest schema and the bookshelf models are gone.
+        objectives: [no-hapi-models]
+      - id: gone
+        intent: Nothing of the module remains in the hapi package but its migration history.
+        objectives: [no-hapi-files]
+      - id: settled
+        intent: >-
+          Decide what the module's departure leaves in the substrate — its ACL entries, its
+          container ids, the shared public tables — and whether the substrate itself is next.
+    objectives:
+      no-cross-module-reach:
+        holdout: match
+        how: >-
+          Reach the peer through the substrate — a port under src/lib the container wires — not
+          by importing its folder or naming its factory id.
+        match:
+          all:
+            - path:
+                { file: "^packages/legacy-api/src/application/[^/]+/", fileNot: "\\.spec\\.ts$" }
+            - fn: "./campaigns/strangle-hapi.mjs#crossModuleReach"
+        probes:
+          fires:
+            - path: packages/legacy-api/src/application/todo/todo-service.ts
+              source: >-
+                import type UserService = require("../user/user-service");
+                TodoService["@require"] = ["bookshelf", "user/user-service"];
+          ignores:
+            - path: packages/legacy-api/src/application/todo/todo-service.ts
+              source: >-
+                import { problem } from "../../lib/problem";
+                import model = require("./todo-model");
+                TodoService["@require"] = ["bookshelf", "todo/todo-model"];
+            - path: packages/legacy-api/src/lib/access/acl.ts
+              source: 'import { userAccess } from "../../application/user/user-access";'
+      no-role-checks-in-routes:
+        holdout: match
+        how: >-
+          A route asks the ACL with `can(action, resource)`; the membership or role assertion
+          belongs in the module's access file.
+        match:
+          all:
+            - path: { file: "^packages/legacy-api/src/application/[^/]+/[^/]*route[^/]*\\.ts$" }
+            - syntax:
+                any:
+                  - pattern: "$U.isSuperAdmin()"
+                  - pattern: "$U.isMemberOf($$$)"
+                  - pattern: "$U.isAdminOf($$$)"
+        probes:
+          fires:
+            - path: packages/legacy-api/src/application/todo/todo-routes.ts
+              source: "const guard = (u) => u.isSuperAdmin() || u.isMemberOf(orgId);"
+          ignores:
+            - path: packages/legacy-api/src/application/todo/todo-access.ts
+              source: "const guard = (u) => u.isSuperAdmin() || u.isMemberOf(orgId);"
+            - path: packages/legacy-api/src/application/todo/todo-routes.ts
+              source: 'const pre = can("edit", "params.id");'
+      has-nest-module:
+        holdout: sector
+        how: Rebuild the module under packages/server/src/modules/ with its taxonomy and tests.
+        sector:
+          { has: { path: { file: "^packages/server/src/modules/[^/]+/[^/]+\\.module\\.ts$" } } }
+      no-hapi-routes:
+        holdout: file
+        how: Point the web proxy at the Nest server for these paths and delete the hapi route file.
+        match:
+          { path: { file: "^packages/legacy-api/src/application/[^/]+/[^/]*route[^/]*\\.ts$" } }
+        probes:
+          fires: [{ path: packages/legacy-api/src/application/todo/todo-routes.ts }]
+          ignores: [{ path: packages/legacy-api/src/application/todo/todo-service.ts }]
+      no-hapi-models:
+        holdout: file
+        how: Move the table into the module's Nest schema and delete the bookshelf model.
+        match: { path: { file: "^packages/legacy-api/src/application/[^/]+/[^/]*-model\\.ts$" } }
+        probes:
+          fires: [{ path: packages/legacy-api/src/application/todo/todo-model.ts }]
+          ignores: [{ path: packages/legacy-api/src/application/todo/todo-service.ts }]
+      no-hapi-files:
+        holdout: file
+        how: Delete what is left of the module in the hapi package; the marker and the migrations stay.
+        match:
+          path:
+            file: "^packages/legacy-api/"
+            fileNot: "(/sector\\.ts$|^packages/legacy-api/migrations/)"
+        probes:
+          fires: [{ path: packages/legacy-api/src/application/todo/todo-service.ts }]
+          ignores:
+            - { path: packages/legacy-api/src/application/todo/sector.ts }
+            - { path: packages/legacy-api/migrations/20260927000007_todos.ts }
+            - { path: packages/server/src/modules/todos/todos.module.ts }
+      hapi-lines:
+        how: The number only falls when hapi code is deleted; a rebuilt module on the Nest side weighs nothing.
+        measure: { fn: "./campaigns/strangle-hapi.mjs#hapiLines" }
+        direction: down
+        # A fix that adds a few lines to hapi code is not the count going the
+        # wrong way; past this much growth over the recorded value, it is.
+        tolerance: 20
+        probes:
+          fires:
+            [
+              {
+                path: packages/legacy-api/src/application/todo/todo-service.ts,
+                source: "a\n\nb\n",
+                value: 2,
+              },
+            ]
+          ignores: [{ path: packages/server/src/modules/todos/todos.module.ts, source: "a\n" }]
+
 # The tree, one file per package beside the package it governs. An `include` is
 # replaced whole by the node that file holds; the policy is still evaluated as
 # one, so an inbound rule and a repo-wide prohibition reach every file in the

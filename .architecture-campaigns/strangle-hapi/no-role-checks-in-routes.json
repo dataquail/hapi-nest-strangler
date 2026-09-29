@@ -1,0 +1,64 @@
+{
+  "version": 2,
+  "campaign": "strangle-hapi",
+  "objective": "no-role-checks-in-routes",
+  "created": "2026-09-29T14:11:00.373Z",
+  "sectors": {
+    "auth": {
+      "entered": "2026-09-29T14:11:00.373Z",
+      "initial": 1,
+      "cleared": 0,
+      "closed": 0,
+      "lastCleared": "2026-09-29T14:11:00.373Z",
+      "holdouts": [
+        "auth-routes.ts#authRoutes#54f63991"
+      ]
+    },
+    "billing": {
+      "entered": "2026-09-29T14:11:00.373Z",
+      "initial": 0,
+      "cleared": 0,
+      "closed": 0,
+      "lastCleared": "2026-09-29T14:11:00.373Z",
+      "holdouts": []
+    },
+    "organization": {
+      "entered": "2026-09-29T14:11:00.373Z",
+      "initial": 1,
+      "cleared": 0,
+      "closed": 0,
+      "lastCleared": "2026-09-29T14:11:00.373Z",
+      "holdouts": [
+        "organization-routes.ts#organizationRoutes#54f63991"
+      ]
+    },
+    "todo": {
+      "entered": "2026-09-29T14:11:00.373Z",
+      "initial": 2,
+      "cleared": 0,
+      "closed": 0,
+      "lastCleared": "2026-09-29T14:11:00.373Z",
+      "holdouts": [
+        "todo-route-helpers.ts#fromOwnOrganization#441f04dd",
+        "todo-route-helpers.ts#fromOwnOrganization#54f63991"
+      ]
+    },
+    "user": {
+      "entered": "2026-09-29T14:11:00.373Z",
+      "initial": 0,
+      "cleared": 0,
+      "closed": 0,
+      "lastCleared": "2026-09-29T14:11:00.373Z",
+      "holdouts": []
+    },
+    "legacy": {
+      "entered": "2026-09-29T14:11:00.373Z",
+      "initial": 0,
+      "cleared": 0,
+      "closed": 0,
+      "lastCleared": "2026-09-29T14:11:00.373Z",
+      "holdouts": []
+    }
+  },
+  "concessions": []
+}

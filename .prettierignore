@@ -9,3 +9,5 @@ pnpm-lock.yaml
 **/routeTree.gen.ts
 .next
 **/.astro/
+# Written by the architecture engine on every `objectives clear`; formatting it would make the next clear a diff.
+.architecture-campaigns/

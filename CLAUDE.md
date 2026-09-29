@@ -1,22 +1,23 @@
 # Project conventions
 
-**What this repository is.** A strangler-fig facsimile derived from `nest-domain-driven-hexagon`: an old hapi server (`packages/legacy-api`) owns everything but the wallet, the NestJS server (`packages/server`) owns the wallet and is reached from hapi over HTTP. ADR-0034 records the decisions. It exists to exercise the goodbones campaigns tooling. The plan is `docs/plan/strangler-facsimile-plan.md`; anything the tooling gets wrong or makes hard goes in `docs/plan/goodbones-findings.md` as it is hit. The hapi package deliberately does **not** follow the conventions below — it mirrors a legacy codebase (see the plan, §4) and has its own rule file.
+**What this repository is.** A strangler-fig facsimile derived from `nest-domain-driven-hexagon`: an old hapi server (`packages/legacy-api`) owns everything but the wallet, the NestJS server (`packages/server`) owns the wallet and is reached from hapi over HTTP. ADR-0034 records the decisions; ADR-0035 records the campaign that measures the strangling. It exists to exercise the goodbones campaigns tooling. The plan is `docs/plan/strangler-facsimile-plan.md`; anything the tooling gets wrong or makes hard goes in `docs/plan/goodbones-findings.md` as it is hit. The hapi package deliberately does **not** follow the conventions below — it mirrors a legacy codebase (see the plan, §4) and has its own rule file.
 
 The Nest server: NestJS + `@nestjs/cqrs`, hexagonal architecture, DDD, no Effect. Full rationale lives in `docs/adr/`; the working-memory digests live in `.claude/rules/`. ADR-0033 is the index of what changed in the port from the Effect edition.
 
 **Before working in an area, read its rule file** — `.claude/rules/` is not auto-loaded, so pull in the relevant one:
 
-| Working on…                                           | Read                                           | Backing ADRs                                  |
-| ----------------------------------------------------- | ---------------------------------------------- | --------------------------------------------- |
-| Adding/moving files in a server feature module        | `.claude/rules/server-module-layout.md`        | 0002, 0003, 0013, 0022–0024, 0032             |
-| New file kind, test, fake, stereotype (parity/layout) | `.claude/rules/server-file-taxonomy.md`        | 0008                                          |
-| Writing or running server tests                       | `.claude/rules/server-testing.md`              | 0009                                          |
-| Handlers, modules, event buses, SQL, auth (server)    | `.claude/rules/server-nest-and-persistence.md` | 0004, 0006, 0007, 0012, 0016–0017, 0020, 0033 |
-| Something compiles but fails at boot, or lints oddly  | `.claude/rules/nest-cqrs-notes.md`             | 0033                                          |
-| Frontend (`packages/web`, `packages/components`)      | `.claude/rules/frontend.md`                    | 0015, 0018, 0019, 0026                        |
-| Anything in `packages/legacy-api`                     | `.claude/rules/legacy-api.md`                  | 0034                                          |
-| Writing comments (any package)                        | `.claude/rules/comments.md`                    | —                                             |
-| Any architectural boundary, file naming, rule probes  | `.claude/rules/architecture-rules.md`          | 0008, 0025, 0027–0031                         |
+| Working on…                                           | Read                                              | Backing ADRs                                  |
+| ----------------------------------------------------- | ------------------------------------------------- | --------------------------------------------- |
+| Adding/moving files in a server feature module        | `.claude/rules/server-module-layout.md`           | 0002, 0003, 0013, 0022–0024, 0032             |
+| New file kind, test, fake, stereotype (parity/layout) | `.claude/rules/server-file-taxonomy.md`           | 0008                                          |
+| Writing or running server tests                       | `.claude/rules/server-testing.md`                 | 0009                                          |
+| Handlers, modules, event buses, SQL, auth (server)    | `.claude/rules/server-nest-and-persistence.md`    | 0004, 0006, 0007, 0012, 0016–0017, 0020, 0033 |
+| Something compiles but fails at boot, or lints oddly  | `.claude/rules/nest-cqrs-notes.md`                | 0033                                          |
+| Frontend (`packages/web`, `packages/components`)      | `.claude/rules/frontend.md`                       | 0015, 0018, 0019, 0026                        |
+| Anything in `packages/legacy-api`                     | `.claude/rules/legacy-api.md`                     | 0034                                          |
+| Writing comments (any package)                        | `.claude/rules/comments.md`                       | —                                             |
+| Any architectural boundary, file naming, rule probes  | `.claude/rules/architecture-rules.md`             | 0008, 0025, 0027–0031                         |
+| The strangler campaign, its ledgers, the nudge        | `.claude/rules/architecture-rules.md` (Campaigns) | 0035                                          |
 
 ## Monorepo map
 
@@ -43,13 +44,16 @@ The Nest server: NestJS + `@nestjs/cqrs`, hexagonal architecture, DDD, no Effect
 
 | Command                                                | What it runs                                                                                                                     |
 | ------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------- |
-| `pnpm check:all`                                       | lint + lint:rules + lint:edges + lint:architecture + check + test + build-storybook (the full gate)                              |
+| `pnpm check:all`                                       | lint + lint:rules + lint:edges + lint:architecture + campaigns:nudge + check + test + build-storybook (the full gate)            |
 | `pnpm check`                                           | `tsc -b` for every project, then builds contracts and type-checks web and components                                             |
 | `pnpm lint`                                            | oxlint (type-aware) — the whole architecture policy (`architecture/*`) plus the ordinary rules                                   |
 | `pnpm lint:rules`                                      | asserts each architectural rule still fires on a planted violation (ADR-0025)                                                    |
 | `pnpm lint:edges`                                      | asserts the architecture policy still refuses — and allows — the edges it should (ADR-0028)                                      |
 | `pnpm lint:architecture`                               | the same policy evaluated without a linter, plus the graph rules, the coverage floors, the conformance ceilings and the baseline |
 | `pnpm architecture:conformance`                        | the full conformance report; its ceilings live in `limits.conformance` in `architecture.yaml` and only ratchet down              |
+| `pnpm campaigns`                                       | the strangler campaign's status: each hapi module's phase and the holdouts left per objective (ADR-0035)                         |
+| `pnpm campaigns:nudge`                                 | what the working-tree diff touches in the campaign and what it owes; non-zero when a touched sector got worse                    |
+| `pnpm campaigns:clear`                                 | reconcile the ledgers with the code after paying a holdout down; never adds one                                                  |
 | `pnpm architecture:coverage`                           | how much of the tree each rule family reaches, and the tiers not yet tightened (ADR-0030)                                        |
 | `pnpm architecture:facts <file>`                       | what the parser reads from one file — edges, bindings, members, exports; write new rules against this                            |
 | `pnpm test`                                            | vitest **unit** suite (excludes `*.integration.test.ts`), no DB                                                                  |

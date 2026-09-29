@@ -1,0 +1,19 @@
+{
+  "version": 2,
+  "campaign": "strangle-hapi",
+  "objective": "has-nest-module",
+  "created": "2026-09-29T14:11:00.373Z",
+  "sectors": {
+    "user": {
+      "entered": "2026-09-29T14:11:00.373Z",
+      "initial": 1,
+      "cleared": 0,
+      "closed": 0,
+      "lastCleared": "2026-09-29T14:11:00.373Z",
+      "holdouts": [
+        "~"
+      ]
+    }
+  },
+  "concessions": []
+}

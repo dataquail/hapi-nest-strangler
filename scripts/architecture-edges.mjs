@@ -11,6 +11,11 @@
 // be visible in a diff.
 
 import {
+  campaignsExtension,
+  loadCampaignFunctions,
+  makeReportSourceLive,
+} from "@goodbones/campaigns";
+import {
   compileImportRules,
   decodeManifest,
   evaluateGraph,
@@ -30,8 +35,15 @@ const isFailure = (result) => result._tag === "Failure";
 
 // The same discovery and decode the two hosts run, so the edges are judged
 // against the manifest exactly as the plugin and the CLI read it.
+// The campaigns family is an extension of the decoder: without it the
+// `campaigns` and `ledger` keys are unknown and the manifest does not decode.
+// Its `fn` terms are imported first, as the two hosts do.
 const read = await readManifestFile(findManifestFile(repoRoot));
-const decoded = decodeManifest(read.configPath, read.manifest, { locate: read.locate });
+const { functions, manifest } = await loadCampaignFunctions(read.configPath, read.manifest);
+const decoded = decodeManifest(read.configPath, manifest, {
+  locate: read.locate,
+  extensions: [campaignsExtension({ functions, reports: makeReportSourceLive(repoRoot) })],
+});
 if (isFailure(decoded)) throw decoded.failure;
 const lowered = lowerManifest(decoded.success.manifest, [typescriptLanguage()]);
 const compiled = compileImportRules(lowered.imports);

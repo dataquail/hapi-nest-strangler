@@ -12,6 +12,9 @@ importers:
 
   .:
     devDependencies:
+      '@goodbones/campaigns':
+        specifier: 0.1.1-beta.3
+        version: 0.1.1-beta.3
       '@goodbones/cli':
         specifier: 0.1.0-beta.14
         version: 0.1.0-beta.14

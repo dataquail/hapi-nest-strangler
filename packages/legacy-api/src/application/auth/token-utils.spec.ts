@@ -27,6 +27,7 @@ describe("token-utils", () => {
     deepStrictEqual(decodePkcePayload(encoded), { state: "s", codeVerifier: "v" });
     deepStrictEqual(decodePkcePayload("%%%"), null);
     deepStrictEqual(decodePkcePayload(Buffer.from("{}").toString("base64url")), null);
+    deepStrictEqual(decodePkcePayload(Buffer.from('{"state":"s"}').toString("base64url")), null);
   });
 
   it("assembles tokens under the pat prefix", () => {

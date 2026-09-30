@@ -115,6 +115,8 @@ pnpm test:acceptance                              # Playwright: boots hapi, Nest
 
 The architecture policy lives in `architecture.yaml` plus one `architecture.yaml` per package and is evaluated by [goodbones](https://dataquail.github.io/goodbones) inside `pnpm lint` and `pnpm lint:architecture`. `pnpm architecture:explain <file>` says what governs a file; `.claude/rules/architecture-rules.md` explains the manifest.
 
+The strangling itself is a goodbones **campaign** in the same manifest ([ADR-0035](docs/adr/0035-the-strangler-campaign.md)): one sector per hapi module, six phases from `fenced` to `settled`, and a committed ledger per objective under `.architecture-campaigns/` that only shrinks. `pnpm campaigns` prints where each module stands; `pnpm campaigns:nudge` says what a diff owes; `pnpm campaigns:clear` records a paydown.
+
 ## Where to read next
 
 - `docs/adr/` — every decision, re-authored for this edition; start at [ADR-0033](docs/adr/0033-porting-from-effect-to-nest.md).

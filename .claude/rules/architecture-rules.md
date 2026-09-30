@@ -147,3 +147,14 @@ Write a new `members` or `surface` rule against `facts` output, not against what
 ## The plugin arrives built
 
 oxlint loads plugins with a bare `import()`, and `.oxlintrc.json` names `@goodbones/oxlint/plugin`. The published tarball carries compiled JavaScript, so no lint command builds anything. Bump the pin deliberately, then run `pnpm lint:rules` and `pnpm lint:edges`. Every `architecture/*` rule id — `imports`, `exports`, `members`, `structure`, `surface` — must be enabled in `.oxlintrc.json`.
+
+## Campaigns: the strangling, measured
+
+The `campaigns` key in the root manifest holds `strangle-hapi` (ADR-0035): the count of what is left of each hapi module, and the phases it moves through. The engine's reference is <https://dataquail.github.io/goodbones/campaigns/getting-started/introduction/>; what this repo owns is the campaign, its functions and its ledgers.
+
+- **Sectors** are the five hapi modules, each marked by `src/application/<m>/sector.ts`, whose exported `sector` object lists what the module owns on both servers. Everything else in the hapi package is the `legacy` sector, parked at the first phase.
+- **Phases** `fenced → rebuilt → routes-moved → data-moved → gone → settled (open)`, each recognised by the objectives it lists. A sector's phase is derived from its holdouts, never set.
+- **Objectives** are detectors with probes: two `fn` terms in `campaigns/strangle-hapi.mjs` (cross-module reach, hapi lines), one `syntax` term (role checks in routes), one sector `has` term (the Nest module exists), three `path` terms (routes, models, files left). The loader runs the probes; a detector that stops firing on its probe stops the policy loading.
+- **Ledgers** live in `.architecture-campaigns/strangle-hapi/`, one JSON per objective plus `plan.json` and `sectors/`. `pnpm campaigns:clear` shrinks them; `architecture objectives concede <campaign>/<objective> --reason "…"` is the only way they grow; a changed defined phase needs a `concessions` entry on the phase.
+- **The ratchet** is `onTouch: ratchet`: `architecture/campaigns` reports a new holdout in the editor, `pnpm lint:architecture` fails on it, and `pnpm campaigns:nudge` (in `check:all`) exits non-zero when a touched sector got worse. Paydown goes in its own commit, followed by `pnpm campaigns:clear`.
+- **Every script that decodes the manifest must pass `campaignsExtension`** (`scripts/architecture-edges.mjs` does), or `campaigns` and `ledger` are unknown keys. `@goodbones/campaigns` is pinned at the root for that reason.

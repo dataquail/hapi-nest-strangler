@@ -19,7 +19,10 @@ export const fromTodoOrganization = function (
   next: () => void,
 ) {
   if (err) throw err;
-  if (!resource || typeof resource.get !== "function") {  next();; return; }
+  if (!resource || typeof resource.get !== "function") {
+    next();
+    return;
+  }
   if (user.isMemberOf(resource.get("organization_id"))) {
     result(undefined, true);
     return;

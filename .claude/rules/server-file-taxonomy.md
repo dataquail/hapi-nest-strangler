@@ -29,7 +29,7 @@ An exemption is a `requiresNot` on the file node that would otherwise owe the si
 | `interface/events/*.event-adapter.ts`       | `interface/events/<base>.event-adapter.test.ts`                                                             |
 | `domain/ports/repositories/*.repository.ts` | in `infrastructure/repositories/`: `<base>-live.ts` + `<base>-fake.ts` + `<base>-live.integration.test.ts`  |
 | `domain/ports/clients/*.client.ts`          | in `infrastructure/clients/`: `<base>-live.ts` + `<base>-fake.ts` + `<base>-live.test.ts`                   |
-| `domain/ports/acl/*.acl.ts`                 | in `infrastructure/acl/`: `<base>-live.ts` + `<base>-fake.ts` + `<base>-live.test.ts`                       |
+| `domain/ports/acl/*.acl.ts`                 | in `infrastructure/acl/`: `<base>-live.ts` + `<base>-fake.ts` + `<base>-live.integration.test.ts`           |
 | module root `<feature>.command-handlers.ts` | `<feature>.handlers.test.ts` calling `assertHandlersCover` for commands and queries                         |
 
 Adapter parity is anchored on the **port** (not the adapter), so a port and its adapters share a base name. The naming conventions are the parity detectors — don't rename a file to dodge the rule, write the test.

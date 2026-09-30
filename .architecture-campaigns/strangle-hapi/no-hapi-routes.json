@@ -3,6 +3,19 @@
   "campaign": "strangle-hapi",
   "objective": "no-hapi-routes",
   "created": "2026-09-29T14:11:00.373Z",
-  "sectors": {},
+  "sectors": {
+    "todo": {
+      "entered": "2026-09-30T18:13:49.135Z",
+      "initial": 3,
+      "cleared": 0,
+      "closed": 0,
+      "lastCleared": "2026-09-30T18:13:49.135Z",
+      "holdouts": [
+        "todo-cli-routes.ts",
+        "todo-route-helpers.ts",
+        "todo-routes.ts"
+      ]
+    }
+  },
   "concessions": []
 }

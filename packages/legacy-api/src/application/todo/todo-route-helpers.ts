@@ -1,19 +1,8 @@
-import Boom from "@hapi/boom";
 import type { Request, ResponseToolkit } from "@hapi/hapi";
 
-import { currentUser } from "../../lib/access/current-user";
 import { asyncValidation } from "../../lib/hapi-async-validation";
 import Joi = require("../../lib/joi");
 import { problem } from "../../lib/problem";
-
-// Membership for the collection routes, checked here because the ACL only
-// sees a string resource for them. Super admins pass, as everywhere.
-export const fromOwnOrganization = (request: Request, h: ResponseToolkit) => {
-  const user = currentUser(request);
-  const organization = (request.params as any).orgId;
-  if (user.isSuperAdmin() || user.isMemberOf(organization.get("id"))) return h.continue;
-  return Boom.forbidden();
-};
 
 // A todo reached through another organization's path reads as absent, never as a leak.
 export const todoBelongsToOrganization =

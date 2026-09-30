@@ -5,12 +5,8 @@ import { resourceConstants } from "../../constants/acl/resource-constants";
 import { can } from "../../lib/access/can";
 import Joi = require("../../lib/joi");
 import type TodoService = require("./todo-service");
-import {
-  fromOwnOrganization,
-  orgAndTodoParams,
-  orgParams,
-  todoBelongsToOrganization,
-} from "./todo-route-helpers";
+import { fromOwnOrganization } from "./todo-access";
+import { orgAndTodoParams, orgParams, todoBelongsToOrganization } from "./todo-route-helpers";
 
 const { TODO } = resourceConstants;
 

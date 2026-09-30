@@ -1,8 +1,9 @@
 import { deepStrictEqual, throws } from "node:assert";
 
+import Boom from "@hapi/boom";
 import { describe, it, vi } from "vitest";
 
-import { fromTodoOrganization } from "./todo-access";
+import { fromOwnOrganization, fromTodoOrganization } from "./todo-access";
 
 const todo = { get: (key: string) => (key === "organization_id" ? "org-1" : undefined) };
 const userIn = (orgs: string[]) => ({ isMemberOf: (id: string) => orgs.includes(id) });
@@ -28,5 +29,21 @@ describe("fromTodoOrganization", () => {
     throws(() => {
       fromTodoOrganization(new Error("acl"), userIn([]), todo, "edit", result, next);
     });
+  });
+});
+
+describe("fromOwnOrganization", () => {
+  const requestBy = (user: object) =>
+    ({ auth: { credentials: { user } }, params: { orgId: { get: () => "org-1" } } }) as any;
+  const h = { continue: Symbol("continue") } as any;
+
+  it("continues for a member or a super admin and refuses anyone else", () => {
+    const member = { isSuperAdmin: () => false, isMemberOf: (id: string) => id === "org-1" };
+    const admin = { isSuperAdmin: () => true, isMemberOf: () => false };
+    const stranger = { isSuperAdmin: () => false, isMemberOf: () => false };
+    deepStrictEqual(fromOwnOrganization(requestBy(member), h), h.continue);
+    deepStrictEqual(fromOwnOrganization(requestBy(admin), h), h.continue);
+    const refused = fromOwnOrganization(requestBy(stranger), h);
+    deepStrictEqual(Boom.isBoom(refused) && refused.output.statusCode, 403);
   });
 });

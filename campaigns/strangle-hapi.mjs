@@ -43,10 +43,11 @@ export const crossModuleReach = ({ file, text }) => {
   return subjects;
 };
 
-// Non-blank lines a file adds to the hapi package; a file on the Nest side
-// weighs nothing, so rebuilding a module never reads as growth.
+// Non-blank lines a file adds to the hapi server's source. A test, a
+// migration or a file on the Nest side weighs nothing, so covering a module
+// or rebuilding it never reads as growth; only its production code does.
 /** @type {import("@goodbones/campaigns").CampaignMeasure} */
 export const hapiLines = ({ file, text }) =>
-  file.startsWith("packages/legacy-api/")
+  file.startsWith("packages/legacy-api/src/")
     ? text.split("\n").filter((line) => line.trim() !== "").length
     : 0;

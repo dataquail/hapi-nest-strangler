@@ -9,50 +9,50 @@
     "auth": {
       "entered": "2026-09-29T14:11:00.373Z",
       "initial": 1157,
-      "recorded": 1157,
-      "improved": 0,
+      "recorded": 749,
+      "improved": 408,
       "closed": null,
-      "lastImproved": "2026-09-29T14:11:00.373Z"
+      "lastImproved": "2026-09-30T14:20:26.933Z"
     },
     "billing": {
       "entered": "2026-09-29T14:11:00.373Z",
       "initial": 791,
-      "recorded": 791,
-      "improved": 0,
+      "recorded": 586,
+      "improved": 205,
       "closed": null,
-      "lastImproved": "2026-09-29T14:11:00.373Z"
+      "lastImproved": "2026-09-30T14:20:26.933Z"
     },
     "organization": {
       "entered": "2026-09-29T14:11:00.373Z",
       "initial": 1471,
-      "recorded": 1471,
-      "improved": 0,
+      "recorded": 955,
+      "improved": 516,
       "closed": null,
-      "lastImproved": "2026-09-29T14:11:00.373Z"
+      "lastImproved": "2026-09-30T14:20:26.933Z"
     },
     "todo": {
       "entered": "2026-09-29T14:11:00.373Z",
       "initial": 591,
-      "recorded": 591,
-      "improved": 0,
+      "recorded": 400,
+      "improved": 191,
       "closed": null,
-      "lastImproved": "2026-09-29T14:11:00.373Z"
+      "lastImproved": "2026-09-30T14:20:26.933Z"
     },
     "user": {
       "entered": "2026-09-29T14:11:00.373Z",
       "initial": 373,
-      "recorded": 373,
-      "improved": 0,
+      "recorded": 275,
+      "improved": 98,
       "closed": null,
-      "lastImproved": "2026-09-29T14:11:00.373Z"
+      "lastImproved": "2026-09-30T14:20:26.933Z"
     },
     "legacy": {
       "entered": "2026-09-29T14:11:00.373Z",
       "initial": 1474,
-      "recorded": 1474,
-      "improved": 0,
+      "recorded": 838,
+      "improved": 636,
       "closed": null,
-      "lastImproved": "2026-09-29T14:11:00.373Z"
+      "lastImproved": "2026-09-30T14:20:26.933Z"
     }
   },
   "concessions": []

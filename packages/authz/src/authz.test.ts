@@ -122,6 +122,13 @@ describe("Check combinators", () => {
   it("any denies with zero checks and all allows with zero checks", async () => {
     deepStrictEqual((await Check.any()(alice, undefined)).unwrap(), false);
     deepStrictEqual((await Check.all()(alice, undefined)).unwrap(), true);
+    const down: Check.Check<TestCaller, undefined, StoreDown> = async () =>
+      Err({ _tag: "StoreDown" });
+    const no: Check.Check<TestCaller, undefined, StoreDown> = async () => Ok(false);
+    const yes: Check.Check<TestCaller, undefined, StoreDown> = async () => Ok(true);
+    deepStrictEqual((await Check.any(down, yes)(alice, undefined)).isErr(), true);
+    deepStrictEqual((await Check.all(down, yes)(alice, undefined)).isErr(), true);
+    deepStrictEqual((await Check.all(yes, no)(alice, undefined)).unwrap(), false);
   });
 
   it("any short-circuits on the first true", async () => {

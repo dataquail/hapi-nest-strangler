@@ -496,28 +496,31 @@ children:
       "middlewares/":
         message: >-
           platform/middlewares/ holds the guards an endpoint names — the user guard every
-          private endpoint will name, and the inter-service guard the internal API names — and
-          the Authenticator that resolves a user credential through the auth module, the one
-          part of the kernel that legitimately names a module, and only through its platform
-          surface.
+          private endpoint names, and the inter-service guard the internal API names — and
+          the Authenticator that resolves a user credential. While the legacy API owns
+          sign-in, the live reads the session and API-token rows it wrote in the shared
+          database (ADR-0034); when the auth module moves across, the live names it through
+          its platform surface instead.
         imports:
           reset: true
           message: >-
             A guard names only a port or the environment, because every endpoint names its
-            guard at decoration time and the auth module's own endpoints are among them. The
-            Authenticator's live resolves the caller before any endpoint runs, so it names the
-            auth module through its platform surface — never past it — plus the buses, the
-            cookie codec, the contracts that define the caller, and the environment. The
-            inter-service guard verifies the shared-secret token with jose.
-          external: ["@nestjs/common", cookie, express, jose]
+            guard at decoration time and the auth module's own endpoints will be among them.
+            The Authenticator's live resolves the caller before any endpoint runs: it names
+            the database binding and the legacy row schemas, the cookie codec, the contracts
+            that define the caller, and the environment. The inter-service guard verifies the
+            shared-secret token with jose.
+          external: ["@nestjs/common", cookie, express, jose, zod]
           allow:
+            - "node:**"
             - "@/common/**"
             - "@/platform/auth/**"
-            - "@/platform/cqrs/command-bus.ts"
-            - "@/platform/cqrs/query-bus.ts"
+            - "@/platform/database/**"
             - "@/platform/http/**"
-            - "@/modules/*/*.platform.ts"
+            - "@/platform/ids/**"
+            - "@/platform/translate-database-errors.ts"
             - "~/contracts/**"
+            - "~/database/**"
         children:
           "*.guard.ts":
             imports:
@@ -526,10 +529,14 @@ children:
                   message: >-
                     The guard is named at decoration time by every private endpoint, the auth
                     module's own among them, so a module surface named here is an import cycle
-                    at load. It depends on the Authenticator port; the live behind that port is
-                    the file that names the auth module.
+                    at load. It depends on the Authenticator port; only the live behind that
+                    port may name a store or a module.
           "*-live.ts": {}
-          "*.test.ts": { use: server-unit-test-file }
+          # Two patterns that both select a file both apply, so the unit
+          # pattern names the guards and leaves the live's test to the
+          # integration pattern.
+          "*.guard.test.ts": { use: server-unit-test-file }
+          "*.integration.test.ts": { use: server-integration-test-file }
 
       "persistence/":
         message: >-
@@ -1393,6 +1400,7 @@ children:
         - "@nestjs/common"
         - "@nestjs/testing"
       allow:
+        - "node:**"
         - "@/common/**"
         - "@/platform/**"
         - "@/modules/*/*.platform.ts"

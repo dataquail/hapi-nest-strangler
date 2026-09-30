@@ -91,7 +91,7 @@ limits:
   # used at fewer than half its nodes). Set each to what `architecture
   # conformance` reports; lower one when the number falls, never raise one.
   # Cycles are held at zero by the `no-cycles` graph rule below.
-  conformance: { residue: 0, vacant: 31, slack: 29, concentration: 0 }
+  conformance: { residue: 0, vacant: 29, slack: 20, concentration: 0 }
 
 aliases:
   "@": packages/server/src

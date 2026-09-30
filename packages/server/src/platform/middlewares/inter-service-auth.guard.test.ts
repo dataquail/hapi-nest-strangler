@@ -19,6 +19,7 @@ const guard = new InterServiceAuthGuard(
   EnvVars.load({
     DATABASE_URL: "postgres://unused",
     INTER_SERVICE_JWT_SECRET: TEST_SERVICE_SECRET,
+    SESSION_COOKIE_SECRET: "test-session-cookie-secret",
   }),
 );
 

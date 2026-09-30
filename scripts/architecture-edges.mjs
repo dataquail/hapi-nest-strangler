@@ -405,6 +405,11 @@ const REFUSED = [
     `${M}/alpha/alpha.platform.ts`,
   ],
   [
+    "the Authenticator live naming a module surface while the legacy API owns sign-in",
+    `${P}/middlewares/authenticator-live.ts`,
+    `${M}/alpha/alpha.platform.ts`,
+  ],
+  [
     "persistence → a module",
     `${P}/persistence/criteria-to-sql.ts`,
     `${M}/alpha/domain/one/one.root.ts`,
@@ -1016,11 +1021,6 @@ const ALLOWED = [
     "the cqrs runtime using the event-bus factory (LEGAL)",
     `${P}/cqrs/cqrs-runtime.ts`,
     "packages/event-bus/src/index.ts",
-  ],
-  [
-    "the Authenticator live using the auth module surface (LEGAL)",
-    `${P}/middlewares/authenticator-live.ts`,
-    `${M}/auth/auth.platform.ts`,
   ],
   [
     "the guard using the Authenticator port (LEGAL)",

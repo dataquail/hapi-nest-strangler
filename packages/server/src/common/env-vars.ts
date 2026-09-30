@@ -12,6 +12,14 @@ const EnvSchema = z.object({
 
   // Shared with the legacy API, which mints the HS256 token every call carries.
   INTER_SERVICE_JWT_SECRET: z.string().min(32),
+
+  // Shared with the legacy API, which issues the session cookie and the API
+  // tokens this server verifies against the rows it wrote.
+  SESSION_COOKIE_NAME: z.string().default("session"),
+  SESSION_COOKIE_SECRET: z.string().min(1),
+  SESSION_TTL_SECONDS: optionalNumber(3600),
+  SESSION_TOUCH_THRESHOLD_SECONDS: optionalNumber(60),
+  API_TOKEN_TOUCH_THRESHOLD_SECONDS: optionalNumber(60),
 });
 
 type ParsedEnv = z.infer<typeof EnvSchema>;

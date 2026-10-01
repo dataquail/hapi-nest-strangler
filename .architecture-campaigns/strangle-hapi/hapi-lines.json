@@ -33,7 +33,7 @@
     "todo": {
       "entered": "2026-09-29T14:11:00.373Z",
       "initial": 591,
-      "recorded": 432,
+      "recorded": 454,
       "improved": 191,
       "closed": null,
       "lastImproved": "2026-09-30T14:20:26.933Z"
@@ -63,6 +63,14 @@
       "from": 400,
       "to": 432,
       "reason": "The todo sector is dual-written (mirrored phase): the create forward and the backend-client todos domain are legacy code that grows before it goes; it leaves with the sector at served."
+    },
+    {
+      "sector": "todo",
+      "at": "2026-10-01T15:13:46.882Z",
+      "by": "zweidenbach@gmail.com",
+      "from": 432,
+      "to": 454,
+      "reason": "The last three todo writes are mirrored (update, complete, delete): the emits are legacy code that grows before it goes with the sector at served."
     }
   ]
 }

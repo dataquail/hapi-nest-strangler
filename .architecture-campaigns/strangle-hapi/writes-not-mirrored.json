@@ -7,14 +7,10 @@
     "todo": {
       "entered": "2026-10-01T14:23:36.624Z",
       "initial": 4,
-      "cleared": 0,
+      "cleared": 3,
       "closed": 0,
-      "lastCleared": "2026-10-01T14:23:36.624Z",
-      "holdouts": [
-        "todo-service.ts#completeTodo#55702887",
-        "todo-service.ts#deleteTodo#c6c214ac",
-        "todo-service.ts#updateTodo#228fe77d"
-      ]
+      "lastCleared": "2026-10-01T15:13:47.723Z",
+      "holdouts": []
     }
   },
   "concessions": [

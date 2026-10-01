@@ -79,6 +79,35 @@ export const startFakeWalletServer = async (sharedSecret: string) => {
           .code(201);
       },
     },
+    {
+      method: "PUT",
+      path: "/internal/orgs/{organizationId}/todos/{id}",
+      handler: async (request, h) => {
+        const ok = await record(request);
+        if (!ok) return h.response({ _tag: "Unauthorized" }).code(401);
+        const { completed, title } = request.payload as { title: string; completed: boolean };
+        const { id, organizationId } = request.params;
+        return h.response({ id, organizationId, title, completed }).code(200);
+      },
+    },
+    {
+      method: "POST",
+      path: "/internal/orgs/{organizationId}/todos/{id}/complete",
+      handler: async (request, h) => {
+        const ok = await record(request);
+        if (!ok) return h.response({ _tag: "Unauthorized" }).code(401);
+        const { id, organizationId } = request.params;
+        return h.response({ id, organizationId, title: "", completed: true }).code(200);
+      },
+    },
+    {
+      method: "DELETE",
+      path: "/internal/orgs/{organizationId}/todos/{id}",
+      handler: async (request, h) => {
+        const ok = await record(request);
+        return h.response().code(ok ? 204 : 401);
+      },
+    },
   ]);
   await server.start();
 

@@ -10,7 +10,6 @@ import invitationModel from "./organization/invitation-model";
 import membershipModel from "./organization/membership-model";
 import organizationModel from "./organization/organization-model";
 import organizationRoleModel from "./organization/organization-role-model";
-import todoModel from "./todo/todo-model";
 import roleModel from "./user/role-model";
 import userModel from "./user/user-model";
 
@@ -29,7 +28,6 @@ export const models: Array<{ name: string; model: ModelFactory }> = [
   { name: "membership", model: membershipModel },
   { name: "organizationRole", model: organizationRoleModel },
   { name: "invitation", model: invitationModel },
-  { name: "todo", model: todoModel },
   { name: "subscription", model: subscriptionModel },
   { name: "webhookEvent", model: webhookEventModel },
 ];

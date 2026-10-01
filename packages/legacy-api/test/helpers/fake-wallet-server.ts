@@ -10,14 +10,15 @@ type Recorded = {
   tokenValid: boolean;
 };
 
-// Stands in for the Nest server's internal wallet API on a fixed port:
-// records every call, verifies the inter-service token the way the real
-// guard does, and can be armed to refuse the next create.
+// Stands in for the Nest server's internal API on a fixed port: records every
+// call, verifies the inter-service token the way the real guard does, and can
+// be armed to refuse the next wallet create or the todo mirrors.
 export const startFakeWalletServer = async (sharedSecret: string) => {
   const { jwtVerify } = await import("jose");
   const key = new TextEncoder().encode(sharedSecret);
   const calls: Recorded[] = [];
   let refuseCreates = false;
+  let refuseTodoMirrors = false;
 
   const record = async (request: Hapi.Request) => {
     const authorization = String(request.headers.authorization ?? "");
@@ -64,6 +65,20 @@ export const startFakeWalletServer = async (sharedSecret: string) => {
         return h.response().code(ok ? 204 : 401);
       },
     },
+    {
+      method: "POST",
+      path: "/internal/orgs/{organizationId}/todos",
+      handler: async (request, h) => {
+        const ok = await record(request);
+        if (!ok) return h.response({ _tag: "Unauthorized" }).code(401);
+        if (refuseTodoMirrors)
+          return h.response({ _tag: "ServiceUnavailable", message: "todo store down" }).code(503);
+        const { id, title } = request.payload as { id: string; title: string };
+        return h
+          .response({ id, organizationId: request.params.organizationId, title, completed: false })
+          .code(201);
+      },
+    },
   ]);
   await server.start();
 
@@ -71,6 +86,18 @@ export const startFakeWalletServer = async (sharedSecret: string) => {
     calls,
     refuseNextCreates: (value: boolean) => {
       refuseCreates = value;
+    },
+    refuseTodoMirrors: (value: boolean) => {
+      refuseTodoMirrors = value;
+    },
+    // The mirror runs after the response, so a test waits for the call to land.
+    waitForCall: async (predicate: (call: Recorded) => boolean): Promise<Recorded> => {
+      for (let attempt = 0; attempt < 50; attempt += 1) {
+        const found = calls.find(predicate);
+        if (found) return found;
+        await new Promise((resolve) => setTimeout(resolve, 20));
+      }
+      throw new Error("the fake Nest server never received the expected call");
     },
     stop: () => server.stop(),
   };

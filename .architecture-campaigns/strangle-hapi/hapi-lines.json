@@ -33,7 +33,7 @@
     "todo": {
       "entered": "2026-09-29T14:11:00.373Z",
       "initial": 591,
-      "recorded": 400,
+      "recorded": 432,
       "improved": 191,
       "closed": null,
       "lastImproved": "2026-09-30T14:20:26.933Z"
@@ -55,5 +55,14 @@
       "lastImproved": "2026-09-30T14:20:26.933Z"
     }
   },
-  "concessions": []
+  "concessions": [
+    {
+      "sector": "todo",
+      "at": "2026-10-01T14:52:57.700Z",
+      "by": "zweidenbach@gmail.com",
+      "from": 400,
+      "to": 432,
+      "reason": "The todo sector is dual-written (mirrored phase): the create forward and the backend-client todos domain are legacy code that grows before it goes; it leaves with the sector at served."
+    }
+  ]
 }

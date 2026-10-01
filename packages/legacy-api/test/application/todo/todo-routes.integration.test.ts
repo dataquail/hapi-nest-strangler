@@ -52,6 +52,11 @@ describe.sequential("todo routes (integration)", () => {
     deepStrictEqual(created.statusCode, 201);
     const todo = body(created);
     deepStrictEqual(todo.completed, false);
+    const mirrored = await wallets.waitForCall(
+      (call) => call.method === "POST" && call.path === `/internal/orgs/${orgId}/todos`,
+    );
+    deepStrictEqual(mirrored.tokenValid, true);
+    deepStrictEqual(mirrored.payload, { id: todo.id, title: "Buy milk" });
 
     const listed = body(
       await server.inject({ method: "GET", url: `/orgs/${orgId}/todos`, headers: owner.headers }),
@@ -211,5 +216,27 @@ describe.sequential("todo routes (integration)", () => {
       ).statusCode,
       204,
     );
+  });
+
+  it("still answers 201 when the Nest server refuses the mirror", async () => {
+    const owner = await signedInAs("owner@example.com");
+    const orgId = await createOrg(owner);
+    wallets.refuseTodoMirrors(true);
+    try {
+      const created = await server.inject({
+        method: "POST",
+        url: `/orgs/${orgId}/todos`,
+        headers: owner.headers,
+        payload: { title: "Unmirrored" },
+      });
+      deepStrictEqual(created.statusCode, 201);
+      const attempted = await wallets.waitForCall(
+        (call) => call.path === `/internal/orgs/${orgId}/todos`,
+      );
+      deepStrictEqual(attempted.payload, { id: body(created).id, title: "Unmirrored" });
+      deepStrictEqual((await getKnex()("todos")).length, 1);
+    } finally {
+      wallets.refuseTodoMirrors(false);
+    }
   });
 });

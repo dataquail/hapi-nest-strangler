@@ -1,6 +1,9 @@
+import type { Server } from "@hapi/hapi";
 import type Bookshelf from "bookshelf";
 import { randomUUID } from "crypto";
 import type { Knex } from "knex";
+
+import { mirrorEvents } from "../../constants/mirror-events";
 
 type TodoRow = {
   id: string;
@@ -15,9 +18,11 @@ const toJson = (row: TodoRow) => ({ id: row.id, title: row.title, completed: row
 
 class TodoService {
   public bookshelf: Bookshelf;
+  private server: Server;
 
-  constructor(bookshelf: Bookshelf) {
+  constructor(bookshelf: Bookshelf, server: Server) {
     this.bookshelf = bookshelf;
+    this.server = server;
   }
 
   // @types/bookshelf is typed against knex 0.21; the instance is knex 2.
@@ -43,6 +48,11 @@ class TodoService {
       updated_at: now,
     };
     await this.knex("todos").insert(row);
+    this.server.events.emit(mirrorEvents.TODO_CREATED, {
+      organizationId: row.organization_id,
+      id: row.id,
+      title: row.title,
+    });
     return toJson(row);
   }
 
@@ -70,6 +80,6 @@ class TodoService {
 }
 
 TodoService["@singleton"] = true;
-TodoService["@require"] = ["bookshelf"];
+TodoService["@require"] = ["bookshelf", "server"];
 
 export = TodoService;

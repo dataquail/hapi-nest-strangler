@@ -55,17 +55,17 @@ The first sector to move showed the plan's middle was shaped for a shared table:
 
 **Nine phases, seven defined, one attested, one open.**
 
-| Phase          | Recognised by                                                                                                                                                                                                        |
-| -------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `fenced`       | unchanged                                                                                                                                                                                                            |
-| `rebuilt`      | unchanged: `has-nest-module`                                                                                                                                                                                         |
-| `mirrored`     | `has-internal-write-api` — a Nest endpoint naming the inter-service guard; `writes-not-mirrored` — a knex `insert`/`update`/`del` in a hapi service method that makes no backend-client call, counted until `served` |
-| `backfilled`   | attested: no detector sees a backfill run, so whoever ran it records it with `campaigns attest`                                                                                                                      |
-| `served`       | `has-nest-endpoints` — a Nest endpoint naming the user guard; `routes-still-local` — a hapi route whose `handler:` is not `proxyToNest(...)`; `legacy-writes` — any knex write left in a hapi service                |
-| `routes-moved` | unchanged: `no-hapi-routes`                                                                                                                                                                                          |
-| `data-moved`   | `no-hapi-models`, and `legacy-table-dropped` — a `*_drop_*` migration in the legacy folder, since the table is dropped rather than moved                                                                             |
-| `gone`         | unchanged: `no-hapi-files`                                                                                                                                                                                           |
-| `settled`      | open, unchanged                                                                                                                                                                                                      |
+| Phase          | Recognised by                                                                                                                                                                                                 |
+| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `fenced`       | unchanged                                                                                                                                                                                                     |
+| `rebuilt`      | unchanged: `has-nest-module`                                                                                                                                                                                  |
+| `mirrored`     | `has-internal-write-api` — a Nest endpoint naming the inter-service guard; `writes-not-mirrored` — a knex `insert`/`update`/`del` in a hapi service method that emits no mirror event, counted until `served` |
+| `backfilled`   | attested: no detector sees a backfill run, so whoever ran it records it with `campaigns attest`                                                                                                               |
+| `served`       | `has-nest-endpoints` — a Nest endpoint naming the user guard; `routes-still-local` — a hapi route whose `handler:` is not `proxyToNest(...)`; `legacy-writes` — any knex write left in a hapi service         |
+| `routes-moved` | unchanged: `no-hapi-routes`                                                                                                                                                                                   |
+| `data-moved`   | `no-hapi-models`, and `legacy-table-dropped` — a `*_drop_*` migration in the legacy folder, since the table is dropped rather than moved                                                                      |
+| `gone`         | unchanged: `no-hapi-files`                                                                                                                                                                                    |
+| `settled`      | open, unchanged                                                                                                                                                                                               |
 
 **`mirrored` advises instead of ratcheting.** The legacy module grows there by design — every write gains a forward — so the phase carries `onTouch: advise` and the campaign-wide ratchet resumes at `served`.
 

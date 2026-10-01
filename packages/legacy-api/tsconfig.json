@@ -22,6 +22,7 @@
     "manifest.ts",
     "bootstrap.ts",
     "domain-event-handler-plugin.ts",
+    "mirror-event-handler-plugin.ts",
     "config.ts",
     "load-env.ts",
     "knexfile.ts",

@@ -27,7 +27,6 @@ const makeKnex = (options: { failCommit?: boolean } = {}) => {
 const makeService = (knex: any, wallets: { create: any; remove: any }) => {
   const server = { events: { emit: vi.fn() } };
   return new OrganizationService({ knex } as any, server as any, {} as any, {
-    todos: { complete: vi.fn(), create: vi.fn(), remove: vi.fn(), update: vi.fn() },
     wallets: { ...wallets, get: vi.fn() },
   });
 };

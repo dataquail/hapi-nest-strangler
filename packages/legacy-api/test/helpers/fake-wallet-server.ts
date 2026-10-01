@@ -13,15 +13,15 @@ type Recorded = {
 
 type Canned = { status: number; body: unknown };
 
-// Stands in for the Nest server's internal API on a fixed port: records every
-// call, verifies the inter-service token the way the real guard does, and can
-// be armed to refuse the next wallet create or the todo mirrors.
+// Stands in for the Nest server on a fixed port: records every call, verifies
+// the inter-service token the way the real guard does, can be armed to refuse
+// the next wallet create, and relays whatever a test arms for the user-facing
+// routes the legacy API proxies to it.
 export const startFakeWalletServer = async (sharedSecret: string) => {
   const { jwtVerify } = await import("jose");
   const key = new TextEncoder().encode(sharedSecret);
   const calls: Recorded[] = [];
   let refuseCreates = false;
-  let refuseTodoMirrors = false;
 
   const record = async (request: Hapi.Request) => {
     const authorization = String(request.headers.authorization ?? "");
@@ -81,49 +81,6 @@ export const startFakeWalletServer = async (sharedSecret: string) => {
         return h.response().code(ok ? 204 : 401);
       },
     },
-    {
-      method: "POST",
-      path: "/internal/orgs/{organizationId}/todos",
-      handler: async (request, h) => {
-        const ok = await record(request);
-        if (!ok) return h.response({ _tag: "Unauthorized" }).code(401);
-        if (refuseTodoMirrors)
-          return h.response({ _tag: "ServiceUnavailable", message: "todo store down" }).code(503);
-        const { id, title } = request.payload as { id: string; title: string };
-        return h
-          .response({ id, organizationId: request.params.organizationId, title, completed: false })
-          .code(201);
-      },
-    },
-    {
-      method: "PUT",
-      path: "/internal/orgs/{organizationId}/todos/{id}",
-      handler: async (request, h) => {
-        const ok = await record(request);
-        if (!ok) return h.response({ _tag: "Unauthorized" }).code(401);
-        const { completed, title } = request.payload as { title: string; completed: boolean };
-        const { id, organizationId } = request.params;
-        return h.response({ id, organizationId, title, completed }).code(200);
-      },
-    },
-    {
-      method: "POST",
-      path: "/internal/orgs/{organizationId}/todos/{id}/complete",
-      handler: async (request, h) => {
-        const ok = await record(request);
-        if (!ok) return h.response({ _tag: "Unauthorized" }).code(401);
-        const { id, organizationId } = request.params;
-        return h.response({ id, organizationId, title: "", completed: true }).code(200);
-      },
-    },
-    {
-      method: "DELETE",
-      path: "/internal/orgs/{organizationId}/todos/{id}",
-      handler: async (request, h) => {
-        const ok = await record(request);
-        return h.response().code(ok ? 204 : 401);
-      },
-    },
   ]);
   await server.start();
 
@@ -131,9 +88,6 @@ export const startFakeWalletServer = async (sharedSecret: string) => {
     calls,
     refuseNextCreates: (value: boolean) => {
       refuseCreates = value;
-    },
-    refuseTodoMirrors: (value: boolean) => {
-      refuseTodoMirrors = value;
     },
     userApiAnswers: (status: number, body: unknown) => {
       userApiAnswer = { status, body };

@@ -28,7 +28,6 @@ export const isBackendClientError = (error: unknown): error is BackendClientErro
 export type HttpClient = {
   get(path: string): Promise<unknown>;
   post(path: string, body: unknown): Promise<unknown>;
-  put(path: string, body: unknown): Promise<unknown>;
   delete(path: string): Promise<unknown>;
 };
 
@@ -67,7 +66,6 @@ export const createHttpClient = ({ authenticate, baseUrl }: Options): HttpClient
   return {
     get: (path) => request("GET", path),
     post: (path, body) => request("POST", path, body),
-    put: (path, body) => request("PUT", path, body),
     delete: (path) => request("DELETE", path),
   };
 };

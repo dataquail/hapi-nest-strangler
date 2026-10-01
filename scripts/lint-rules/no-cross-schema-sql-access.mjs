@@ -22,6 +22,11 @@ import { isTestFile } from "./is-test-file.mjs";
 // here owns the schema named after its folder.
 const SCHEMA_BY_MODULE = { role: "platform" };
 
+// The legacy API's tables, which an ACL adapter may read while the bounded
+// context it fronts has not moved across (ADR-0034); nothing else may.
+const LEGACY_SCHEMA = "public";
+const ACL_LIVE = /\/infrastructure\/acl\/[^/]+\.acl-live\.ts$/;
+
 // Set-returning functions and values-lists are not tables, so a bare name here
 // is not an unqualified table reference.
 const NOT_A_TABLE = new Set(["unnest", "values", "generate_series", "jsonb_to_recordset"]);
@@ -97,6 +102,7 @@ export default {
             continue;
           }
           if (schema.toLowerCase() === ownSchema) continue;
+          if (schema.toLowerCase() === LEGACY_SCHEMA && ACL_LIVE.test(context.filename)) continue;
           const key = `${schema}.${name}`;
           if (reported.has(key)) continue;
           reported.add(key);

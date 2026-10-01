@@ -229,6 +229,54 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/internal/orgs/{organizationId}/todos": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations["internalTodos.create"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/internal/orgs/{organizationId}/todos/{id}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put: operations["internalTodos.update"];
+    post?: never;
+    delete: operations["internalTodos.delete"];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/internal/orgs/{organizationId}/todos/{id}/complete": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations["internalTodos.complete"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/internal/wallets": {
     parameters: {
       query?: never;
@@ -651,6 +699,23 @@ export interface components {
       expires_at: string | null;
       /** @enum {string} */
       token_type: "Bearer";
+    };
+    InternalCreateTodoPayload: {
+      /** Format: uuid */
+      id: string;
+      title: string;
+    };
+    InternalTodo: {
+      completed: boolean;
+      /** Format: uuid */
+      id: string;
+      /** Format: uuid */
+      organizationId: string;
+      title: string;
+    };
+    InternalUpdateTodoPayload: {
+      completed: boolean;
+      title: string;
     };
     InviteUserPayload: {
       email: string;
@@ -1648,6 +1713,259 @@ export interface operations {
           "application/json": {
             /** @enum {string} */
             _tag: "CliTodoNotFoundError";
+            message: string;
+          };
+        };
+      };
+      /** @description The server is not ready to handle the request */
+      503: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @enum {string} */
+            _tag: "ServiceUnavailable";
+            message?: string;
+          };
+        };
+      };
+    };
+  };
+  "internalTodos.create": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        organizationId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: {
+      content: {
+        "application/json": components["schemas"]["InternalCreateTodoPayload"];
+      };
+    };
+    responses: {
+      /** @description Success */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["InternalTodo"];
+        };
+      };
+      /** @description Authentication is required and has failed or has not been provided */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @enum {string} */
+            _tag: "Unauthorized";
+            message?: string;
+          };
+        };
+      };
+      /** @description A todo with that id has already been mirrored to this server */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @enum {string} */
+            _tag: "InternalTodoAlreadyExistsError";
+            message: string;
+          };
+        };
+      };
+      /** @description The server is not ready to handle the request */
+      503: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @enum {string} */
+            _tag: "ServiceUnavailable";
+            message?: string;
+          };
+        };
+      };
+    };
+  };
+  "internalTodos.update": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+        organizationId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: {
+      content: {
+        "application/json": components["schemas"]["InternalUpdateTodoPayload"];
+      };
+    };
+    responses: {
+      /** @description Success */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["InternalTodo"];
+        };
+      };
+      /** @description Authentication is required and has failed or has not been provided */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @enum {string} */
+            _tag: "Unauthorized";
+            message?: string;
+          };
+        };
+      };
+      /** @description No todo with that id in this organization has been mirrored to this server */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @enum {string} */
+            _tag: "InternalTodoNotFoundError";
+            message: string;
+          };
+        };
+      };
+      /** @description The server is not ready to handle the request */
+      503: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @enum {string} */
+            _tag: "ServiceUnavailable";
+            message?: string;
+          };
+        };
+      };
+    };
+  };
+  "internalTodos.delete": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+        organizationId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description No content */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Authentication is required and has failed or has not been provided */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @enum {string} */
+            _tag: "Unauthorized";
+            message?: string;
+          };
+        };
+      };
+      /** @description No todo with that id in this organization has been mirrored to this server */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @enum {string} */
+            _tag: "InternalTodoNotFoundError";
+            message: string;
+          };
+        };
+      };
+      /** @description The server is not ready to handle the request */
+      503: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @enum {string} */
+            _tag: "ServiceUnavailable";
+            message?: string;
+          };
+        };
+      };
+    };
+  };
+  "internalTodos.complete": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+        organizationId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Success */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["InternalTodo"];
+        };
+      };
+      /** @description Authentication is required and has failed or has not been provided */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @enum {string} */
+            _tag: "Unauthorized";
+            message?: string;
+          };
+        };
+      };
+      /** @description No todo with that id in this organization has been mirrored to this server */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @enum {string} */
+            _tag: "InternalTodoNotFoundError";
             message: string;
           };
         };

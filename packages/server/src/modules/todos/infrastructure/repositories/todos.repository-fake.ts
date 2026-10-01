@@ -1,6 +1,6 @@
 import { Err, Ok, type Result } from "oxide.ts";
 
-import { TodoNotFound } from "@/modules/todos/domain/todo/todo.errors.js";
+import { TodoAlreadyExists, TodoNotFound } from "@/modules/todos/domain/todo/todo.errors.js";
 import type { TodoId } from "@/modules/todos/domain/todo/todo.id.js";
 import type { TodoRoot } from "@/modules/todos/domain/todo/todo.root.js";
 import { TodosRepository } from "@/modules/todos/domain/todo/todos.repository.js";
@@ -11,7 +11,12 @@ import type { OrganizationId } from "@/platform/ids/organization-id.js";
 export class TodosRepositoryFake extends TodosRepository {
   private readonly store = new Map<TodoId, TodoRoot>();
 
-  public insertOne(todo: TodoRoot): Promise<Result<void, PersistenceUnavailable>> {
+  public insertOne(
+    todo: TodoRoot,
+  ): Promise<Result<void, TodoAlreadyExists | PersistenceUnavailable>> {
+    if (this.store.has(todo.id)) {
+      return Promise.resolve(Err(new TodoAlreadyExists({ todoId: todo.id })));
+    }
     this.store.set(todo.id, todo);
     return Promise.resolve(Ok(undefined));
   }

@@ -49,7 +49,7 @@
     "legacy": {
       "entered": "2026-09-29T14:11:00.373Z",
       "initial": 1474,
-      "recorded": 838,
+      "recorded": 899,
       "improved": 636,
       "closed": null,
       "lastImproved": "2026-09-30T14:20:26.933Z"
@@ -71,6 +71,14 @@
       "from": 432,
       "to": 454,
       "reason": "The last three todo writes are mirrored (update, complete, delete): the emits are legacy code that grows before it goes with the sector at served."
+    },
+    {
+      "sector": "legacy",
+      "at": "2026-10-01T15:36:25.768Z",
+      "by": "zweidenbach@gmail.com",
+      "from": 838,
+      "to": 899,
+      "reason": "The legacy substrate gains the proxy handler every sector's routes will use to forward to the Nest server; it is strangler scaffolding that goes when the last route does."
     }
   ]
 }

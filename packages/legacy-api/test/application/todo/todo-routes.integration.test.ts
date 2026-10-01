@@ -72,6 +72,10 @@ describe.sequential("todo routes (integration)", () => {
       }),
     );
     deepStrictEqual(updated, { id: todo.id, title: "Buy oat milk", completed: true });
+    const mirroredUpdate = await wallets.waitForCall(
+      (call) => call.method === "PUT" && call.path === `/internal/orgs/${orgId}/todos/${todo.id}`,
+    );
+    deepStrictEqual(mirroredUpdate.payload, { title: "Buy oat milk", completed: true });
 
     const cliCreated = body(
       await server.inject({
@@ -97,6 +101,11 @@ describe.sequential("todo routes (integration)", () => {
       }),
     );
     deepStrictEqual(completed.completed, true);
+    await wallets.waitForCall(
+      (call) =>
+        call.method === "POST" &&
+        call.path === `/internal/orgs/${orgId}/todos/${cliCreated.id}/complete`,
+    );
 
     deepStrictEqual(
       (
@@ -119,6 +128,11 @@ describe.sequential("todo routes (integration)", () => {
       204,
     );
     deepStrictEqual(await getKnex()("todos"), []);
+    for (const id of [cliCreated.id, todo.id]) {
+      await wallets.waitForCall(
+        (call) => call.method === "DELETE" && call.path === `/internal/orgs/${orgId}/todos/${id}`,
+      );
+    }
   });
 
   it("answers 404 for an unknown todo and for a todo reached through another organization", async () => {

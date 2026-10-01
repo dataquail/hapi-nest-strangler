@@ -61,6 +61,12 @@ class TodoService {
     await this.knex("todos")
       .where({ id: todo.get("id") })
       .update({ title: input.title, completed: input.completed, updated_at: now });
+    this.server.events.emit(mirrorEvents.TODO_UPDATED, {
+      organizationId: todo.get("organization_id"),
+      id: todo.get("id"),
+      title: input.title,
+      completed: input.completed,
+    });
     return { id: todo.get("id"), title: input.title, completed: input.completed };
   }
 
@@ -69,6 +75,10 @@ class TodoService {
     await this.knex("todos")
       .where({ id: todo.get("id") })
       .update({ completed: true, updated_at: new Date() });
+    this.server.events.emit(mirrorEvents.TODO_COMPLETED, {
+      organizationId: todo.get("organization_id"),
+      id: todo.get("id"),
+    });
     return { id: todo.get("id"), title: todo.get("title"), completed: true };
   }
 
@@ -76,6 +86,10 @@ class TodoService {
     await this.knex("todos")
       .where({ id: todo.get("id") })
       .del();
+    this.server.events.emit(mirrorEvents.TODO_DELETED, {
+      organizationId: todo.get("organization_id"),
+      id: todo.get("id"),
+    });
   }
 }
 

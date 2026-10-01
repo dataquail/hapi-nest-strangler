@@ -3,6 +3,20 @@
   "campaign": "strangle-hapi",
   "objective": "legacy-writes",
   "created": "2026-10-01T14:16:42.276Z",
-  "sectors": {},
+  "sectors": {
+    "todo": {
+      "entered": "2026-10-01T15:24:59.423Z",
+      "initial": 4,
+      "cleared": 0,
+      "closed": 0,
+      "lastCleared": "2026-10-01T15:24:59.423Z",
+      "holdouts": [
+        "todo-service.ts#completeTodo#55702887",
+        "todo-service.ts#createTodo#6f5357b3",
+        "todo-service.ts#deleteTodo#c6c214ac",
+        "todo-service.ts#updateTodo#228fe77d"
+      ]
+    }
+  },
   "concessions": []
 }

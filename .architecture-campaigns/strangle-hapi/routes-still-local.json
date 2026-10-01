@@ -3,6 +3,24 @@
   "campaign": "strangle-hapi",
   "objective": "routes-still-local",
   "created": "2026-10-01T14:16:42.276Z",
-  "sectors": {},
+  "sectors": {
+    "todo": {
+      "entered": "2026-10-01T15:24:59.423Z",
+      "initial": 8,
+      "cleared": 0,
+      "closed": 0,
+      "lastCleared": "2026-10-01T15:24:59.423Z",
+      "holdouts": [
+        "todo-cli-routes.ts#todoCliRoutes#1beb6762",
+        "todo-cli-routes.ts#todoCliRoutes#6bdca378",
+        "todo-cli-routes.ts#todoCliRoutes#92d778a4",
+        "todo-cli-routes.ts#todoCliRoutes#a7e57f50",
+        "todo-routes.ts#todoRoutes#4de7afdc",
+        "todo-routes.ts#todoRoutes#6bdca378",
+        "todo-routes.ts#todoRoutes#92d778a4",
+        "todo-routes.ts#todoRoutes#a7e57f50"
+      ]
+    }
+  },
   "concessions": []
 }

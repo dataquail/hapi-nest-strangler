@@ -3,6 +3,17 @@
   "campaign": "strangle-hapi",
   "objective": "has-internal-write-api",
   "created": "2026-10-01T14:16:42.276Z",
-  "sectors": {},
+  "sectors": {
+    "todo": {
+      "entered": "2026-10-01T14:23:36.624Z",
+      "initial": 1,
+      "cleared": 0,
+      "closed": 0,
+      "lastCleared": "2026-10-01T14:23:36.624Z",
+      "holdouts": [
+        "~"
+      ]
+    }
+  },
   "concessions": []
 }

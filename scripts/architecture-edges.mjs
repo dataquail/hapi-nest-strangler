@@ -541,9 +541,14 @@ const REFUSED = [
     `${M}/alpha/domain/one/one.repository.ts`,
   ],
   [
-    "ACL adapter → @org/database",
+    "an ACL adapter naming an imports gateway while every peer context is the legacy API's",
     `${M}/alpha/infrastructure/acl/beta.acl-live.ts`,
-    "packages/database/src/index.ts",
+    `${M}/alpha/alpha.imports.ts`,
+  ],
+  [
+    "an ACL adapter dispatching on the query bus while every peer context is the legacy API's",
+    `${M}/alpha/infrastructure/acl/beta.acl-live.ts`,
+    `${P}/cqrs/query-bus.ts`,
   ],
   [
     "endpoint → its own repositories",
@@ -993,14 +998,9 @@ const ALLOWED = [
     `${M}/beta/beta.module.ts`,
   ],
   [
-    "an ACL adapter naming its own module's imports gateway (LEGAL)",
+    "an ACL adapter reading the legacy API's rows through the database binding (LEGAL)",
     `${M}/alpha/infrastructure/acl/beta.acl-live.ts`,
-    `${M}/alpha/alpha.imports.ts`,
-  ],
-  [
-    "an ACL adapter dispatching on the query bus (LEGAL)",
-    `${M}/alpha/infrastructure/acl/beta.acl-live.ts`,
-    `${P}/cqrs/query-bus.ts`,
+    "packages/database/src/index.ts",
   ],
   [
     "a handler list naming the span-attribute type (LEGAL)",

@@ -1061,19 +1061,22 @@ children:
             imports:
               message: >-
                 An ACL adapter is the one place a module's foreign vocabulary appears
-                (ADR-0022): it takes the messages the other module published from this
-                module's own <feature>.imports.ts, dispatches them on the bus, and translates
-                what comes back into this module's own acl port. It needs nothing else — no
-                repositories, no use cases, no database, and no other module named directly.
+                (ADR-0022): it asks the other bounded context and translates the answer into
+                this module's own acl port. While that context still lives on the legacy API
+                the answer is a row it wrote in the shared database, read through the
+                database binding (ADR-0034); once it has moved across, the adapter takes the
+                messages the peer published from this module's own <feature>.imports.ts and
+                dispatches them on the bus instead. It needs nothing else — no repositories,
+                no use cases, and no other module named directly.
               allow:
-                - "@/modules/{module}/*.imports.ts"
                 - "@/modules/{module}/domain/ports/acl/**"
-                - "@/platform/cqrs/command-bus.ts"
-                - "@/platform/cqrs/query-bus.ts"
+                - "@/platform/database/**"
+                - "@/platform/translate-database-errors.ts"
+                - "~/database/**"
             children:
               "*.acl-live.ts": {}
               "*.acl-fake.ts": {}
-              "*.test.ts": { use: server-use-case-test-file }
+              "*.acl-live.integration.test.ts": { use: server-integration-test-file }
 
       "interface/":
         message: >-
@@ -1225,12 +1228,13 @@ children:
                   "*.acl.ts":
                     message: >-
                       Every ACL port (*.acl.ts) needs a *.acl-live.ts, a *.acl-fake.ts, and a
-                      *.acl-live.test.ts in ../../../infrastructure/acl/.
+                      *.acl-live.integration.test.ts in ../../../infrastructure/acl/ — the
+                      live reads the legacy API's rows, so its test seeds them.
                     surface: [{ use: port-declares-no-value }]
                     requires:
                       - "../../../infrastructure/acl/{base}-live.ts"
                       - "../../../infrastructure/acl/{base}-fake.ts"
-                      - "../../../infrastructure/acl/{base}-live.test.ts"
+                      - "../../../infrastructure/acl/{base}-live.integration.test.ts"
                     importedBy: { use: acl-port-consumers }
 
           # Each subdomain folder — one per aggregate. The named folders above

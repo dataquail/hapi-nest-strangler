@@ -7,12 +7,10 @@
     "todo": {
       "entered": "2026-10-01T15:24:59.423Z",
       "initial": 1,
-      "cleared": 0,
+      "cleared": 1,
       "closed": 0,
-      "lastCleared": "2026-10-01T15:24:59.423Z",
-      "holdouts": [
-        "~"
-      ]
+      "lastCleared": "2026-10-01T15:31:58.112Z",
+      "holdouts": []
     }
   },
   "concessions": []

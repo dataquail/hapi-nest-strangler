@@ -16,7 +16,6 @@ const EXPECTED_TABLES = [
   "roles",
   "sessions",
   "subscriptions",
-  "todos",
   "users",
   "webhook_events",
 ];

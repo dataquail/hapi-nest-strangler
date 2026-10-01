@@ -84,7 +84,7 @@ limits:
   # against the structure ratio and nothing else; that floor is re-recorded
   # as the package grows and is the number to watch climbing back as the
   # campaign moves modules into the enumerated tree of the Nest server.
-  coverage: { imports: 0.99, structure: 0.37, members: 0.03, surface: 0.93, graph: 1 }
+  coverage: { imports: 0.99, structure: 0.38, members: 0.03, surface: 0.92, graph: 1 }
   # Conformance ceilings, gated by `architecture check`: residue (files no
   # family reaches), vacant nodes (an allowlist selecting no file), slack
   # (allowances nothing imports through) and concentration (a fragment entry

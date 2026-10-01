@@ -597,6 +597,53 @@
           }
         },
         "required": ["organizationId"]
+      },
+      "InternalTodo": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "organizationId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "title": {
+            "type": "string"
+          },
+          "completed": {
+            "type": "boolean"
+          }
+        },
+        "required": ["id", "organizationId", "title", "completed"]
+      },
+      "InternalCreateTodoPayload": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": ["id", "title"]
+      },
+      "InternalUpdateTodoPayload": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "completed": {
+            "type": "boolean"
+          }
+        },
+        "required": ["title", "completed"]
       }
     },
     "parameters": {}
@@ -5184,6 +5231,418 @@
                     }
                   },
                   "required": ["_tag"]
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "The server is not ready to handle the request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "_tag": {
+                      "type": "string",
+                      "enum": ["ServiceUnavailable"]
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["_tag"]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/internal/orgs/{organizationId}/todos": {
+      "post": {
+        "operationId": "internalTodos.create",
+        "tags": ["internal-todos"],
+        "security": [
+          {
+            "interServiceToken": []
+          }
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "organizationId",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InternalCreateTodoPayload"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalTodo"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication is required and has failed or has not been provided",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "_tag": {
+                      "type": "string",
+                      "enum": ["Unauthorized"]
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["_tag"]
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "A todo with that id has already been mirrored to this server",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "_tag": {
+                      "type": "string",
+                      "enum": ["InternalTodoAlreadyExistsError"]
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["_tag", "message"]
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "The server is not ready to handle the request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "_tag": {
+                      "type": "string",
+                      "enum": ["ServiceUnavailable"]
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["_tag"]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/internal/orgs/{organizationId}/todos/{id}": {
+      "put": {
+        "operationId": "internalTodos.update",
+        "tags": ["internal-todos"],
+        "security": [
+          {
+            "interServiceToken": []
+          }
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "organizationId",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InternalUpdateTodoPayload"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalTodo"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication is required and has failed or has not been provided",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "_tag": {
+                      "type": "string",
+                      "enum": ["Unauthorized"]
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["_tag"]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No todo with that id in this organization has been mirrored to this server",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "_tag": {
+                      "type": "string",
+                      "enum": ["InternalTodoNotFoundError"]
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["_tag", "message"]
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "The server is not ready to handle the request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "_tag": {
+                      "type": "string",
+                      "enum": ["ServiceUnavailable"]
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["_tag"]
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "internalTodos.delete",
+        "tags": ["internal-todos"],
+        "security": [
+          {
+            "interServiceToken": []
+          }
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "organizationId",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No content"
+          },
+          "401": {
+            "description": "Authentication is required and has failed or has not been provided",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "_tag": {
+                      "type": "string",
+                      "enum": ["Unauthorized"]
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["_tag"]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No todo with that id in this organization has been mirrored to this server",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "_tag": {
+                      "type": "string",
+                      "enum": ["InternalTodoNotFoundError"]
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["_tag", "message"]
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "The server is not ready to handle the request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "_tag": {
+                      "type": "string",
+                      "enum": ["ServiceUnavailable"]
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["_tag"]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/internal/orgs/{organizationId}/todos/{id}/complete": {
+      "post": {
+        "operationId": "internalTodos.complete",
+        "tags": ["internal-todos"],
+        "security": [
+          {
+            "interServiceToken": []
+          }
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "organizationId",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalTodo"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication is required and has failed or has not been provided",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "_tag": {
+                      "type": "string",
+                      "enum": ["Unauthorized"]
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["_tag"]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No todo with that id in this organization has been mirrored to this server",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "_tag": {
+                      "type": "string",
+                      "enum": ["InternalTodoNotFoundError"]
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["_tag", "message"]
                 }
               }
             }

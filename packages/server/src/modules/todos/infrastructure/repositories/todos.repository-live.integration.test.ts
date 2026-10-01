@@ -54,6 +54,16 @@ describe.sequential("TodosRepositoryLive (integration)", () => {
     });
   });
 
+  describe("insert of an id already stored", () => {
+    it("fails TodoAlreadyExists and leaves the first row", async () => {
+      (await repo.insertOne(buyMilk)).unwrap();
+      const again = TodoRootOps.create({ id: aliceId, organizationId: orgA, title: "Again", now });
+      deepStrictEqual((await repo.insertOne(again)).unwrapErr()._tag, "TodoAlreadyExists");
+      const found = (await repo.findOne(byOrgAndId(orgA, aliceId))).unwrap();
+      deepStrictEqual(found?.title, "Buy milk");
+    });
+  });
+
   describe("findOne", () => {
     it("returns null for an unknown id", async () => {
       deepStrictEqual((await repo.findOne(byOrgAndId(orgA, bobId))).unwrap(), null);

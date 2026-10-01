@@ -2,7 +2,7 @@ import { Inject, Injectable } from "@nestjs/common";
 import { RowSchemas, sql } from "@org/database";
 import { Err, Ok, type Result } from "oxide.ts";
 
-import { TodoNotFound } from "@/modules/todos/domain/todo/todo.errors.js";
+import { TodoAlreadyExists, TodoNotFound } from "@/modules/todos/domain/todo/todo.errors.js";
 import type { TodoId } from "@/modules/todos/domain/todo/todo.id.js";
 import type { TodoRoot } from "@/modules/todos/domain/todo/todo.root.js";
 import { TodosRepository } from "@/modules/todos/domain/todo/todos.repository.js";
@@ -21,15 +21,21 @@ export class TodosRepositoryLive extends TodosRepository {
     super();
   }
 
-  public insertOne(todo: TodoRoot): Promise<Result<void, PersistenceUnavailable>> {
+  public insertOne(
+    todo: TodoRoot,
+  ): Promise<Result<void, TodoAlreadyExists | PersistenceUnavailable>> {
     const row = TodoMapper.toPersistence(todo);
-    return translateDatabaseErrors(async () => {
-      await this.db.exec(sql.unsafe`
-        INSERT INTO todos.todos (id, organization_id, title, completed, created_at, updated_at)
-        VALUES (${row.id}, ${row.organization_id}, ${row.title}, ${row.completed},
-                ${sql.timestamp(row.created_at)}, ${sql.timestamp(row.updated_at)})
-      `);
-    });
+    return translateDatabaseErrors(
+      async () => {
+        await this.db.exec(sql.unsafe`
+          INSERT INTO todos.todos (id, organization_id, title, completed, created_at, updated_at)
+          VALUES (${row.id}, ${row.organization_id}, ${row.title}, ${row.completed},
+                  ${sql.timestamp(row.created_at)}, ${sql.timestamp(row.updated_at)})
+        `);
+      },
+      (error) =>
+        error.type === "unique_violation" ? new TodoAlreadyExists({ todoId: todo.id }) : null,
+    );
   }
 
   public async updateOne(

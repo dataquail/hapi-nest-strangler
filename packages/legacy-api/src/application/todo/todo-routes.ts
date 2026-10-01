@@ -3,6 +3,7 @@ import type { ServerRoute } from "@hapi/hapi";
 import { actionConstants } from "../../constants/acl/action-constants";
 import { resourceConstants } from "../../constants/acl/resource-constants";
 import { can } from "../../lib/access/can";
+import { proxiedRouteOptions, proxyToNest } from "../../lib/backend-client/proxy-to-nest";
 import Joi = require("../../lib/joi");
 import { fromOwnOrganization } from "./todo-access";
 import { orgAndTodoParams, orgParams, todoBelongsToOrganization } from "./todo-route-helpers";
@@ -14,19 +15,8 @@ const todoRoutes = (todoService: TodoService, rowExists: any): ServerRoute[] => 
   {
     method: "GET",
     path: "/orgs/{orgId}/todos",
-    handler: (request) => todoService.listTodos((request.params as any).orgId),
-    options: {
-      tags: ["api"],
-      description: "The organization's todos",
-      auth: "session",
-      ext: {
-        onPreHandler: [
-          { method: can(actionConstants.LIST, TODO) },
-          { method: fromOwnOrganization },
-        ],
-      },
-      validate: { params: orgParams(rowExists) },
-    },
+    handler: proxyToNest(),
+    options: proxiedRouteOptions("The organization's todos, served by the Nest server", false),
   },
   {
     method: "POST",

@@ -58,10 +58,19 @@ describe.sequential("todo routes (integration)", () => {
     deepStrictEqual(mirrored.tokenValid, true);
     deepStrictEqual(mirrored.payload, { id: todo.id, title: "Buy milk" });
 
-    const listed = body(
-      await server.inject({ method: "GET", url: `/orgs/${orgId}/todos`, headers: owner.headers }),
+    wallets.userApiAnswers(200, [todo]);
+    const listed = await server.inject({
+      method: "GET",
+      url: `/orgs/${orgId}/todos`,
+      headers: owner.headers,
+    });
+    deepStrictEqual(listed.statusCode, 200);
+    deepStrictEqual(body(listed), [todo]);
+    const proxiedList = await wallets.waitForCall(
+      (call) => call.method === "GET" && call.path === `/orgs/${orgId}/todos`,
     );
-    deepStrictEqual(listed, [todo]);
+    deepStrictEqual(proxiedList.cookie, owner.headers.cookie);
+    deepStrictEqual(proxiedList.authorization, "");
 
     const updated = body(
       await server.inject({
@@ -85,6 +94,7 @@ describe.sequential("todo routes (integration)", () => {
         payload: { title: "From the CLI" },
       }),
     );
+    wallets.userApiAnswers(200, [todo, cliCreated]);
     const cliListed = body(
       await server.inject({
         method: "GET",
@@ -93,6 +103,9 @@ describe.sequential("todo routes (integration)", () => {
       }),
     );
     deepStrictEqual(cliListed.length, 2);
+    await wallets.waitForCall(
+      (call) => call.method === "GET" && call.path === `/cli/orgs/${orgId}/todos`,
+    );
     const completed = body(
       await server.inject({
         method: "POST",
@@ -184,6 +197,9 @@ describe.sequential("todo routes (integration)", () => {
       }),
     );
 
+    // The read is the Nest server's to refuse now; this server only forwards
+    // the stranger's own session and relays the answer.
+    wallets.userApiAnswers(403, { _tag: "Forbidden" });
     deepStrictEqual(
       (
         await server.inject({
@@ -194,6 +210,11 @@ describe.sequential("todo routes (integration)", () => {
       ).statusCode,
       403,
     );
+    const strangerRead = await wallets.waitForCall(
+      (call) => call.method === "GET" && call.cookie === stranger.headers.cookie,
+    );
+    deepStrictEqual(strangerRead.path, `/orgs/${orgId}/todos`);
+    wallets.userApiAnswers(200, []);
     deepStrictEqual(
       (
         await server.inject({
@@ -252,5 +273,19 @@ describe.sequential("todo routes (integration)", () => {
     } finally {
       wallets.refuseTodoMirrors(false);
     }
+  });
+
+  it("relays the Nest server's answer to a proxied read as it is, status and all", async () => {
+    const owner = await signedInAs("owner@example.com");
+    const orgId = await createOrg(owner);
+    wallets.userApiAnswers(403, { _tag: "Forbidden", message: "not a member" });
+    const refused = await server.inject({
+      method: "GET",
+      url: `/orgs/${orgId}/todos`,
+      headers: owner.headers,
+    });
+    deepStrictEqual(refused.statusCode, 403);
+    deepStrictEqual(body(refused), { _tag: "Forbidden", message: "not a member" });
+    wallets.userApiAnswers(200, []);
   });
 });

@@ -6,9 +6,12 @@ type Recorded = {
   method: string;
   path: string;
   authorization: string;
+  cookie: string;
   payload: unknown;
   tokenValid: boolean;
 };
+
+type Canned = { status: number; body: unknown };
 
 // Stands in for the Nest server's internal API on a fixed port: records every
 // call, verifies the inter-service token the way the real guard does, and can
@@ -35,14 +38,27 @@ export const startFakeWalletServer = async (sharedSecret: string) => {
       method: request.method.toUpperCase(),
       path: request.path,
       authorization,
+      cookie: String(request.headers.cookie ?? ""),
       payload: request.payload,
       tokenValid,
     });
     return tokenValid;
   };
 
+  // The user-facing todo API the legacy routes proxy to: answers whatever the
+  // test last armed, so a test asserts on the forward and the relay, not on
+  // Nest's behaviour.
+  let userApiAnswer: Canned = { status: 200, body: [] };
+  const relay = async (request: Hapi.Request, h: Hapi.ResponseToolkit) => {
+    await record(request);
+    const reply = h.response(JSON.stringify(userApiAnswer.body)).code(userApiAnswer.status);
+    return reply.type("application/json");
+  };
+
   const server = Hapi.server({ port: FAKE_WALLET_PORT, host: "127.0.0.1" });
   server.route([
+    { method: "*", path: "/orgs/{rest*}", handler: relay },
+    { method: "*", path: "/cli/orgs/{rest*}", handler: relay },
     {
       method: "POST",
       path: "/internal/wallets",
@@ -118,6 +134,9 @@ export const startFakeWalletServer = async (sharedSecret: string) => {
     },
     refuseTodoMirrors: (value: boolean) => {
       refuseTodoMirrors = value;
+    },
+    userApiAnswers: (status: number, body: unknown) => {
+      userApiAnswer = { status, body };
     },
     // The mirror runs after the response, so a test waits for the call to land.
     waitForCall: async (predicate: (call: Recorded) => boolean): Promise<Recorded> => {

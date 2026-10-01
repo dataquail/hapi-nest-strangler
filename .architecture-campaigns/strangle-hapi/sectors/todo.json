@@ -2,8 +2,8 @@
   "version": 1,
   "campaign": "strangle-hapi",
   "sector": "todo",
-  "reached": "routes-moved",
-  "since": "2026-10-01T15:40:28.804Z",
+  "reached": "data-moved",
+  "since": "2026-10-01T16:30:10.397Z",
   "attested": [
     {
       "phase": "backfilled",

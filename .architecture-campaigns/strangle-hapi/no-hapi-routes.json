@@ -7,13 +7,10 @@
     "todo": {
       "entered": "2026-10-01T15:40:28.804Z",
       "initial": 2,
-      "cleared": 0,
+      "cleared": 2,
       "closed": 0,
-      "lastCleared": "2026-10-01T15:40:28.804Z",
-      "holdouts": [
-        "todo-cli-routes.ts",
-        "todo-routes.ts"
-      ]
+      "lastCleared": "2026-10-01T16:30:10.397Z",
+      "holdouts": []
     }
   },
   "concessions": []

@@ -80,8 +80,6 @@ const bootstrap: Plugin<Record<string, never>> = {
       ioc.create("auth/cli-auth-routes"),
       ioc.create("organization/organization-routes"),
       ioc.create("organization/organization-cli-routes"),
-      ioc.create("todo/todo-routes"),
-      ioc.create("todo/todo-cli-routes"),
       ioc.create("billing/billing-routes"),
     ]);
 

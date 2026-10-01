@@ -11,12 +11,9 @@ type Recorded = {
   tokenValid: boolean;
 };
 
-type Canned = { status: number; body: unknown };
-
-// Stands in for the Nest server on a fixed port: records every call, verifies
-// the inter-service token the way the real guard does, can be armed to refuse
-// the next wallet create, and relays whatever a test arms for the user-facing
-// routes the legacy API proxies to it.
+// Stands in for the Nest server's internal API on a fixed port: records every
+// call, verifies the inter-service token the way the real guard does, and can
+// be armed to refuse the next wallet create.
 export const startFakeWalletServer = async (sharedSecret: string) => {
   const { jwtVerify } = await import("jose");
   const key = new TextEncoder().encode(sharedSecret);
@@ -45,20 +42,8 @@ export const startFakeWalletServer = async (sharedSecret: string) => {
     return tokenValid;
   };
 
-  // The user-facing todo API the legacy routes proxy to: answers whatever the
-  // test last armed, so a test asserts on the forward and the relay, not on
-  // Nest's behaviour.
-  let userApiAnswer: Canned = { status: 200, body: [] };
-  const relay = async (request: Hapi.Request, h: Hapi.ResponseToolkit) => {
-    await record(request);
-    const reply = h.response(JSON.stringify(userApiAnswer.body)).code(userApiAnswer.status);
-    return reply.type("application/json");
-  };
-
   const server = Hapi.server({ port: FAKE_WALLET_PORT, host: "127.0.0.1" });
   server.route([
-    { method: "*", path: "/orgs/{rest*}", handler: relay },
-    { method: "*", path: "/cli/orgs/{rest*}", handler: relay },
     {
       method: "POST",
       path: "/internal/wallets",
@@ -88,9 +73,6 @@ export const startFakeWalletServer = async (sharedSecret: string) => {
     calls,
     refuseNextCreates: (value: boolean) => {
       refuseCreates = value;
-    },
-    userApiAnswers: (status: number, body: unknown) => {
-      userApiAnswer = { status, body };
     },
     // The mirror runs after the response, so a test waits for the call to land.
     waitForCall: async (predicate: (call: Recorded) => boolean): Promise<Recorded> => {

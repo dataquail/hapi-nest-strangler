@@ -33,10 +33,10 @@
     "todo": {
       "entered": "2026-09-29T14:11:00.373Z",
       "initial": 591,
-      "recorded": 93,
-      "improved": 552,
+      "recorded": 25,
+      "improved": 620,
       "closed": null,
-      "lastImproved": "2026-10-01T15:40:28.804Z"
+      "lastImproved": "2026-10-01T16:30:10.397Z"
     },
     "user": {
       "entered": "2026-09-29T14:11:00.373Z",
@@ -49,10 +49,10 @@
     "legacy": {
       "entered": "2026-09-29T14:11:00.373Z",
       "initial": 1474,
-      "recorded": 899,
-      "improved": 636,
+      "recorded": 836,
+      "improved": 699,
       "closed": null,
-      "lastImproved": "2026-09-30T14:20:26.933Z"
+      "lastImproved": "2026-10-01T16:30:10.397Z"
     }
   },
   "concessions": [

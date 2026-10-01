@@ -48,3 +48,33 @@ A sector's phase is derived: the first phase with work left. `user` reaches noth
 - `docs/plan/goodbones-findings.md` — the findings, including step 11's.
 - ADR-0034 — the facsimile the campaign measures.
 - <https://dataquail.github.io/goodbones/campaigns/getting-started/introduction/> — the campaigns family.
+
+## Amendment 2026-10-01: phases for a dual-write strangling
+
+The first sector to move showed the plan's middle was shaped for a shared table: `rebuilt` straight to `routes-moved`, with the data following. The repository's principle is that the two servers share no persisted data — the Nest module owns its schema from the day it exists, so its domain is free to differ from the legacy row — which makes the realistic path a dual-write: hapi stays the source of truth and forwards every write to the Nest module's internal API, the Nest table is backfilled once, then hapi's routes forward to Nest one operation at a time until nothing is left to move.
+
+**Nine phases, seven defined, one attested, one open.**
+
+| Phase          | Recognised by                                                                                                                                                                                                        |
+| -------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `fenced`       | unchanged                                                                                                                                                                                                            |
+| `rebuilt`      | unchanged: `has-nest-module`                                                                                                                                                                                         |
+| `mirrored`     | `has-internal-write-api` — a Nest endpoint naming the inter-service guard; `writes-not-mirrored` — a knex `insert`/`update`/`del` in a hapi service method that makes no backend-client call, counted until `served` |
+| `backfilled`   | attested: no detector sees a backfill run, so whoever ran it records it with `campaigns attest`                                                                                                                      |
+| `served`       | `has-nest-endpoints` — a Nest endpoint naming the user guard; `routes-still-local` — a hapi route whose `handler:` is not `proxyToNest(...)`; `legacy-writes` — any knex write left in a hapi service                |
+| `routes-moved` | unchanged: `no-hapi-routes`                                                                                                                                                                                          |
+| `data-moved`   | `no-hapi-models`, and `legacy-table-dropped` — a `*_drop_*` migration in the legacy folder, since the table is dropped rather than moved                                                                             |
+| `gone`         | unchanged: `no-hapi-files`                                                                                                                                                                                           |
+| `settled`      | open, unchanged                                                                                                                                                                                                      |
+
+**`mirrored` advises instead of ratcheting.** The legacy module grows there by design — every write gains a forward — so the phase carries `onTouch: advise` and the campaign-wide ratchet resumes at `served`.
+
+**The operation-grained objectives are `syntax` terms** over the hapi code shape: ast-grep rules with `inside`, `has` and `not`, probed like every other detector. They count statements and route definitions rather than files, so a PR that mirrors one write or proxies one route moves a number. The cost is that they describe this codebase's shape; a real campaign writes its own.
+
+**Concessions were receipted** on `routes-moved`, `data-moved` and `gone`: the first and last only moved later in the list, the middle one gained an objective.
+
+### Consequences of the amendment
+
+- The sectors re-derived honestly: `todo` and `user` stay at `rebuilt`, the others at `fenced`.
+- A dual-write strangling needs a step no detector can see. `backfilled` is the first attested phase, and the campaign history will carry who attested it and with what evidence.
+- The findings for this amendment are in `docs/scratch/campaign-rough-edges.md`, entries 18 onward.

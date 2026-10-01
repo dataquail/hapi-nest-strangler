@@ -15,26 +15,44 @@
       "concessions": 0
     },
     {
-      "id": "routes-moved",
-      "hash": "40d76fa7",
+      "id": "mirrored",
+      "hash": "32874753",
       "defined": true,
       "concessions": 0
+    },
+    {
+      "id": "backfilled",
+      "hash": "38bf979d",
+      "defined": true,
+      "concessions": 0
+    },
+    {
+      "id": "served",
+      "hash": "fc29868a",
+      "defined": true,
+      "concessions": 0
+    },
+    {
+      "id": "routes-moved",
+      "hash": "a693f498",
+      "defined": true,
+      "concessions": 1
     },
     {
       "id": "data-moved",
-      "hash": "5ff07476",
+      "hash": "03a1be09",
       "defined": true,
-      "concessions": 0
+      "concessions": 1
     },
     {
       "id": "gone",
-      "hash": "a10ebb31",
+      "hash": "e6b52988",
       "defined": true,
-      "concessions": 0
+      "concessions": 1
     },
     {
       "id": "settled",
-      "hash": "cddbef9a",
+      "hash": "250213eb",
       "defined": false,
       "concessions": 0
     }

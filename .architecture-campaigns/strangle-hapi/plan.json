@@ -16,9 +16,9 @@
     },
     {
       "id": "mirrored",
-      "hash": "32874753",
+      "hash": "ec552756",
       "defined": true,
-      "concessions": 0
+      "concessions": 1
     },
     {
       "id": "backfilled",

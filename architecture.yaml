@@ -84,7 +84,7 @@ limits:
   # against the structure ratio and nothing else; that floor is re-recorded
   # as the package grows and is the number to watch climbing back as the
   # campaign moves modules into the enumerated tree of the Nest server.
-  coverage: { imports: 0.99, structure: 0.34, members: 0.03, surface: 0.92, graph: 1 }
+  coverage: { imports: 0.99, structure: 0.33, members: 0.03, surface: 0.92, graph: 1 }
   # Conformance ceilings, gated by `architecture check`: residue (files no
   # family reaches), vacant nodes (an allowlist selecting no file), slack
   # (allowances nothing imports through) and concentration (a fragment entry
@@ -426,6 +426,12 @@ campaigns:
           the Nest table fills as a replica while hapi stays the source of truth.
         objectives: [has-internal-write-api, writes-not-mirrored]
         onTouch: advise
+        concessions:
+          - reason: >-
+              The forwards ride hapi's domain events rather than a backend-client call in the
+              service method, so `writes-not-mirrored` now looks for the mirror event (2026-10-01).
+            at: "2026-10-01"
+            by: "@dataquail"
       - id: backfilled
         intent: >-
           The Nest table has been backfilled from the legacy table once, after every write was
@@ -565,8 +571,9 @@ campaigns:
       writes-not-mirrored:
         holdout: match
         how: >-
-          Forward this write to the Nest module's internal API from the same service method
-          through the backend client, so the Nest table receives what hapi wrote.
+          Emit the module's mirror event from the same service method once the row is written;
+          the mirror plugin forwards it to the Nest module's internal API, so the Nest table
+          receives what hapi wrote.
         until: served
         match:
           all:
@@ -585,7 +592,7 @@ campaigns:
                   stopBy: end
                   not:
                     has:
-                      regex: "backendClient"
+                      regex: "mirrorEvents"
                       stopBy: end
         probes:
           fires:
@@ -602,7 +609,7 @@ campaigns:
                 class TodoService {
                   async createTodo(row) {
                     await this.knex("todos").insert(row);
-                    await this.backendClient.todos.create(row);
+                    this.server.events.emit(mirrorEvents.TODO_CREATED, row);
                   }
                 }
             - path: packages/legacy-api/src/application/todo/todo-service.spec.ts

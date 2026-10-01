@@ -4,6 +4,7 @@ import type { Manifest } from "@hapi/glue";
 import bootstrap = require("./bootstrap");
 import config = require("./config");
 import domainEventHandlerPlugin = require("./domain-event-handler-plugin");
+import mirrorEventHandlerPlugin = require("./mirror-event-handler-plugin");
 import * as logger from "./src/lib/logger";
 
 const server: Manifest["server"] = {
@@ -45,6 +46,9 @@ const plugins: NonNullable<Manifest["register"]>["plugins"] = [
   },
   {
     plugin: domainEventHandlerPlugin,
+  },
+  {
+    plugin: mirrorEventHandlerPlugin,
   },
 ];
 

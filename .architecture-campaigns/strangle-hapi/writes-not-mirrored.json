@@ -12,11 +12,19 @@
       "lastCleared": "2026-10-01T14:23:36.624Z",
       "holdouts": [
         "todo-service.ts#completeTodo#55702887",
-        "todo-service.ts#createTodo#6f5357b3",
         "todo-service.ts#deleteTodo#c6c214ac",
         "todo-service.ts#updateTodo#228fe77d"
       ]
     }
   },
-  "concessions": []
+  "concessions": [
+    {
+      "sector": "todo",
+      "at": "2026-10-01T14:50:57.995Z",
+      "by": "zweidenbach@gmail.com",
+      "from": 4,
+      "to": 3,
+      "reason": "phase mirrored changed: The forwards ride hapi's domain events rather than a backend-client call in the service method, so `writes-not-mirrored` now looks for the mirror event (2026-10-01)."
+    }
+  ]
 }

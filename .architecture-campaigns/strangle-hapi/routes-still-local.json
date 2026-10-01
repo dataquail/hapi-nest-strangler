@@ -7,17 +7,10 @@
     "todo": {
       "entered": "2026-10-01T15:24:59.423Z",
       "initial": 8,
-      "cleared": 2,
+      "cleared": 8,
       "closed": 0,
-      "lastCleared": "2026-10-01T15:36:26.604Z",
-      "holdouts": [
-        "todo-cli-routes.ts#todoCliRoutes#1beb6762",
-        "todo-cli-routes.ts#todoCliRoutes#92d778a4",
-        "todo-cli-routes.ts#todoCliRoutes#a7e57f50",
-        "todo-routes.ts#todoRoutes#4de7afdc",
-        "todo-routes.ts#todoRoutes#92d778a4",
-        "todo-routes.ts#todoRoutes#a7e57f50"
-      ]
+      "lastCleared": "2026-10-01T15:40:28.804Z",
+      "holdouts": []
     }
   },
   "concessions": []

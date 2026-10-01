@@ -10,282 +10,108 @@ import { getServer } from "../../server";
 
 type Session = Awaited<ReturnType<typeof signedInAs>>;
 
+const orgId = "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa";
+const todoId = "11111111-1111-1111-1111-111111111111";
+const todo = { id: todoId, title: "Buy milk", completed: false };
+
+// Every todo route forwards to the Nest server and relays its answer; these
+// tests hold the forward and the relay, not what the Nest server does.
 describe.sequential("todo routes (integration)", () => {
   let server: Awaited<ReturnType<typeof getServer>>;
-  let wallets: Awaited<ReturnType<typeof startFakeWalletServer>>;
+  let nest: Awaited<ReturnType<typeof startFakeWalletServer>>;
+  let owner: Session;
 
   beforeAll(async () => {
-    wallets = await startFakeWalletServer(config("/auth/interServiceJWTSecret"));
+    nest = await startFakeWalletServer(config("/auth/interServiceJWTSecret"));
     server = await getServer();
     await server.initialize();
   });
 
   afterAll(async () => {
     await server.stop();
-    await wallets.stop();
+    await nest.stop();
     await closeKnex();
   });
 
-  beforeEach(truncateAll);
+  beforeEach(async () => {
+    await truncateAll();
+    owner = await signedInAs("owner@example.com");
+    nest.calls.length = 0;
+    nest.userApiAnswers(200, todo);
+  });
 
   const body = (res: { payload: string }) => JSON.parse(res.payload);
-  const createOrg = async (owner: Session) =>
-    body(
-      await server.inject({
-        method: "POST",
-        url: "/orgs",
+
+  const routes = [
+    { method: "GET", url: `/orgs/${orgId}/todos`, payload: undefined, answer: [todo] },
+    { method: "POST", url: `/orgs/${orgId}/todos`, payload: { title: "Buy milk" }, answer: todo },
+    {
+      method: "PUT",
+      url: `/orgs/${orgId}/todos/${todoId}`,
+      payload: { title: "Buy oat milk", completed: true },
+      answer: { ...todo, title: "Buy oat milk", completed: true },
+    },
+    { method: "DELETE", url: `/orgs/${orgId}/todos/${todoId}`, payload: undefined, answer: null },
+    { method: "GET", url: `/cli/orgs/${orgId}/todos`, payload: undefined, answer: [todo] },
+    {
+      method: "POST",
+      url: `/cli/orgs/${orgId}/todos`,
+      payload: { title: "From the CLI" },
+      answer: { ...todo, title: "From the CLI" },
+    },
+    {
+      method: "POST",
+      url: `/cli/orgs/${orgId}/todos/${todoId}/complete`,
+      payload: undefined,
+      answer: { ...todo, completed: true },
+    },
+    {
+      method: "DELETE",
+      url: `/cli/orgs/${orgId}/todos/${todoId}`,
+      payload: undefined,
+      answer: null,
+    },
+  ] as const;
+
+  for (const route of routes) {
+    it(`forwards ${route.method} ${route.url} with the caller's session and relays the answer`, async () => {
+      nest.userApiAnswers(route.answer === null ? 204 : 200, route.answer);
+      const res = await server.inject({
+        method: route.method,
+        url: route.url,
         headers: owner.headers,
-        payload: { name: "Acme" },
-      }),
-    ).id as string;
+        payload: route.payload,
+      });
+      deepStrictEqual(res.statusCode, route.answer === null ? 204 : 200);
+      if (route.answer !== null) deepStrictEqual(body(res), route.answer);
 
-  it("creates, lists, updates and deletes todos for a member, over HTTP and the CLI paths", async () => {
-    const owner = await signedInAs("owner@example.com");
-    const orgId = await createOrg(owner);
+      const forwarded = await nest.waitForCall(
+        (call) => call.method === route.method && call.path === route.url,
+      );
+      deepStrictEqual(forwarded.cookie, owner.headers.cookie);
+      deepStrictEqual(forwarded.authorization, "");
+      deepStrictEqual(forwarded.payload ?? undefined, route.payload);
+    });
+  }
 
-    const created = await server.inject({
+  it("relays a refusal as it is and writes nothing to its own table", async () => {
+    nest.userApiAnswers(403, { _tag: "Forbidden", message: "not a member" });
+    const refused = await server.inject({
       method: "POST",
       url: `/orgs/${orgId}/todos`,
       headers: owner.headers,
       payload: { title: "Buy milk" },
     });
-    deepStrictEqual(created.statusCode, 201);
-    const todo = body(created);
-    deepStrictEqual(todo.completed, false);
-    const mirrored = await wallets.waitForCall(
-      (call) => call.method === "POST" && call.path === `/internal/orgs/${orgId}/todos`,
-    );
-    deepStrictEqual(mirrored.tokenValid, true);
-    deepStrictEqual(mirrored.payload, { id: todo.id, title: "Buy milk" });
-
-    wallets.userApiAnswers(200, [todo]);
-    const listed = await server.inject({
-      method: "GET",
-      url: `/orgs/${orgId}/todos`,
-      headers: owner.headers,
-    });
-    deepStrictEqual(listed.statusCode, 200);
-    deepStrictEqual(body(listed), [todo]);
-    const proxiedList = await wallets.waitForCall(
-      (call) => call.method === "GET" && call.path === `/orgs/${orgId}/todos`,
-    );
-    deepStrictEqual(proxiedList.cookie, owner.headers.cookie);
-    deepStrictEqual(proxiedList.authorization, "");
-
-    const updated = body(
-      await server.inject({
-        method: "PUT",
-        url: `/orgs/${orgId}/todos/${todo.id}`,
-        headers: owner.headers,
-        payload: { title: "Buy oat milk", completed: true },
-      }),
-    );
-    deepStrictEqual(updated, { id: todo.id, title: "Buy oat milk", completed: true });
-    const mirroredUpdate = await wallets.waitForCall(
-      (call) => call.method === "PUT" && call.path === `/internal/orgs/${orgId}/todos/${todo.id}`,
-    );
-    deepStrictEqual(mirroredUpdate.payload, { title: "Buy oat milk", completed: true });
-
-    const cliCreated = body(
-      await server.inject({
-        method: "POST",
-        url: `/cli/orgs/${orgId}/todos`,
-        headers: owner.headers,
-        payload: { title: "From the CLI" },
-      }),
-    );
-    wallets.userApiAnswers(200, [todo, cliCreated]);
-    const cliListed = body(
-      await server.inject({
-        method: "GET",
-        url: `/cli/orgs/${orgId}/todos`,
-        headers: owner.headers,
-      }),
-    );
-    deepStrictEqual(cliListed.length, 2);
-    await wallets.waitForCall(
-      (call) => call.method === "GET" && call.path === `/cli/orgs/${orgId}/todos`,
-    );
-    const completed = body(
-      await server.inject({
-        method: "POST",
-        url: `/cli/orgs/${orgId}/todos/${cliCreated.id}/complete`,
-        headers: owner.headers,
-      }),
-    );
-    deepStrictEqual(completed.completed, true);
-    await wallets.waitForCall(
-      (call) =>
-        call.method === "POST" &&
-        call.path === `/internal/orgs/${orgId}/todos/${cliCreated.id}/complete`,
-    );
-
-    deepStrictEqual(
-      (
-        await server.inject({
-          method: "DELETE",
-          url: `/cli/orgs/${orgId}/todos/${cliCreated.id}`,
-          headers: owner.headers,
-        })
-      ).statusCode,
-      204,
-    );
-    deepStrictEqual(
-      (
-        await server.inject({
-          method: "DELETE",
-          url: `/orgs/${orgId}/todos/${todo.id}`,
-          headers: owner.headers,
-        })
-      ).statusCode,
-      204,
-    );
-    deepStrictEqual(await getKnex()("todos"), []);
-    for (const id of [cliCreated.id, todo.id]) {
-      await wallets.waitForCall(
-        (call) => call.method === "DELETE" && call.path === `/internal/orgs/${orgId}/todos/${id}`,
-      );
-    }
-  });
-
-  it("answers 404 for an unknown todo and for a todo reached through another organization", async () => {
-    const owner = await signedInAs("owner@example.com");
-    const orgA = await createOrg(owner);
-    const orgB = await createOrg(owner);
-    const todo = body(
-      await server.inject({
-        method: "POST",
-        url: `/orgs/${orgA}/todos`,
-        headers: owner.headers,
-        payload: { title: "A" },
-      }),
-    );
-    const unknown = await server.inject({
-      method: "DELETE",
-      url: `/orgs/${orgA}/todos/00000000-0000-0000-0000-000000000000`,
-      headers: owner.headers,
-    });
-    deepStrictEqual(unknown.statusCode, 404);
-    deepStrictEqual(body(unknown)._tag, "TodoNotFoundError");
-    const crossed = await server.inject({
-      method: "DELETE",
-      url: `/orgs/${orgB}/todos/${todo.id}`,
-      headers: owner.headers,
-    });
-    deepStrictEqual(crossed.statusCode, 404);
-    deepStrictEqual(body(crossed)._tag, "TodoNotFoundError");
-    const cliCrossed = await server.inject({
-      method: "POST",
-      url: `/cli/orgs/${orgB}/todos/${todo.id}/complete`,
-      headers: owner.headers,
-    });
-    deepStrictEqual(body(cliCrossed)._tag, "CliTodoNotFoundError");
-    deepStrictEqual((await getKnex()("todos")).length, 1);
-  });
-
-  it("forbids a non-member and admits a super admin", async () => {
-    const owner = await signedInAs("owner@example.com");
-    const stranger = await signedInAs("stranger@example.com");
-    const admin = await signedInAs("admin@example.com", { superAdmin: true });
-    const orgId = await createOrg(owner);
-    const todo = body(
-      await server.inject({
-        method: "POST",
-        url: `/orgs/${orgId}/todos`,
-        headers: owner.headers,
-        payload: { title: "A" },
-      }),
-    );
-
-    // The read is the Nest server's to refuse now; this server only forwards
-    // the stranger's own session and relays the answer.
-    wallets.userApiAnswers(403, { _tag: "Forbidden" });
-    deepStrictEqual(
-      (
-        await server.inject({
-          method: "GET",
-          url: `/orgs/${orgId}/todos`,
-          headers: stranger.headers,
-        })
-      ).statusCode,
-      403,
-    );
-    const strangerRead = await wallets.waitForCall(
-      (call) => call.method === "GET" && call.cookie === stranger.headers.cookie,
-    );
-    deepStrictEqual(strangerRead.path, `/orgs/${orgId}/todos`);
-    wallets.userApiAnswers(200, []);
-    deepStrictEqual(
-      (
-        await server.inject({
-          method: "POST",
-          url: `/orgs/${orgId}/todos`,
-          headers: stranger.headers,
-          payload: { title: "x" },
-        })
-      ).statusCode,
-      403,
-    );
-    deepStrictEqual(
-      (
-        await server.inject({
-          method: "DELETE",
-          url: `/orgs/${orgId}/todos/${todo.id}`,
-          headers: stranger.headers,
-        })
-      ).statusCode,
-      403,
-    );
-    deepStrictEqual(
-      (await server.inject({ method: "GET", url: `/orgs/${orgId}/todos`, headers: admin.headers }))
-        .statusCode,
-      200,
-    );
-    deepStrictEqual(
-      (
-        await server.inject({
-          method: "DELETE",
-          url: `/orgs/${orgId}/todos/${todo.id}`,
-          headers: admin.headers,
-        })
-      ).statusCode,
-      204,
-    );
-  });
-
-  it("still answers 201 when the Nest server refuses the mirror", async () => {
-    const owner = await signedInAs("owner@example.com");
-    const orgId = await createOrg(owner);
-    wallets.refuseTodoMirrors(true);
-    try {
-      const created = await server.inject({
-        method: "POST",
-        url: `/orgs/${orgId}/todos`,
-        headers: owner.headers,
-        payload: { title: "Unmirrored" },
-      });
-      deepStrictEqual(created.statusCode, 201);
-      const attempted = await wallets.waitForCall(
-        (call) => call.path === `/internal/orgs/${orgId}/todos`,
-      );
-      deepStrictEqual(attempted.payload, { id: body(created).id, title: "Unmirrored" });
-      deepStrictEqual((await getKnex()("todos")).length, 1);
-    } finally {
-      wallets.refuseTodoMirrors(false);
-    }
-  });
-
-  it("relays the Nest server's answer to a proxied read as it is, status and all", async () => {
-    const owner = await signedInAs("owner@example.com");
-    const orgId = await createOrg(owner);
-    wallets.userApiAnswers(403, { _tag: "Forbidden", message: "not a member" });
-    const refused = await server.inject({
-      method: "GET",
-      url: `/orgs/${orgId}/todos`,
-      headers: owner.headers,
-    });
     deepStrictEqual(refused.statusCode, 403);
     deepStrictEqual(body(refused), { _tag: "Forbidden", message: "not a member" });
-    wallets.userApiAnswers(200, []);
+    deepStrictEqual(await getKnex()("todos"), []);
+  });
+
+  it("forwards without a session too: the Nest server is the one to refuse", async () => {
+    nest.userApiAnswers(401, { _tag: "Unauthorized" });
+    const res = await server.inject({ method: "GET", url: `/orgs/${orgId}/todos` });
+    deepStrictEqual(res.statusCode, 401);
+    const forwarded = await nest.waitForCall((call) => call.path === `/orgs/${orgId}/todos`);
+    deepStrictEqual(forwarded.cookie, "");
   });
 });

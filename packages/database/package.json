@@ -20,7 +20,9 @@
     "test": "vitest",
     "db:migrate": "tsx ./src/scripts/migrate.ts",
     "db:migrate:test": "tsx ./src/scripts/migrate.ts --test",
-    "db:reset": "tsx ./src/scripts/reset-database.ts"
+    "db:reset": "tsx ./src/scripts/reset-database.ts",
+    "db:backfill:todos": "tsx ./src/scripts/backfill-todos.ts",
+    "db:backfill:todos:test": "tsx ./src/scripts/backfill-todos.ts --test"
   },
   "dependencies": {
     "@slonik/pg-driver": "^49.10.9",

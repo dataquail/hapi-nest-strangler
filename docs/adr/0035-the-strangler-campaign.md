@@ -73,6 +73,8 @@ The first sector to move showed the plan's middle was shaped for a shared table:
 
 **Concessions were receipted** on `routes-moved`, `data-moved` and `gone`: the first and last only moved later in the list, the middle one gained an objective.
 
+**`routes-moved` in practice.** The web's `next.config.ts` rewrites a moved sector's paths to the Nest server ahead of the catch-all to the legacy API, and the server-side client routes by the same table (`services/api/upstreams.shared.ts`). The CLI and the MCP server reach the API through that same gateway (`APP_API_URL` defaults to the web's `/api`), so one table says which server serves a path; the legacy API's route-parity test lists the groups the Nest server serves and holds the legacy table to the rest.
+
 ### Consequences of the amendment
 
 - The sectors re-derived honestly: `todo` and `user` stay at `rebuilt`, the others at `fenced`.

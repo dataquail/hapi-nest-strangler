@@ -5,6 +5,8 @@
 export type ApiTransport = {
   readonly baseUrl: string;
   readonly headers: Readonly<Record<string, string>>;
+  // A transport that picks the upstream per request supplies its own fetch.
+  readonly fetch?: (request: Request) => Promise<Response>;
 };
 
 export const BROWSER_TRANSPORT: ApiTransport = { baseUrl: "/api", headers: {} };

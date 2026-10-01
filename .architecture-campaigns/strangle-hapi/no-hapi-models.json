@@ -3,6 +3,17 @@
   "campaign": "strangle-hapi",
   "objective": "no-hapi-models",
   "created": "2026-09-29T14:11:00.373Z",
-  "sectors": {},
+  "sectors": {
+    "todo": {
+      "entered": "2026-10-01T16:30:10.397Z",
+      "initial": 1,
+      "cleared": 0,
+      "closed": 0,
+      "lastCleared": "2026-10-01T16:30:10.397Z",
+      "holdouts": [
+        "todo-model.ts"
+      ]
+    }
+  },
   "concessions": []
 }

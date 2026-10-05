@@ -10,10 +10,11 @@ import { DatabaseModule } from "@/platform/database/database.module.js";
 import { ProblemFilter } from "@/platform/http/problem.filter.js";
 
 import { AuthzModule } from "./authz.module.js";
+import { BillingGatewayModule } from "./billing-gateway.module.js";
 
 // The application, assembled once and identical in both composition roots.
 // What differs between them is the environment each overrides: the database,
-// the environment variables and the user auth guard. The strangler adds a
+// the environment variables, the user auth guard and the billing gateway. The strangler adds a
 // module here, one line each, as it leaves the legacy API.
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { AuthzModule } from "./authz.module.js";
     DatabaseModule,
     CqrsRuntimeModule,
     AuthzModule,
+    BillingGatewayModule,
     WalletModule,
     TodosModule,
     BillingModule,

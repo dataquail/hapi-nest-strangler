@@ -154,8 +154,8 @@ export default defineConfig({
     },
     {
       // The legacy hapi API, against the TEST database: the BFF that serves
-      // every browser and CLI route and terminates auth. Its Stripe gateway
-      // is the in-memory one; its wallet calls go to the Nest server above.
+      // every browser and CLI route and terminates auth. Its wallet calls and
+      // the routes it forwards go to the Nest server above.
       name: "bff",
       command: "pnpm -F @org/legacy-api exec tsx server.ts",
       url: `${BFF_PROBE_URL}/health-check`,
@@ -169,7 +169,6 @@ export default defineConfig({
         APP_URL,
         NEST_SERVER_URL: NEST_INTERNAL_URL,
         INTER_SERVICE_JWT_SECRET,
-        STRIPE_USE_FAKE: "true",
         SESSION_COOKIE_SECRET:
           process.env.SESSION_COOKIE_SECRET ?? "acceptance-session-cookie-secret",
       },

@@ -4,8 +4,15 @@ import type { Lifecycle, Request, ResponseToolkit } from "@hapi/hapi";
 import config = require("../../../config");
 
 // What the Nest server needs to answer as itself: the caller's own
-// credentials, never a service token, and the body as it arrived.
-const FORWARDED_HEADERS = ["authorization", "cookie", "content-type", "accept"] as const;
+// credentials, never a service token, and the body as it arrived — with the
+// provider's signature over it, for a webhook.
+const FORWARDED_HEADERS = [
+  "authorization",
+  "cookie",
+  "content-type",
+  "accept",
+  "stripe-signature",
+] as const;
 
 const forwardedHeaders = (request: Request): Record<string, string> => {
   const headers: Record<string, string> = {};

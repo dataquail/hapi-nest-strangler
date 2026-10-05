@@ -11,6 +11,16 @@
       "closed": 0,
       "lastCleared": "2026-10-01T16:30:10.397Z",
       "holdouts": []
+    },
+    "billing": {
+      "entered": "2026-10-05T14:11:19.636Z",
+      "initial": 1,
+      "cleared": 0,
+      "closed": 0,
+      "lastCleared": "2026-10-05T14:11:19.636Z",
+      "holdouts": [
+        "billing-routes.ts"
+      ]
     }
   },
   "concessions": []

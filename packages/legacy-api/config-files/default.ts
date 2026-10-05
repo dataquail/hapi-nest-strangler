@@ -38,12 +38,6 @@ export const defaultConfig = {
         process.env.ZITADEL_POST_LOGOUT_REDIRECT_URI ?? "http://localhost:3000/",
     },
   },
-  stripe: {
-    secretKey: process.env.STRIPE_SECRET_KEY ?? "",
-    webhookSecret: process.env.STRIPE_WEBHOOK_SECRET ?? "",
-    priceId: process.env.STRIPE_PRICE_ID_DEFAULT ?? "",
-    useFake: process.env.STRIPE_USE_FAKE === "true",
-  },
   backend: {
     url: process.env.NEST_SERVER_URL ?? "http://localhost:3001",
   },

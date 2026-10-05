@@ -15,12 +15,10 @@
     "billing": {
       "entered": "2026-10-05T13:49:20.691Z",
       "initial": 1,
-      "cleared": 0,
+      "cleared": 1,
       "closed": 0,
-      "lastCleared": "2026-10-05T13:49:20.691Z",
-      "holdouts": [
-        "~"
-      ]
+      "lastCleared": "2026-10-05T13:53:05.903Z",
+      "holdouts": []
     }
   },
   "concessions": []

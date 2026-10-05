@@ -597,6 +597,77 @@
           }
         },
         "required": ["organizationId"]
+      },
+      "InternalSubscription": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "organizationId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "stripeCustomerId": {
+            "type": "string"
+          },
+          "stripeSubscriptionId": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "currentPeriodEnd": {
+            "type": ["string", "null"],
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "organizationId",
+          "stripeCustomerId",
+          "stripeSubscriptionId",
+          "status",
+          "currentPeriodEnd"
+        ]
+      },
+      "InternalRecordSubscriptionPayload": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "stripeCustomerId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "stripeSubscriptionId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "status": {
+            "type": "string",
+            "minLength": 1
+          },
+          "currentPeriodEnd": {
+            "type": ["string", "null"],
+            "format": "date-time"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "stripeCustomerId",
+          "stripeSubscriptionId",
+          "status",
+          "currentPeriodEnd",
+          "createdAt"
+        ]
       }
     },
     "parameters": {}
@@ -5184,6 +5255,109 @@
                     }
                   },
                   "required": ["_tag"]
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "The server is not ready to handle the request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "_tag": {
+                      "type": "string",
+                      "enum": ["ServiceUnavailable"]
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["_tag"]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/internal/orgs/{organizationId}/billing/subscriptions": {
+      "post": {
+        "operationId": "internalBilling.recordSubscription",
+        "tags": ["internal-billing"],
+        "security": [
+          {
+            "interServiceToken": []
+          }
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "organizationId",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InternalRecordSubscriptionPayload"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalSubscription"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication is required and has failed or has not been provided",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "_tag": {
+                      "type": "string",
+                      "enum": ["Unauthorized"]
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["_tag"]
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "A subscription for that organization has already been mirrored to this server",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "_tag": {
+                      "type": "string",
+                      "enum": ["InternalSubscriptionAlreadyExistsError"]
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["_tag", "message"]
                 }
               }
             }

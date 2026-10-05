@@ -6,6 +6,7 @@ export const sector = {
     "packages/legacy-api/test/application/billing/**",
     "packages/legacy-api/migrations/*_subscriptions.ts",
     "packages/legacy-api/migrations/*_webhook_events.ts",
+    "packages/legacy-api/src/lib/backend-client/domains/billing.ts",
     "packages/server/src/modules/billing/**",
   ],
 };

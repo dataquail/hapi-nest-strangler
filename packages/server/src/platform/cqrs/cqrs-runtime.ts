@@ -3,6 +3,7 @@ import { CqrsModule } from "@nestjs/cqrs";
 import { makeEventBus, makeUnhandledFailures } from "@org/event-bus";
 import { makeUnitOfWork } from "@org/unit-of-work";
 
+import { billingCommandSpanAttributes } from "@/modules/billing/billing.platform.js";
 import {
   todoCommandSpanAttributes,
   todoQuerySpanAttributes,
@@ -66,6 +67,7 @@ const mergeUnique = <V>(
           "command span attributes",
           walletCommandSpanAttributes,
           todoCommandSpanAttributes,
+          billingCommandSpanAttributes,
         ),
     },
     {

@@ -27,7 +27,11 @@ describe.sequential("billing routes (integration)", () => {
     await closeKnex();
   });
 
-  beforeEach(truncateAll);
+  beforeEach(async () => {
+    await truncateAll();
+    wallets.calls.length = 0;
+    wallets.refuseMirrors(false);
+  });
 
   const body = (res: { payload: string }) => JSON.parse(res.payload);
   const createOrg = async (owner: Session) =>
@@ -111,6 +115,47 @@ describe.sequential("billing routes (integration)", () => {
       headers: stranger.headers,
     });
     deepStrictEqual(forbidden.statusCode, 403);
+  });
+
+  it("mirrors a started subscription to the Nest server under the same ids", async () => {
+    const owner = await signedInAs("owner@example.com");
+    const orgId = await createOrg(owner);
+    const started = await server.inject({
+      method: "POST",
+      url: `/orgs/${orgId}/billing/subscriptions`,
+      headers: owner.headers,
+      payload: {},
+    });
+    const row = await getKnex()("subscriptions").first();
+
+    const call = await wallets.waitForCall(
+      (one) => one.path === `/internal/orgs/${orgId}/billing/subscriptions`,
+    );
+    deepStrictEqual(call.method, "POST");
+    deepStrictEqual(call.tokenValid, true);
+    deepStrictEqual(call.payload, {
+      id: body(started).id,
+      stripeCustomerId: row.stripe_customer_id,
+      stripeSubscriptionId: row.stripe_subscription_id,
+      status: "active",
+      currentPeriodEnd: body(started).currentPeriodEnd,
+      createdAt: new Date(row.created_at).toISOString(),
+    });
+  });
+
+  it("answers a start the Nest server refuses to mirror, since hapi is the source of truth", async () => {
+    wallets.refuseMirrors(true);
+    const owner = await signedInAs("owner@example.com");
+    const orgId = await createOrg(owner);
+    const started = await server.inject({
+      method: "POST",
+      url: `/orgs/${orgId}/billing/subscriptions`,
+      headers: owner.headers,
+      payload: {},
+    });
+    deepStrictEqual(started.statusCode, 201);
+    await wallets.waitForCall((one) => one.path.endsWith("/billing/subscriptions"));
+    deepStrictEqual((await getKnex()("subscriptions")).length, 1);
   });
 
   it("ingests Stripe webhooks once each, syncing the subscription status", async () => {

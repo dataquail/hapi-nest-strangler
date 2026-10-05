@@ -11,6 +11,19 @@
       "closed": 0,
       "lastCleared": "2026-10-01T15:13:47.723Z",
       "holdouts": []
+    },
+    "billing": {
+      "entered": "2026-10-05T13:49:20.691Z",
+      "initial": 4,
+      "cleared": 0,
+      "closed": 0,
+      "lastCleared": "2026-10-05T13:49:20.691Z",
+      "holdouts": [
+        "billing-service.ts#cancelSubscription#ac56a836",
+        "billing-service.ts#ingestStripeWebhook#9e8ae549",
+        "billing-service.ts#ingestStripeWebhook#dad5b32b",
+        "billing-service.ts#startSubscription#cff14458"
+      ]
     }
   },
   "concessions": [

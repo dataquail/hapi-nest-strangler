@@ -15,14 +15,13 @@
     "billing": {
       "entered": "2026-10-05T13:59:40.628Z",
       "initial": 4,
-      "cleared": 0,
+      "cleared": 1,
       "closed": 0,
-      "lastCleared": "2026-10-05T13:59:40.628Z",
+      "lastCleared": "2026-10-05T14:03:52.629Z",
       "holdouts": [
         "billing-routes.ts#billingRoutes#9c1acaf5",
         "billing-routes.ts#billingRoutes#ad2a056c",
-        "billing-routes.ts#billingRoutes#c52c2599",
-        "billing-routes.ts#billingRoutes#cc76f797"
+        "billing-routes.ts#billingRoutes#c52c2599"
       ]
     }
   },

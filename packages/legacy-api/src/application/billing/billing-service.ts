@@ -56,14 +56,6 @@ class BillingService {
     return this.bookshelf.knex as unknown as Knex;
   }
 
-  async getCurrent(organization: any) {
-    const row: SubscriptionRow | undefined = await this.knex("subscriptions")
-      .where({ organization_id: organization.get("id") })
-      .first();
-    if (!row) throw subscriptionNotFound(organization.get("id"));
-    return toJson(row);
-  }
-
   // The provider calls happen outside any transaction: a failed insert after
   // a successful create leaves an orphaned provider subscription, as it always has.
   async startSubscription(organization: any) {

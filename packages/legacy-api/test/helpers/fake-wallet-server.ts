@@ -2,6 +2,8 @@ import * as Hapi from "@hapi/hapi";
 
 export const FAKE_WALLET_PORT = 18081;
 
+type Canned = { status: number; body: unknown };
+
 type Recorded = {
   method: string;
   path: string;
@@ -13,7 +15,8 @@ type Recorded = {
 
 // Stands in for the Nest server's internal API on a fixed port: records every
 // call, verifies the inter-service token the way the real guard does, and can
-// be armed to refuse the next wallet create or every billing mirror.
+// be armed to refuse the next wallet create or every billing mirror, and
+// relays whatever a test arms for the user-facing routes proxied to it.
 export const startFakeWalletServer = async (sharedSecret: string) => {
   const { jwtVerify } = await import("jose");
   const key = new TextEncoder().encode(sharedSecret);
@@ -43,6 +46,16 @@ export const startFakeWalletServer = async (sharedSecret: string) => {
     return tokenValid;
   };
 
+  // The user-facing API the legacy routes proxy to: answers whatever the test
+  // last armed, so a test asserts on the forward and the relay, not on Nest's
+  // behaviour.
+  let userApiAnswer: Canned = { status: 200, body: {} };
+  const relay: Hapi.Lifecycle.Method = async (request, h) => {
+    await record(request);
+    const reply = h.response(JSON.stringify(userApiAnswer.body)).code(userApiAnswer.status);
+    return reply.type("application/json");
+  };
+
   const server = Hapi.server({ port: FAKE_WALLET_PORT, host: "127.0.0.1" });
   const mirror: Hapi.Lifecycle.Method = async (request, h) => {
     const ok = await record(request);
@@ -55,6 +68,7 @@ export const startFakeWalletServer = async (sharedSecret: string) => {
   };
 
   server.route([
+    { method: "*", path: "/orgs/{rest*}", handler: relay },
     {
       method: ["POST", "PUT"],
       path: "/internal/orgs/{organizationId}/billing/{rest*}",
@@ -90,6 +104,9 @@ export const startFakeWalletServer = async (sharedSecret: string) => {
     calls,
     refuseNextCreates: (value: boolean) => {
       refuseCreates = value;
+    },
+    userApiAnswers: (status: number, body: unknown) => {
+      userApiAnswer = { status, body };
     },
     refuseMirrors: (value: boolean) => {
       refuseMirrors = value;

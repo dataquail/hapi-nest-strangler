@@ -2,6 +2,11 @@ import { Global, Module } from "@nestjs/common";
 import { makePolicyRegistry, makeResourceResolverRegistry } from "@org/authz";
 
 import {
+  BillingModule,
+  BillingPolicyContribution,
+  BillingResolverEntry,
+} from "@/modules/billing/billing.platform.js";
+import {
   TodoCollectionResolverEntry,
   TodoPolicyContribution,
   TodoResolverEntry,
@@ -18,23 +23,29 @@ import { UserAuthGuard } from "@/platform/middlewares/user-auth.guard.js";
 // adding a module with policies means one import and one entry in each factory.
 @Global()
 @Module({
-  imports: [TodosModule],
+  imports: [TodosModule, BillingModule],
   providers: [
     CookieCodec,
     { provide: Authenticator, useClass: AuthenticatorLive },
     UserAuthGuard,
     {
       provide: PolicyRegistry,
-      inject: [TodoPolicyContribution],
-      useFactory: (todos: TodoPolicyContribution) => makePolicyRegistry([todos.contribution]),
+      inject: [TodoPolicyContribution, BillingPolicyContribution],
+      useFactory: (todos: TodoPolicyContribution, billing: BillingPolicyContribution) =>
+        makePolicyRegistry([todos.contribution, billing.contribution]),
     },
     {
       provide: ResourceResolverRegistry,
-      inject: [TodoCollectionResolverEntry, TodoResolverEntry],
-      useFactory: (todoCollection: TodoCollectionResolverEntry, todo: TodoResolverEntry) =>
+      inject: [TodoCollectionResolverEntry, TodoResolverEntry, BillingResolverEntry],
+      useFactory: (
+        todoCollection: TodoCollectionResolverEntry,
+        todo: TodoResolverEntry,
+        billing: BillingResolverEntry,
+      ) =>
         makeResourceResolverRegistry({
           todoCollection: todoCollection.resolve,
           todo: todo.resolve,
+          billing: billing.resolve,
         }),
     },
     Authz,

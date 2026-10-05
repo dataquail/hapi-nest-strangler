@@ -1,58 +1,58 @@
 {
-  "version": 1,
+  "version": 2,
   "campaign": "strangle-hapi",
   "phases": [
     {
       "id": "fenced",
-      "hash": "10388130",
+      "hash": "5af1792e",
       "defined": true,
       "concessions": 0
     },
     {
       "id": "rebuilt",
-      "hash": "043a364f",
+      "hash": "03906f0c",
       "defined": true,
       "concessions": 0
     },
     {
       "id": "mirrored",
-      "hash": "042ffbfc",
+      "hash": "50eff3fc",
       "defined": true,
-      "concessions": 2
+      "concessions": 3
     },
     {
       "id": "backfilled",
-      "hash": "38bf979d",
+      "hash": "41308a20",
       "defined": true,
       "concessions": 0
     },
     {
       "id": "served",
-      "hash": "fc29868a",
+      "hash": "3a72d1a4",
       "defined": true,
       "concessions": 0
     },
     {
       "id": "routes-moved",
-      "hash": "a693f498",
+      "hash": "49bebcdb",
       "defined": true,
       "concessions": 1
     },
     {
       "id": "data-moved",
-      "hash": "03a1be09",
+      "hash": "de1f8225",
       "defined": true,
       "concessions": 1
     },
     {
       "id": "gone",
-      "hash": "e6b52988",
+      "hash": "629d7e43",
       "defined": true,
       "concessions": 1
     },
     {
       "id": "settled",
-      "hash": "250213eb",
+      "hash": "a51e7219",
       "defined": false,
       "concessions": 0
     }

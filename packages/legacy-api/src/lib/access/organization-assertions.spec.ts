@@ -2,7 +2,7 @@ import { deepStrictEqual } from "node:assert";
 
 import { describe, it } from "vitest";
 
-import { asOrganizationAdmin, fromOwnOrganization } from "./organization-access";
+import { asOrganizationAdmin, fromOwnOrganization } from "./organization-assertions";
 
 const userIn = (memberOf: string[], adminOf: string[]) => ({
   isMemberOf: (id: string) => memberOf.includes(id),

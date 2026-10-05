@@ -5,6 +5,7 @@ import { mirrorEvents } from "./src/constants/mirror-events";
 import type {
   MirroredCancellation,
   MirroredSubscriptionStart,
+  MirroredWebhookEvent,
 } from "./src/lib/backend-client/domains/billing";
 import * as logger from "./src/lib/logger";
 
@@ -32,6 +33,13 @@ const plugin: Plugin<Record<string, never>> = {
     server.events.on(mirrorEvents.SUBSCRIPTION_CANCELED, (cancel: MirroredCancellation) => {
       forward(`subscription cancel for ${cancel.organizationId}`, () =>
         backendClient.billing.recordCancellation(cancel),
+      );
+    });
+
+    server.event(mirrorEvents.WEBHOOK_EVENT_INGESTED);
+    server.events.on(mirrorEvents.WEBHOOK_EVENT_INGESTED, (event: MirroredWebhookEvent) => {
+      forward(`webhook event ${event.stripeEventId}`, () =>
+        backendClient.billing.recordWebhookEvent(event),
       );
     });
   },

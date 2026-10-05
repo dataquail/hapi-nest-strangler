@@ -678,6 +678,38 @@
           }
         },
         "required": ["canceledAt"]
+      },
+      "InternalRecordWebhookEventPayload": {
+        "type": "object",
+        "properties": {
+          "stripeEventId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "receivedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "subscription": {
+            "type": ["object", "null"],
+            "properties": {
+              "stripeSubscriptionId": {
+                "type": "string",
+                "minLength": 1
+              },
+              "status": {
+                "type": "string",
+                "minLength": 1
+              },
+              "currentPeriodEnd": {
+                "type": ["string", "null"],
+                "format": "date-time"
+              }
+            },
+            "required": ["stripeSubscriptionId", "status", "currentPeriodEnd"]
+          }
+        },
+        "required": ["stripeEventId", "receivedAt", "subscription"]
       }
     },
     "parameters": {}
@@ -5471,6 +5503,71 @@
                     }
                   },
                   "required": ["_tag", "message"]
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "The server is not ready to handle the request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "_tag": {
+                      "type": "string",
+                      "enum": ["ServiceUnavailable"]
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["_tag"]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/internal/billing/webhook-events": {
+      "post": {
+        "operationId": "internalBilling.recordWebhookEvent",
+        "tags": ["internal-billing"],
+        "security": [
+          {
+            "interServiceToken": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InternalRecordWebhookEventPayload"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "No content"
+          },
+          "401": {
+            "description": "Authentication is required and has failed or has not been provided",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "_tag": {
+                      "type": "string",
+                      "enum": ["Unauthorized"]
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["_tag"]
                 }
               }
             }

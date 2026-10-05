@@ -3,4 +3,5 @@
 export const mirrorEvents = {
   SUBSCRIPTION_STARTED: "mirror-subscription-started",
   SUBSCRIPTION_CANCELED: "mirror-subscription-canceled",
+  WEBHOOK_EVENT_INGESTED: "mirror-webhook-event-ingested",
 } as const;

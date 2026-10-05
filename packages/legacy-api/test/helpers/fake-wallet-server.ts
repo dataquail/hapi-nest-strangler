@@ -44,7 +44,23 @@ export const startFakeWalletServer = async (sharedSecret: string) => {
   };
 
   const server = Hapi.server({ port: FAKE_WALLET_PORT, host: "127.0.0.1" });
+  const mirror: Hapi.Lifecycle.Method = async (request, h) => {
+    const ok = await record(request);
+    if (!ok) return h.response({ _tag: "Unauthorized" }).code(401);
+    if (refuseMirrors)
+      return h.response({ _tag: "ServiceUnavailable", message: "billing store down" }).code(503);
+    return request.payload === null
+      ? h.response().code(204)
+      : h.response(request.payload).code(request.method === "post" ? 201 : 200);
+  };
+
   server.route([
+    {
+      method: ["POST", "PUT"],
+      path: "/internal/orgs/{organizationId}/billing/{rest*}",
+      handler: mirror,
+    },
+    { method: "POST", path: "/internal/billing/{rest*}", handler: mirror },
     {
       method: "POST",
       path: "/internal/wallets",
@@ -57,19 +73,6 @@ export const startFakeWalletServer = async (sharedSecret: string) => {
         return h
           .response({ id: "11111111-1111-1111-1111-111111111111", organizationId, balance: 0 })
           .code(201);
-      },
-    },
-    {
-      method: ["POST", "PUT"],
-      path: "/internal/orgs/{organizationId}/billing/{rest*}",
-      handler: async (request, h) => {
-        const ok = await record(request);
-        if (!ok) return h.response({ _tag: "Unauthorized" }).code(401);
-        if (refuseMirrors)
-          return h
-            .response({ _tag: "ServiceUnavailable", message: "billing store down" })
-            .code(503);
-        return h.response(request.payload).code(request.method === "post" ? 201 : 200);
       },
     },
     {

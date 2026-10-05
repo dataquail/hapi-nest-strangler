@@ -153,7 +153,8 @@ describe("BillingService", () => {
 
   it("applies a webhook once and acknowledges its redelivery without touching the subscription", async () => {
     const { inserts, knex, updates } = makeKnex();
-    const service = new BillingService({ knex } as any, createFakeGateway(), makeServer() as any);
+    const server = makeServer();
+    const service = new BillingService({ knex } as any, createFakeGateway(), server as any);
     const payload = JSON.stringify({
       eventId: "evt_1",
       type: "customer.subscription.deleted",
@@ -170,6 +171,20 @@ describe("BillingService", () => {
     deepStrictEqual(updates.length, 1);
     deepStrictEqual(updates[0].where, { stripe_subscription_id: "sub_9" });
     deepStrictEqual(updates[0].patch.status, "canceled");
+    deepStrictEqual(server.events.emit.mock.calls, [
+      [
+        "mirror-webhook-event-ingested",
+        {
+          stripeEventId: "evt_1",
+          receivedAt: (updates[0].patch.updated_at as Date).toISOString(),
+          subscription: {
+            stripeSubscriptionId: "sub_9",
+            status: "canceled",
+            currentPeriodEnd: null,
+          },
+        },
+      ],
+    ]);
   });
 
   it("rejects a webhook whose signature does not verify before consuming the event", async () => {

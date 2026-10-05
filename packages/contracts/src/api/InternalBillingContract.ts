@@ -47,6 +47,21 @@ export const InternalRecordCancellationPayload = z
   .meta({ id: "InternalRecordCancellationPayload" });
 export type InternalRecordCancellationPayload = z.infer<typeof InternalRecordCancellationPayload>;
 
+export const InternalRecordWebhookEventPayload = z
+  .object({
+    stripeEventId: z.string().min(1),
+    receivedAt: z.iso.datetime(),
+    subscription: z
+      .object({
+        stripeSubscriptionId: z.string().min(1),
+        status: z.string().min(1),
+        currentPeriodEnd: z.iso.datetime().nullable(),
+      })
+      .nullable(),
+  })
+  .meta({ id: "InternalRecordWebhookEventPayload" });
+export type InternalRecordWebhookEventPayload = z.infer<typeof InternalRecordWebhookEventPayload>;
+
 const OrgParams = z.object({ organizationId: OrganizationId });
 
 // Service-to-service only: while the legacy API owns billing it mirrors every
@@ -73,6 +88,15 @@ export const Group = defineGroup({
       body: InternalRecordCancellationPayload,
       success: { status: 200, schema: InternalSubscription },
       errors: [InternalSubscriptionNotFoundError, ServiceUnavailable],
+      security: "service",
+    }),
+    recordWebhookEvent: defineRoute({
+      method: "post",
+      path: "/internal/billing/webhook-events",
+      operationId: "internalBilling.recordWebhookEvent",
+      body: InternalRecordWebhookEventPayload,
+      success: { status: 204, schema: undefined },
+      errors: [ServiceUnavailable],
       security: "service",
     }),
   },

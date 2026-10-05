@@ -129,7 +129,8 @@ describe("BillingService", () => {
       order.push("provider");
       return { status: "canceled", currentPeriodEnd: null };
     });
-    const service = new BillingService({ knex } as any, gateway, makeServer() as any);
+    const server = makeServer();
+    const service = new BillingService({ knex } as any, gateway, server as any);
 
     const result = await service.cancelSubscription(organization("org-1"));
 
@@ -139,6 +140,15 @@ describe("BillingService", () => {
     ]);
     deepStrictEqual(updates.length, 1);
     deepStrictEqual(updates[0].patch.status, "canceled");
+    deepStrictEqual(server.events.emit.mock.calls, [
+      [
+        "mirror-subscription-canceled",
+        {
+          organizationId: "org-1",
+          canceledAt: (updates[0].patch.updated_at as Date).toISOString(),
+        },
+      ],
+    ]);
   });
 
   it("applies a webhook once and acknowledges its redelivery without touching the subscription", async () => {

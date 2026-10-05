@@ -15,11 +15,10 @@
     "billing": {
       "entered": "2026-10-05T13:49:20.691Z",
       "initial": 4,
-      "cleared": 1,
+      "cleared": 2,
       "closed": 0,
-      "lastCleared": "2026-10-05T13:53:05.903Z",
+      "lastCleared": "2026-10-05T13:55:05.852Z",
       "holdouts": [
-        "billing-service.ts#cancelSubscription#ac56a836",
         "billing-service.ts#ingestStripeWebhook#9e8ae549",
         "billing-service.ts#ingestStripeWebhook#dad5b32b"
       ]

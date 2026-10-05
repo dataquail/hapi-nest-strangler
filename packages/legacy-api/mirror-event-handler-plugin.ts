@@ -2,7 +2,10 @@ import type { Plugin, Server } from "@hapi/hapi";
 import * as ioc from "electrolyte";
 
 import { mirrorEvents } from "./src/constants/mirror-events";
-import type { MirroredSubscriptionStart } from "./src/lib/backend-client/domains/billing";
+import type {
+  MirroredCancellation,
+  MirroredSubscriptionStart,
+} from "./src/lib/backend-client/domains/billing";
 import * as logger from "./src/lib/logger";
 
 // While a module is dual-written its services announce each write as a mirror
@@ -23,6 +26,13 @@ const plugin: Plugin<Record<string, never>> = {
     server.event(mirrorEvents.SUBSCRIPTION_STARTED);
     server.events.on(mirrorEvents.SUBSCRIPTION_STARTED, (start: MirroredSubscriptionStart) => {
       forward(`subscription ${start.id} start`, () => backendClient.billing.recordStart(start));
+    });
+
+    server.event(mirrorEvents.SUBSCRIPTION_CANCELED);
+    server.events.on(mirrorEvents.SUBSCRIPTION_CANCELED, (cancel: MirroredCancellation) => {
+      forward(`subscription cancel for ${cancel.organizationId}`, () =>
+        backendClient.billing.recordCancellation(cancel),
+      );
     });
   },
 };

@@ -668,6 +668,16 @@
           "currentPeriodEnd",
           "createdAt"
         ]
+      },
+      "InternalRecordCancellationPayload": {
+        "type": "object",
+        "properties": {
+          "canceledAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": ["canceledAt"]
       }
     },
     "parameters": {}
@@ -5352,6 +5362,109 @@
                     "_tag": {
                       "type": "string",
                       "enum": ["InternalSubscriptionAlreadyExistsError"]
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["_tag", "message"]
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "The server is not ready to handle the request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "_tag": {
+                      "type": "string",
+                      "enum": ["ServiceUnavailable"]
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["_tag"]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/internal/orgs/{organizationId}/billing/subscriptions/current/cancellation": {
+      "post": {
+        "operationId": "internalBilling.recordCancellation",
+        "tags": ["internal-billing"],
+        "security": [
+          {
+            "interServiceToken": []
+          }
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "organizationId",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InternalRecordCancellationPayload"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalSubscription"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication is required and has failed or has not been provided",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "_tag": {
+                      "type": "string",
+                      "enum": ["Unauthorized"]
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["_tag"]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No subscription for that organization has been mirrored to this server",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "_tag": {
+                      "type": "string",
+                      "enum": ["InternalSubscriptionNotFoundError"]
                     },
                     "message": {
                       "type": "string"

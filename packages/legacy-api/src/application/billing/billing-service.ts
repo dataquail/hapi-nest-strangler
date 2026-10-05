@@ -113,6 +113,10 @@ class BillingService {
     await this.knex("subscriptions")
       .where({ id: row.id })
       .update({ status: "canceled", updated_at: now });
+    this.server.events.emit(mirrorEvents.SUBSCRIPTION_CANCELED, {
+      organizationId: row.organization_id,
+      canceledAt: now.toISOString(),
+    });
     return toJson({ ...row, status: "canceled", updated_at: now });
   }
 

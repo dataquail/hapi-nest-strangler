@@ -51,19 +51,11 @@ describe.sequential("billing routes (integration)", () => {
       payload: JSON.stringify(event),
     });
 
-  it("starts, reads and cancels a subscription; admins commit, members only read", async () => {
+  it("starts and cancels a subscription; only admins commit", async () => {
     const owner = await signedInAs("owner@example.com");
     const member = await signedInAs("member@example.com");
     const orgId = await createOrg(owner);
     await getKnex()("memberships").insert({ user_id: member.userId, organization_id: orgId });
-
-    const missing = await server.inject({
-      method: "GET",
-      url: `/orgs/${orgId}/billing/subscriptions/current`,
-      headers: member.headers,
-    });
-    deepStrictEqual(missing.statusCode, 404);
-    deepStrictEqual(body(missing)._tag, "SubscriptionNotFoundError");
 
     const memberStarts = await server.inject({
       method: "POST",
@@ -92,13 +84,6 @@ describe.sequential("billing routes (integration)", () => {
     deepStrictEqual(again.statusCode, 409);
     deepStrictEqual(body(again)._tag, "SubscriptionAlreadyExistsError");
 
-    const read = await server.inject({
-      method: "GET",
-      url: `/orgs/${orgId}/billing/subscriptions/current`,
-      headers: member.headers,
-    });
-    deepStrictEqual(body(read), body(started));
-
     const canceled = await server.inject({
       method: "DELETE",
       url: `/orgs/${orgId}/billing/subscriptions/current`,
@@ -107,14 +92,26 @@ describe.sequential("billing routes (integration)", () => {
     deepStrictEqual(canceled.statusCode, 200);
     deepStrictEqual(body(canceled).status, "canceled");
     deepStrictEqual((await getKnex()("subscriptions").first()).status, "canceled");
+  });
 
-    const stranger = await signedInAs("stranger@example.com");
-    const forbidden = await server.inject({
+  it("forwards a read of the current subscription to the Nest server and relays its answer", async () => {
+    const owner = await signedInAs("owner@example.com");
+    const orgId = await createOrg(owner);
+    wallets.userApiAnswers(404, { _tag: "SubscriptionNotFoundError", organizationId: orgId });
+
+    const read = await server.inject({
       method: "GET",
       url: `/orgs/${orgId}/billing/subscriptions/current`,
-      headers: stranger.headers,
+      headers: owner.headers,
     });
-    deepStrictEqual(forbidden.statusCode, 403);
+
+    deepStrictEqual(read.statusCode, 404);
+    deepStrictEqual(body(read)._tag, "SubscriptionNotFoundError");
+    const call = await wallets.waitForCall(
+      (one) => one.path === `/orgs/${orgId}/billing/subscriptions/current`,
+    );
+    deepStrictEqual(call.method, "GET");
+    deepStrictEqual(call.cookie, owner.headers.cookie);
   });
 
   it("mirrors a started subscription to the Nest server under the same ids", async () => {
@@ -252,15 +249,12 @@ describe.sequential("billing routes (integration)", () => {
       },
     });
     deepStrictEqual(updated.statusCode, 204);
-    const afterUpdate = body(
-      await server.inject({
-        method: "GET",
-        url: `/orgs/${orgId}/billing/subscriptions/current`,
-        headers: owner.headers,
-      }),
-    );
+    const afterUpdate = await getKnex()("subscriptions").first();
     deepStrictEqual(afterUpdate.status, "past_due");
-    deepStrictEqual(afterUpdate.currentPeriodEnd, "2030-01-01T00:00:00.000Z");
+    deepStrictEqual(
+      new Date(afterUpdate.current_period_end).toISOString(),
+      "2030-01-01T00:00:00.000Z",
+    );
     deepStrictEqual(afterUpdate.id, started.id);
 
     // Replayed delivery: acknowledged, applied once.

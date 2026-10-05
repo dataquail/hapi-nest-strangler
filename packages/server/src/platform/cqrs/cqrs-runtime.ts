@@ -3,7 +3,10 @@ import { CqrsModule } from "@nestjs/cqrs";
 import { makeEventBus, makeUnhandledFailures } from "@org/event-bus";
 import { makeUnitOfWork } from "@org/unit-of-work";
 
-import { billingCommandSpanAttributes } from "@/modules/billing/billing.platform.js";
+import {
+  billingCommandSpanAttributes,
+  billingQuerySpanAttributes,
+} from "@/modules/billing/billing.platform.js";
 import {
   todoCommandSpanAttributes,
   todoQuerySpanAttributes,
@@ -73,7 +76,12 @@ const mergeUnique = <V>(
     {
       provide: QuerySpanAttributes,
       useFactory: () =>
-        mergeUnique("query span attributes", walletQuerySpanAttributes, todoQuerySpanAttributes),
+        mergeUnique(
+          "query span attributes",
+          walletQuerySpanAttributes,
+          todoQuerySpanAttributes,
+          billingQuerySpanAttributes,
+        ),
     },
     AppCommandBus,
     AppQueryBus,

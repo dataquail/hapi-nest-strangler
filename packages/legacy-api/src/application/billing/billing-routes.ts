@@ -2,6 +2,7 @@ import type { ServerRoute } from "@hapi/hapi";
 
 import { actionConstants } from "../../constants/acl/action-constants";
 import { can } from "../../lib/access/can";
+import { proxiedRouteOptions, proxyToNest } from "../../lib/backend-client/proxy-to-nest";
 import { asyncValidation } from "../../lib/hapi-async-validation";
 import Joi = require("../../lib/joi");
 import { problem } from "../../lib/problem";
@@ -37,14 +38,11 @@ const billingRoutes = (billingService: BillingService, rowExists: any): ServerRo
     {
       method: "GET",
       path: "/orgs/{orgId}/billing/subscriptions/current",
-      handler: (request) => billingService.getCurrent((request.params as any).orgId),
-      options: {
-        tags: ["api"],
-        description: "The organization's current subscription",
-        auth: "session",
-        ext: { onPreHandler: [{ method: can(actionConstants.VIEW, "params.orgId") }] },
-        validate: { params: orgParams },
-      },
+      handler: proxyToNest(),
+      options: proxiedRouteOptions(
+        "The organization's current subscription, served by the Nest server",
+        false,
+      ),
     },
     {
       method: "DELETE",

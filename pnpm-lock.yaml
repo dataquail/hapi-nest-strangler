@@ -454,6 +454,9 @@ importers:
       rxjs:
         specifier: ^7.8.2
         version: 7.8.2
+      stripe:
+        specifier: ^22.6.2
+        version: 22.6.2(@types/node@25.9.6)
       zod:
         specifier: ^4.3.6
         version: 4.6.4
@@ -13295,6 +13298,10 @@ snapshots:
   stripe@22.6.2(@types/node@22.20.2):
     optionalDependencies:
       '@types/node': 22.20.2
+
+  stripe@22.6.2(@types/node@25.9.6):
+    optionalDependencies:
+      '@types/node': 25.9.6
 
   strtok3@10.3.5:
     dependencies:

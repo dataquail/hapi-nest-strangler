@@ -55,3 +55,13 @@ export const seedMemberOrganization = async (
   await seedLegacyMembership(db, userId, organizationId);
   return organizationId;
 };
+
+export const seedAdminOrganization = async (
+  db: Database,
+  userId: string,
+  name: string,
+): Promise<string> => {
+  const organizationId = await seedMemberOrganization(db, userId, name);
+  await seedLegacyOrganizationRole(db, userId, organizationId, "admin");
+  return organizationId;
+};

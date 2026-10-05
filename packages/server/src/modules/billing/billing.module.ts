@@ -10,12 +10,15 @@ import { OrganizationAccessLive } from "./infrastructure/acl/organization-access
 import { PlatformRolesLive } from "./infrastructure/acl/platform-roles.acl-live.js";
 import { SubscriptionRepositoryLive } from "./infrastructure/repositories/subscription.repository-live.js";
 import { WebhookEventRepositoryLive } from "./infrastructure/repositories/webhook-event.repository-live.js";
+import { StripeWebhookEventAdapter } from "./interface/events/stripe-webhook.event-adapter.js";
 import { billingEndpoints } from "./interface/http/index.js";
 import { BillingPolicyContribution } from "./policies/billing.policies.js";
 import { BillingResolverEntry } from "./policies/billing.resource-resolver.js";
 
 // A module states its own imports by importing them (ADR-0032); the contexts
 // its ACL ports reach still live on the legacy API, so there are none yet.
+// The BillingGateway is absent: which adapter satisfies it is the composition
+// root's choice.
 @Module({
   controllers: [...billingEndpoints],
   providers: [
@@ -25,6 +28,7 @@ import { BillingResolverEntry } from "./policies/billing.resource-resolver.js";
     { provide: WebhookEventRepository, useClass: WebhookEventRepositoryLive },
     { provide: OrganizationAccess, useClass: OrganizationAccessLive },
     { provide: PlatformRoles, useClass: PlatformRolesLive },
+    StripeWebhookEventAdapter,
     BillingPolicyContribution,
     BillingResolverEntry,
   ],

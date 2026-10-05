@@ -20,6 +20,17 @@ const EnvSchema = z.object({
   SESSION_TTL_SECONDS: optionalNumber(3600),
   SESSION_TOUCH_THRESHOLD_SECONDS: optionalNumber(60),
   API_TOKEN_TOUCH_THRESHOLD_SECONDS: optionalNumber(60),
+
+  // The in-memory gateway stands in for Stripe when this is true, as it does
+  // on the legacy API; otherwise the live gateway refuses to start without
+  // the three keys below.
+  STRIPE_USE_FAKE: z
+    .enum(["true", "false"])
+    .default("false")
+    .transform((value) => value === "true"),
+  STRIPE_SECRET_KEY: z.string().default(""),
+  STRIPE_WEBHOOK_SECRET: z.string().default(""),
+  STRIPE_PRICE_ID_DEFAULT: z.string().default(""),
 });
 
 type ParsedEnv = z.infer<typeof EnvSchema>;

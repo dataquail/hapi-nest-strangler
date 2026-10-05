@@ -140,6 +140,7 @@ export default defineConfig({
         PORT: String(new URL(NEST_URL).port),
         INTER_SERVICE_JWT_SECRET,
         OTLP_URL: process.env.OTLP_URL ?? "http://localhost:4318/v1/traces",
+        STRIPE_USE_FAKE: "true",
       },
       // Acceptance always spawns its own server processes — reusing a running
       // dev server would mean the test runs against the *dev* DB instead of

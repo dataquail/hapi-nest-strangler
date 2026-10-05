@@ -5,6 +5,7 @@ import { makeUnitOfWork } from "@org/unit-of-work";
 
 import {
   billingCommandSpanAttributes,
+  billingEventSpanAttributes,
   billingQuerySpanAttributes,
 } from "@/modules/billing/billing.platform.js";
 import {
@@ -54,7 +55,11 @@ const mergeUnique = <V>(
       useFactory: (unhandledFailures: UnhandledFailures) =>
         makeEventBus({
           unhandledFailures,
-          spanAttributes: mergeUnique("event span attributes", walletEventSpanAttributes),
+          spanAttributes: mergeUnique(
+            "event span attributes",
+            walletEventSpanAttributes,
+            billingEventSpanAttributes,
+          ),
         }),
     },
     {

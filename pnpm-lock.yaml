@@ -13,20 +13,20 @@ importers:
   .:
     devDependencies:
       '@goodbones/campaigns':
-        specifier: 0.1.1-beta.3
-        version: 0.1.1-beta.3
+        specifier: 0.1.1-beta.4
+        version: 0.1.1-beta.4
       '@goodbones/cli':
-        specifier: 0.1.0-beta.14
-        version: 0.1.0-beta.14
+        specifier: 0.1.0-beta.15
+        version: 0.1.0-beta.15
       '@goodbones/core':
-        specifier: 0.1.0-beta.14
-        version: 0.1.0-beta.14
+        specifier: 0.1.0-beta.15
+        version: 0.1.0-beta.15
       '@goodbones/oxlint':
-        specifier: 0.1.0-beta.14
-        version: 0.1.0-beta.14(oxlint@1.82.0(oxlint-tsgolint@7.0.2001))
+        specifier: 0.1.0-beta.15
+        version: 0.1.0-beta.15(oxlint@1.82.0(oxlint-tsgolint@7.0.2001))
       '@goodbones/typescript':
-        specifier: 0.1.0-beta.14
-        version: 0.1.0-beta.14
+        specifier: 0.1.0-beta.15
+        version: 0.1.0-beta.15
       '@types/node':
         specifier: ^22.19.0
         version: 22.20.2
@@ -1154,26 +1154,26 @@ packages:
   '@floating-ui/utils@0.2.12':
     resolution: {integrity: sha512-HpCo8tmWzLVad5s2d19EhAz5zqrrQ6s69qd6moPMQvkOuSwDT1YgRfWSVuc4ennqrgv3OHppiOGMQ7oC13yIww==}
 
-  '@goodbones/ast-grep@0.1.3-beta.3':
-    resolution: {integrity: sha512-1ydnS9dw/7ZhONrpNO2Z8YkFBm2UUYekAEHyv7ydorB0ch46MqQMNEGUzEHxI4kpSVZBkW1Y1TyBfWbjHQBGxQ==}
+  '@goodbones/ast-grep@0.1.3-beta.4':
+    resolution: {integrity: sha512-1pXtLcpzYQct3QTHHUyXNw+vOja9PeIQAKwki0IiHJfuHJQMsWN5uEsDu+Mks68EmeJxRuX5hOlTQ5k18UbGYQ==}
 
-  '@goodbones/campaigns@0.1.1-beta.3':
-    resolution: {integrity: sha512-yytI6Be+7a8CyM0Y8UUgclZfo8qtnjZKn0bVbbn58Rf1hRQKtwWnd98MW/y09b91BHDSUtrxAQJbDkS54lDHog==}
+  '@goodbones/campaigns@0.1.1-beta.4':
+    resolution: {integrity: sha512-JeFFReY3s8pJ5/XqeIGJb5qJ89BjdCxjF/z1K3JXKNx2TpFE1w1Kznl6WfXKxGHBLPEt0HHb4IyUOihVD2wdkg==}
 
-  '@goodbones/cli@0.1.0-beta.14':
-    resolution: {integrity: sha512-RSOltbGJ9C0w2HvzQ0kwICqlQj1FHMd8hCJYI/U/QK/HpJjM28eoTmJd8rZQ/6y1B4mD+n9CmKyeXmLjWtCl7w==}
+  '@goodbones/cli@0.1.0-beta.15':
+    resolution: {integrity: sha512-FQujfG21lvGMPva+dX8dlQkYq3YhRS5DaKdA/jAduRTOkkLT5qyM5ADl6Wjd2jENeFSyVGBw5bQ+8+8chsetxw==}
     hasBin: true
 
-  '@goodbones/core@0.1.0-beta.14':
-    resolution: {integrity: sha512-9XmA1h9LM5uBFegwTo+rQX97ncLFXLxRqAbxacX20CG9QVJ2Bd2jlSIr4MprMaB4j6g9OPYxixz2gybMXd9xiw==}
+  '@goodbones/core@0.1.0-beta.15':
+    resolution: {integrity: sha512-oPwEuA8K5ZnvGnEYEvvLO4Jl1AYHOrmCo0vrDJOwTXDXzHxThEO2jElwn19Q0bLhKBdRIgYOPTZLADOqzk6QTA==}
 
-  '@goodbones/oxlint@0.1.0-beta.14':
-    resolution: {integrity: sha512-qPhUoQRY9Jc7UdQvHjmQZoW/M2sT5mfzRroEXw4cOjhbmHmu/g11WfcSu5B/dll1pTjjeVAwvmSFXlRgQT5zmQ==}
+  '@goodbones/oxlint@0.1.0-beta.15':
+    resolution: {integrity: sha512-AK+/f9E77uOh11oqPWZHjVUemkukEg/9zg2UwkAxLql+SsstpXkD3t2sxiUBE4ew7o8rQU1kZ5zAnnxjf/rbaQ==}
     peerDependencies:
       oxlint: '>=1.77.0'
 
-  '@goodbones/typescript@0.1.0-beta.14':
-    resolution: {integrity: sha512-b1hPTQG/NG3I8p/1hGj6fFgivW5RWPTVCRwmXuLTkx5IeSHDynLMeRZ8pbZ8CVeRcgLlM+hWvUwrIBXSqzusfg==}
+  '@goodbones/typescript@0.1.0-beta.15':
+    resolution: {integrity: sha512-D2WLBU44/D40cabCkNU+6EpaM80HyGsFHFLhSi/wrNtqKlxdAEZ1YXWHUrATIJZ+5+KJxbWEWwAqxYYfG9MlDA==}
 
   '@grpc/grpc-js@1.14.4':
     resolution: {integrity: sha512-k9Dj3DV/itK9D06Y8f190Qgop7/Ui+D0njFV3LHMPwPT75DpXLQohE9Wmz0QElrJnzsjB7KPWiKJbOl7IPDArQ==}
@@ -7652,41 +7652,41 @@ snapshots:
 
   '@floating-ui/utils@0.2.12': {}
 
-  '@goodbones/ast-grep@0.1.3-beta.3':
+  '@goodbones/ast-grep@0.1.3-beta.4':
     dependencies:
       '@ast-grep/napi': 0.45.3
-      '@goodbones/core': 0.1.0-beta.14
+      '@goodbones/core': 0.1.0-beta.15
 
-  '@goodbones/campaigns@0.1.1-beta.3':
+  '@goodbones/campaigns@0.1.1-beta.4':
     dependencies:
-      '@goodbones/core': 0.1.0-beta.14
+      '@goodbones/core': 0.1.0-beta.15
       effect: 4.0.0-beta.94
 
-  '@goodbones/cli@0.1.0-beta.14':
+  '@goodbones/cli@0.1.0-beta.15':
     dependencies:
-      '@goodbones/ast-grep': 0.1.3-beta.3
-      '@goodbones/campaigns': 0.1.1-beta.3
-      '@goodbones/core': 0.1.0-beta.14
-      '@goodbones/typescript': 0.1.0-beta.14
+      '@goodbones/ast-grep': 0.1.3-beta.4
+      '@goodbones/campaigns': 0.1.1-beta.4
+      '@goodbones/core': 0.1.0-beta.15
+      '@goodbones/typescript': 0.1.0-beta.15
       effect: 4.0.0-beta.94
 
-  '@goodbones/core@0.1.0-beta.14':
+  '@goodbones/core@0.1.0-beta.15':
     dependencies:
       effect: 4.0.0-beta.94
       yaml: 2.9.1
 
-  '@goodbones/oxlint@0.1.0-beta.14(oxlint@1.82.0(oxlint-tsgolint@7.0.2001))':
+  '@goodbones/oxlint@0.1.0-beta.15(oxlint@1.82.0(oxlint-tsgolint@7.0.2001))':
     dependencies:
-      '@goodbones/ast-grep': 0.1.3-beta.3
-      '@goodbones/campaigns': 0.1.1-beta.3
-      '@goodbones/core': 0.1.0-beta.14
-      '@goodbones/typescript': 0.1.0-beta.14
+      '@goodbones/ast-grep': 0.1.3-beta.4
+      '@goodbones/campaigns': 0.1.1-beta.4
+      '@goodbones/core': 0.1.0-beta.15
+      '@goodbones/typescript': 0.1.0-beta.15
       effect: 4.0.0-beta.94
       oxlint: 1.82.0(oxlint-tsgolint@7.0.2001)
 
-  '@goodbones/typescript@0.1.0-beta.14':
+  '@goodbones/typescript@0.1.0-beta.15':
     dependencies:
-      '@goodbones/core': 0.1.0-beta.14
+      '@goodbones/core': 0.1.0-beta.15
       effect: 4.0.0-beta.94
       oxc-parser: 0.148.0
       unrs-resolver: 1.12.2

@@ -199,6 +199,7 @@ export default defineConfig({
       env: {
         ...process.env,
         SERVER_INTERNAL_URL,
+        NEST_INTERNAL_URL,
         OTLP_URL: process.env.OTLP_URL ?? "http://localhost:4318/v1/traces",
       },
       reuseExistingServer: false,

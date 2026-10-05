@@ -16,14 +16,23 @@ describe("migrations record", () => {
     deepStrictEqual(Object.keys(migrations), onDisk);
   });
 
-  it("creates every module schema before any table", () => {
+  // Schemas arrive one module at a time as the strangler moves them, so the
+  // order that holds is per module: its schema before any of its tables.
+  it("creates each module's schema before that module's tables", () => {
     const names = Object.keys(migrations);
-    const lastSchema = Math.max(...names.map((n, i) => (n.includes("create_schema") ? i : -1)));
-    const firstTable = names.findIndex((n) => n.includes("create_table"));
-    const schemasCreated = names
-      .filter((n) => n.includes("create_schema"))
-      .map((n) => n.replace(/^\d{4}_create_schema_/, ""));
-    deepStrictEqual(new Set(schemasCreated), new Set(MODULE_SCHEMAS));
-    deepStrictEqual(lastSchema < firstTable, true);
+    const schemaIndex = new Map(
+      names.flatMap((name, index) => {
+        const schema = /^\d{4}_create_schema_(.+)$/.exec(name)?.[1];
+        return schema === undefined ? [] : [[schema, index] as const];
+      }),
+    );
+    deepStrictEqual(new Set(schemaIndex.keys()), new Set(MODULE_SCHEMAS));
+    for (const [index, name] of names.entries()) {
+      const table = /^\d{4}_create_table_([a-z]+)_/.exec(name);
+      if (table === null) continue;
+      const schema = table[1];
+      const created = schemaIndex.get(schema ?? "");
+      deepStrictEqual(created !== undefined && created < index, true, name);
+    }
   });
 });

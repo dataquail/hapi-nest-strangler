@@ -8,10 +8,10 @@ export type MigratorConfig = {
 };
 
 // ADR-0020: each module of the Nest server owns a Postgres schema named after
-// its folder. Only the wallet lives here; every other table is the legacy
-// API's, in `public`, and arrives schema by schema as the strangler moves a
-// module across. Adding a module means a migration and an entry here.
-export const MODULE_SCHEMAS = ["wallet"] as const;
+// its folder. Every table not listed here is the legacy API's, in `public`,
+// and arrives schema by schema as the strangler moves a module across.
+// Adding a module means a migration and an entry here.
+export const MODULE_SCHEMAS = ["wallet", "todos"] as const;
 
 // Not the default name: the legacy API's migrator owns `knex_migrations` in
 // the same database, and neither history may read, or drop, the other's.

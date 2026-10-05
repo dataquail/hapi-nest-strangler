@@ -23,7 +23,8 @@ jobs:
     steps:
       - uses: actions/checkout@v6
         with:
-          # The campaign nudge diffs the branch against main.
+          # The campaign nudge diffs the branch against the PR's base, so a
+          # stacked PR is judged on its own layer.
           fetch-depth: 0
       - uses: ./.github/actions/setup
       - name: Prettier
@@ -36,8 +37,11 @@ jobs:
         run: pnpm lint:edges
       - name: Architecture check
         run: pnpm lint:architecture
+      # A gate again since campaigns 0.1.1-beta.4: in --base mode a rise the
+      # ledger has conceded reads as conceded, and entering a phase's window
+      # is "now counted", not growth.
       - name: Campaign nudge
-        run: pnpm exec architecture campaigns status --changed --base origin/main packages
+        run: pnpm exec architecture campaigns status --changed --base "origin/${{ github.base_ref || 'main' }}" packages
 
   typecheck:
     name: Typecheck

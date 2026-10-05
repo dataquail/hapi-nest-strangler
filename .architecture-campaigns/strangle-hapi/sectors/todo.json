@@ -2,8 +2,23 @@
   "version": 1,
   "campaign": "strangle-hapi",
   "sector": "todo",
-  "reached": "fenced",
-  "since": "2026-09-29T14:11:00.373Z",
-  "attested": [],
-  "notes": []
+  "reached": "settled",
+  "since": "2026-10-01T16:36:32.062Z",
+  "attested": [
+    {
+      "phase": "backfilled",
+      "reason": "db:backfill:todos run against the shared database after every todo write was mirrored: 2 upserted, 1 deleted; a second run upserted the same 2 and deleted 0.",
+      "evidence": "https://github.com/dataquail/hapi-nest-strangler/pull/12",
+      "at": "2026-10-01T15:24:38.054Z",
+      "by": "zweidenbach@gmail.com"
+    }
+  ],
+  "notes": [
+    {
+      "phase": "settled",
+      "text": "Arrived at settled 2026-10-01. What the departure leaves: in hapi, the TODO entry in constants/acl/resource-constants.ts, the todo migrations and the drop, and the marker; in the Nest server, the ACL adapters reading public.memberships and public.roles and the legacy row schemas they use, the authenticator over public.sessions and public.api_tokens, the test seeds for legacy rows, and the todos schema's missing FK to organizations. All of it goes when organization, role and auth move; none of it",
+      "by": "zweidenbach@gmail.com",
+      "at": "2026-10-01T16:37:46.896Z"
+    }
+  ]
 }

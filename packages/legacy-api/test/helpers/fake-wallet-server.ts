@@ -6,13 +6,14 @@ type Recorded = {
   method: string;
   path: string;
   authorization: string;
+  cookie: string;
   payload: unknown;
   tokenValid: boolean;
 };
 
-// Stands in for the Nest server's internal wallet API on a fixed port:
-// records every call, verifies the inter-service token the way the real
-// guard does, and can be armed to refuse the next create.
+// Stands in for the Nest server's internal API on a fixed port: records every
+// call, verifies the inter-service token the way the real guard does, and can
+// be armed to refuse the next wallet create.
 export const startFakeWalletServer = async (sharedSecret: string) => {
   const { jwtVerify } = await import("jose");
   const key = new TextEncoder().encode(sharedSecret);
@@ -34,6 +35,7 @@ export const startFakeWalletServer = async (sharedSecret: string) => {
       method: request.method.toUpperCase(),
       path: request.path,
       authorization,
+      cookie: String(request.headers.cookie ?? ""),
       payload: request.payload,
       tokenValid,
     });
@@ -71,6 +73,15 @@ export const startFakeWalletServer = async (sharedSecret: string) => {
     calls,
     refuseNextCreates: (value: boolean) => {
       refuseCreates = value;
+    },
+    // The mirror runs after the response, so a test waits for the call to land.
+    waitForCall: async (predicate: (call: Recorded) => boolean): Promise<Recorded> => {
+      for (let attempt = 0; attempt < 50; attempt += 1) {
+        const found = calls.find(predicate);
+        if (found) return found;
+        await new Promise((resolve) => setTimeout(resolve, 20));
+      }
+      throw new Error("the fake Nest server never received the expected call");
     },
     stop: () => server.stop(),
   };

@@ -14,6 +14,7 @@ export const makeApiClient = (transport: ApiTransport): ApiClient =>
     baseUrl: transport.baseUrl,
     headers: { ...transport.headers },
     credentials: "include",
+    ...(transport.fetch === undefined ? {} : { fetch: transport.fetch }),
   });
 
 let browserClient: { readonly transport: ApiTransport; readonly client: ApiClient } | null = null;

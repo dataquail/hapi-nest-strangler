@@ -3,7 +3,7 @@
 **Scope:** `packages/web/` and `packages/components/` — read before touching frontend code.
 **Backing ADRs:** 0026 (TanStack Query + MVVM), 0015 (component library), 0018 (Next renderer + proxy), 0019 (integration seam).
 
-The frontend is a Next.js (App Router) renderer that proxies `/api/*` to the legacy hapi API (ADR-0034). That server stays the BFF — Next renders + proxies but does NOT terminate auth. See ADR-0018.
+The frontend is a Next.js (App Router) renderer that proxies `/api/*` to the legacy hapi API (ADR-0034), except the paths a Nest module serves, which `next.config.ts` rewrites to the Nest server (ADR-0035). The hapi server stays the BFF — Next renders + proxies but does NOT terminate auth. See ADR-0018. `services/api/upstreams.shared.ts` is the one table saying which server serves a path; the rewrites mirror it and the server-side client reads it, so moving a module is one entry there plus one rewrite.
 
 **State is TanStack Query v5** over an `openapi-fetch` client typed by the generated OpenAPI `paths`, plus two tiny external stores (notifications, navigation). There is no Effect, no atom graph, no Redux. **`pnpm -F @org/contracts build` must run before web type-checks or runs** (`pretypecheck`/`predev`/`prebuild` do it): web resolves `@org/contracts` through tsconfig `paths` into the built package.
 
@@ -110,5 +110,5 @@ Two trees: `primitives/` (atoms) and `patterns/` (molecules + organisms). Direct
 pnpm bootstrap                    # Docker (postgres, jaeger, zitadel) + migrate + seed
 pnpm --filter @org/legacy-api dev # hapi API on :9000, the BFF the browser talks to
 pnpm --filter @org/server dev     # Nest server on :3001, the wallet, reached only from hapi
-pnpm --filter @org/web dev        # Next.js on :3000 (builds contracts first); /api/* rewrites to :9000
+pnpm --filter @org/web dev        # Next.js on :3000 (builds contracts first); /api/* rewrites to :9000, moved paths to :3001
 ```

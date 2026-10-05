@@ -496,28 +496,31 @@ children:
       "middlewares/":
         message: >-
           platform/middlewares/ holds the guards an endpoint names — the user guard every
-          private endpoint will name, and the inter-service guard the internal API names — and
-          the Authenticator that resolves a user credential through the auth module, the one
-          part of the kernel that legitimately names a module, and only through its platform
-          surface.
+          private endpoint names, and the inter-service guard the internal API names — and
+          the Authenticator that resolves a user credential. While the legacy API owns
+          sign-in, the live reads the session and API-token rows it wrote in the shared
+          database (ADR-0034); when the auth module moves across, the live names it through
+          its platform surface instead.
         imports:
           reset: true
           message: >-
             A guard names only a port or the environment, because every endpoint names its
-            guard at decoration time and the auth module's own endpoints are among them. The
-            Authenticator's live resolves the caller before any endpoint runs, so it names the
-            auth module through its platform surface — never past it — plus the buses, the
-            cookie codec, the contracts that define the caller, and the environment. The
-            inter-service guard verifies the shared-secret token with jose.
-          external: ["@nestjs/common", cookie, express, jose]
+            guard at decoration time and the auth module's own endpoints will be among them.
+            The Authenticator's live resolves the caller before any endpoint runs: it names
+            the database binding and the legacy row schemas, the cookie codec, the contracts
+            that define the caller, and the environment. The inter-service guard verifies the
+            shared-secret token with jose.
+          external: ["@nestjs/common", cookie, express, jose, zod]
           allow:
+            - "node:**"
             - "@/common/**"
             - "@/platform/auth/**"
-            - "@/platform/cqrs/command-bus.ts"
-            - "@/platform/cqrs/query-bus.ts"
+            - "@/platform/database/**"
             - "@/platform/http/**"
-            - "@/modules/*/*.platform.ts"
+            - "@/platform/ids/**"
+            - "@/platform/translate-database-errors.ts"
             - "~/contracts/**"
+            - "~/database/**"
         children:
           "*.guard.ts":
             imports:
@@ -526,10 +529,14 @@ children:
                   message: >-
                     The guard is named at decoration time by every private endpoint, the auth
                     module's own among them, so a module surface named here is an import cycle
-                    at load. It depends on the Authenticator port; the live behind that port is
-                    the file that names the auth module.
+                    at load. It depends on the Authenticator port; only the live behind that
+                    port may name a store or a module.
           "*-live.ts": {}
-          "*.test.ts": { use: server-unit-test-file }
+          # Two patterns that both select a file both apply, so the unit
+          # pattern names the guards and leaves the live's test to the
+          # integration pattern.
+          "*.guard.test.ts": { use: server-unit-test-file }
+          "*.integration.test.ts": { use: server-integration-test-file }
 
       "persistence/":
         message: >-
@@ -1054,19 +1061,22 @@ children:
             imports:
               message: >-
                 An ACL adapter is the one place a module's foreign vocabulary appears
-                (ADR-0022): it takes the messages the other module published from this
-                module's own <feature>.imports.ts, dispatches them on the bus, and translates
-                what comes back into this module's own acl port. It needs nothing else — no
-                repositories, no use cases, no database, and no other module named directly.
+                (ADR-0022): it asks the other bounded context and translates the answer into
+                this module's own acl port. While that context still lives on the legacy API
+                the answer is a row it wrote in the shared database, read through the
+                database binding (ADR-0034); once it has moved across, the adapter takes the
+                messages the peer published from this module's own <feature>.imports.ts and
+                dispatches them on the bus instead. It needs nothing else — no repositories,
+                no use cases, and no other module named directly.
               allow:
-                - "@/modules/{module}/*.imports.ts"
                 - "@/modules/{module}/domain/ports/acl/**"
-                - "@/platform/cqrs/command-bus.ts"
-                - "@/platform/cqrs/query-bus.ts"
+                - "@/platform/database/**"
+                - "@/platform/translate-database-errors.ts"
+                - "~/database/**"
             children:
               "*.acl-live.ts": {}
               "*.acl-fake.ts": {}
-              "*.test.ts": { use: server-use-case-test-file }
+              "*.acl-live.integration.test.ts": { use: server-integration-test-file }
 
       "interface/":
         message: >-
@@ -1218,12 +1228,13 @@ children:
                   "*.acl.ts":
                     message: >-
                       Every ACL port (*.acl.ts) needs a *.acl-live.ts, a *.acl-fake.ts, and a
-                      *.acl-live.test.ts in ../../../infrastructure/acl/.
+                      *.acl-live.integration.test.ts in ../../../infrastructure/acl/ — the
+                      live reads the legacy API's rows, so its test seeds them.
                     surface: [{ use: port-declares-no-value }]
                     requires:
                       - "../../../infrastructure/acl/{base}-live.ts"
                       - "../../../infrastructure/acl/{base}-fake.ts"
-                      - "../../../infrastructure/acl/{base}-live.test.ts"
+                      - "../../../infrastructure/acl/{base}-live.integration.test.ts"
                     importedBy: { use: acl-port-consumers }
 
           # Each subdomain folder — one per aggregate. The named folders above
@@ -1393,6 +1404,7 @@ children:
         - "@nestjs/common"
         - "@nestjs/testing"
       allow:
+        - "node:**"
         - "@/common/**"
         - "@/platform/**"
         - "@/modules/*/*.platform.ts"

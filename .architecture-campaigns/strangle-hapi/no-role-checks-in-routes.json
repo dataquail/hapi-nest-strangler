@@ -35,13 +35,10 @@
     "todo": {
       "entered": "2026-09-29T14:11:00.373Z",
       "initial": 2,
-      "cleared": 0,
+      "cleared": 2,
       "closed": 0,
-      "lastCleared": "2026-09-29T14:11:00.373Z",
-      "holdouts": [
-        "todo-route-helpers.ts#fromOwnOrganization#441f04dd",
-        "todo-route-helpers.ts#fromOwnOrganization#54f63991"
-      ]
+      "lastCleared": "2026-09-30T16:00:10.172Z",
+      "holdouts": []
     },
     "user": {
       "entered": "2026-09-29T14:11:00.373Z",

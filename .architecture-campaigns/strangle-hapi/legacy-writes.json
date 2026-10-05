@@ -1,0 +1,17 @@
+{
+  "version": 2,
+  "campaign": "strangle-hapi",
+  "objective": "legacy-writes",
+  "created": "2026-10-01T14:16:42.276Z",
+  "sectors": {
+    "todo": {
+      "entered": "2026-10-01T15:24:59.423Z",
+      "initial": 4,
+      "cleared": 4,
+      "closed": 0,
+      "lastCleared": "2026-10-01T15:40:28.804Z",
+      "holdouts": []
+    }
+  },
+  "concessions": []
+}

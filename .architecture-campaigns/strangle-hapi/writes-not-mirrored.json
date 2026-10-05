@@ -1,0 +1,26 @@
+{
+  "version": 2,
+  "campaign": "strangle-hapi",
+  "objective": "writes-not-mirrored",
+  "created": "2026-10-01T14:16:42.276Z",
+  "sectors": {
+    "todo": {
+      "entered": "2026-10-01T14:23:36.624Z",
+      "initial": 4,
+      "cleared": 3,
+      "closed": 0,
+      "lastCleared": "2026-10-01T15:13:47.723Z",
+      "holdouts": []
+    }
+  },
+  "concessions": [
+    {
+      "sector": "todo",
+      "at": "2026-10-01T14:50:57.995Z",
+      "by": "zweidenbach@gmail.com",
+      "from": 4,
+      "to": 3,
+      "reason": "phase mirrored changed: The forwards ride hapi's domain events rather than a backend-client call in the service method, so `writes-not-mirrored` now looks for the mirror event (2026-10-01)."
+    }
+  ]
+}

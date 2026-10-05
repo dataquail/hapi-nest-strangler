@@ -23,7 +23,7 @@ The server resolves a bearer token per call, in order:
 1. `APP_API_TOKEN` environment variable (recommended for MCP clients / CI), or
 2. the credential file written by `org auth login` (`$XDG_CONFIG_HOME/org-cli/credentials.json`).
 
-`APP_API_URL` selects the server (default `http://localhost:9000`, the legacy API that serves the `/cli/*` routes). Mint a token in the web UI (Settings → API tokens) or via the CLI device flow.
+`APP_API_URL` selects the gateway (default `http://localhost:3000/api`, the web's proxy, whose rewrites send each `/cli/*` path to the server that serves it). Mint a token in the web UI (Settings → API tokens) or via the CLI device flow.
 
 ## Run
 

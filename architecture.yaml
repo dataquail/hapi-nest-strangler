@@ -84,14 +84,14 @@ limits:
   # against the structure ratio and nothing else; that floor is re-recorded
   # as the package grows and is the number to watch climbing back as the
   # campaign moves modules into the enumerated tree of the Nest server.
-  coverage: { imports: 0.99, structure: 0.28, members: 0.03, surface: 0.9, graph: 1 }
+  coverage: { imports: 0.99, structure: 0.38, members: 0.03, surface: 0.92, graph: 1 }
   # Conformance ceilings, gated by `architecture check`: residue (files no
   # family reaches), vacant nodes (an allowlist selecting no file), slack
   # (allowances nothing imports through) and concentration (a fragment entry
   # used at fewer than half its nodes). Set each to what `architecture
   # conformance` reports; lower one when the number falls, never raise one.
   # Cycles are held at zero by the `no-cycles` graph rule below.
-  conformance: { residue: 0, vacant: 31, slack: 29, concentration: 0 }
+  conformance: { residue: 0, vacant: 24, slack: 17, concentration: 0 }
 
 aliases:
   "@": packages/server/src
@@ -418,15 +418,65 @@ campaigns:
       - id: rebuilt
         intent: The module exists on the Nest server in the hexagonal layout, with hapi still serving its routes.
         objectives: [has-nest-module]
+      # The legacy module grows here by design — every write gains a forward
+      # to the Nest module — so a touch is advised on, not ratcheted.
+      - id: mirrored
+        intent: >-
+          Every write the legacy module takes is forwarded to the Nest module's internal API, so
+          the Nest table fills as a replica while hapi stays the source of truth.
+        objectives: [has-internal-write-api, writes-not-mirrored]
+        onTouch: advise
+        concessions:
+          - reason: >-
+              The internal write API is dual-write scaffolding: `has-internal-write-api` now stops
+              counting at `served`, so the Nest module may retire it once it serves the routes
+              (2026-10-01).
+            at: "2026-10-01"
+            by: "@dataquail"
+          - reason: >-
+              The forwards ride hapi's domain events rather than a backend-client call in the
+              service method, so `writes-not-mirrored` now looks for the mirror event (2026-10-01).
+            at: "2026-10-01"
+            by: "@dataquail"
+      - id: backfilled
+        intent: >-
+          The Nest table has been backfilled from the legacy table once, after every write was
+          mirrored; no detector sees a script run, so whoever ran it attests to it.
+        attested: true
+      - id: served
+        intent: >-
+          The Nest module answers: hapi's routes forward to it operation by operation, and the
+          legacy service writes nothing itself any more.
+        objectives: [has-nest-endpoints, routes-still-local, legacy-writes]
       - id: routes-moved
         intent: The web proxy sends the module's routes to the Nest server and the hapi routes are deleted.
         objectives: [no-hapi-routes]
+        concessions:
+          - reason: >-
+              Unchanged in what it asks; it moved later when the mirrored, backfilled and served
+              phases were inserted before it (2026-10-01).
+            at: "2026-10-01"
+            by: "@dataquail"
       - id: data-moved
-        intent: The module's tables belong to its Nest schema and the bookshelf models are gone.
-        objectives: [no-hapi-models]
+        intent: >-
+          The module's tables belong to its Nest schema, the legacy table is dropped by a legacy
+          migration, and the bookshelf models are gone.
+        objectives: [no-hapi-models, legacy-table-dropped]
+        concessions:
+          - reason: >-
+              The plan moved from a shared table to dual-write with a backfill (2026-10-01), so the
+              legacy table is dropped by a migration rather than moved; this phase now asks for it.
+            at: "2026-10-01"
+            by: "@dataquail"
       - id: gone
         intent: Nothing of the module remains in the hapi package but its migration history.
         objectives: [no-hapi-files]
+        concessions:
+          - reason: >-
+              Unchanged in what it asks; it moved later when the mirrored, backfilled and served
+              phases were inserted before it (2026-10-01).
+            at: "2026-10-01"
+            by: "@dataquail"
       - id: settled
         intent: >-
           Decide what the module's departure leaves in the substrate — its ACL entries, its
@@ -511,6 +561,134 @@ campaigns:
             - { path: packages/legacy-api/src/application/todo/sector.ts }
             - { path: packages/legacy-api/migrations/20260927000007_todos.ts }
             - { path: packages/server/src/modules/todos/todos.module.ts }
+      has-internal-write-api:
+        holdout: sector
+        how: >-
+          Give the Nest module an internal write API behind the inter-service guard, so the legacy
+          module can forward each write to it; it goes again once the Nest module serves the
+          routes itself.
+        until: served
+        sector:
+          has:
+            all:
+              - path:
+                  {
+                    file: "^packages/server/src/modules/[^/]+/interface/http/[^/]+\\.endpoint\\.ts$",
+                  }
+              - content: { regex: "InterServiceAuthGuard" }
+      writes-not-mirrored:
+        holdout: match
+        how: >-
+          Emit the module's mirror event from the same service method once the row is written;
+          the mirror plugin forwards it to the Nest module's internal API, so the Nest table
+          receives what hapi wrote.
+        until: served
+        match:
+          all:
+            - path:
+                {
+                  file: "^packages/legacy-api/src/application/[^/]+/[^/]*-service\\.ts$",
+                  fileNot: "\\.spec\\.ts$",
+                }
+            - syntax:
+                any:
+                  - pattern: "$Q.insert($$$)"
+                  - pattern: "$Q.update($$$)"
+                  - pattern: "$Q.del($$$)"
+                inside:
+                  kind: method_definition
+                  stopBy: end
+                  not:
+                    has:
+                      regex: "mirrorEvents"
+                      stopBy: end
+        probes:
+          fires:
+            - path: packages/legacy-api/src/application/todo/todo-service.ts
+              source: |
+                class TodoService {
+                  async createTodo(row) {
+                    await this.knex("todos").insert(row);
+                  }
+                }
+          ignores:
+            - path: packages/legacy-api/src/application/todo/todo-service.ts
+              source: |
+                class TodoService {
+                  async createTodo(row) {
+                    await this.knex("todos").insert(row);
+                    this.server.events.emit(mirrorEvents.TODO_CREATED, row);
+                  }
+                }
+            - path: packages/legacy-api/src/application/todo/todo-service.spec.ts
+              source: 'await this.knex("todos").insert(row);'
+      has-nest-endpoints:
+        holdout: sector
+        how: >-
+          Give the Nest module its user-facing endpoints behind the user guard, with the policies
+          that authorize them.
+        sector:
+          has:
+            all:
+              - path:
+                  {
+                    file: "^packages/server/src/modules/[^/]+/interface/http/[^/]+\\.endpoint\\.ts$",
+                  }
+              - content: { regex: "UserAuthGuard" }
+      routes-still-local:
+        holdout: match
+        how: >-
+          Replace this route's handler with `proxyToNest(...)`, so hapi forwards the operation to
+          the Nest module instead of serving it.
+        match:
+          all:
+            - path: { file: "^packages/legacy-api/src/application/[^/]+/[^/]*route[^/]*\\.ts$" }
+            - syntax:
+                kind: pair
+                has: { field: key, regex: "^handler$" }
+                not:
+                  has: { field: value, pattern: "proxyToNest($$$)" }
+        probes:
+          fires:
+            - path: packages/legacy-api/src/application/todo/todo-routes.ts
+              source: 'const routes = [{ method: "GET", path: "/x", handler: (request) => todoService.listTodos(request) }];'
+          ignores:
+            - path: packages/legacy-api/src/application/todo/todo-routes.ts
+              source: 'const routes = [{ method: "GET", path: "/x", handler: proxyToNest("todos") }];'
+            - path: packages/legacy-api/src/application/todo/todo-service.ts
+              source: "const routes = [{ handler: (request) => todoService.listTodos(request) }];"
+      legacy-writes:
+        holdout: match
+        how: >-
+          The Nest module is the source of truth now: delete this write and the forward beside it;
+          the route that reached it is a proxy.
+        match:
+          all:
+            - path:
+                {
+                  file: "^packages/legacy-api/src/application/[^/]+/[^/]*-service\\.ts$",
+                  fileNot: "\\.spec\\.ts$",
+                }
+            - syntax:
+                any:
+                  - pattern: "$Q.insert($$$)"
+                  - pattern: "$Q.update($$$)"
+                  - pattern: "$Q.del($$$)"
+        probes:
+          fires:
+            - path: packages/legacy-api/src/application/todo/todo-service.ts
+              source: 'await this.knex("todos").insert(row);'
+          ignores:
+            - path: packages/legacy-api/src/application/todo/todo-service.ts
+              source: 'const rows = await this.knex("todos").where({ id }).first();'
+            - path: packages/legacy-api/src/application/todo/todo-service.spec.ts
+              source: 'await this.knex("todos").insert(row);'
+      legacy-table-dropped:
+        holdout: sector
+        how: >-
+          Write a legacy migration that drops the module's table, now that nothing on hapi reads or
+          writes it; the Nest table is the only copy.
+        sector: { has: { path: { file: "^packages/legacy-api/migrations/\\d+_drop_" } } }
       hapi-lines:
         how: The number only falls when hapi code is deleted; a rebuilt module on the Nest side weighs nothing.
         measure: { fn: "./campaigns/strangle-hapi.mjs#hapiLines" }

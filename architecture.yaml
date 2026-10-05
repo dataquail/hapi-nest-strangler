@@ -404,6 +404,12 @@ campaigns:
     owner: "@dataquail"
     scope: ["~/legacy-api/**", "~/server/src/modules/**"]
     legacy: "~/legacy-api/**"
+    # The strangling's own scaffolding on the hapi side, which every sector
+    # leans on in turn and none of them takes away with it.
+    shared:
+      - "~/legacy-api/src/lib/backend-client/*.ts"
+      - "~/legacy-api/mirror-event-handler-plugin.ts"
+      - "~/legacy-api/src/constants/mirror-events.ts"
     perimeter:
       marker: "~/legacy-api/src/application/*/sector.ts"
     onTouch: ratchet
@@ -427,6 +433,7 @@ campaigns:
           the Nest table fills as a replica while hapi stays the source of truth.
         objectives: [has-internal-write-api, writes-not-mirrored, mirror-before-write]
         onTouch: advise
+        grows: [hapi-lines]
         concessions:
           - reason: >-
               A mirror emitted before the write it announces reaches the replica even when the
@@ -444,6 +451,11 @@ campaigns:
               The forwards ride hapi's domain events rather than a backend-client call in the
               service method, so `writes-not-mirrored` now looks for the mirror event (2026-10-01).
             at: "2026-10-01"
+            by: "@dataquail"
+          - reason: >-
+              The phase declares the hapi-lines rise its dual-write prescribes, so a forward added
+              here is expected growth rather than a concession per PR (2026-10-05).
+            at: "2026-10-05"
             by: "@dataquail"
       - id: backfilled
         intent: >-

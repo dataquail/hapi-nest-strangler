@@ -49,10 +49,18 @@
     "legacy": {
       "entered": "2026-09-29T14:11:00.373Z",
       "initial": 1474,
-      "recorded": 836,
-      "improved": 699,
+      "recorded": 737,
+      "improved": 798,
       "closed": null,
-      "lastImproved": "2026-10-01T16:30:10.397Z"
+      "lastImproved": "2026-10-05T13:46:30.070Z"
+    },
+    "shared": {
+      "entered": "2026-10-05T13:46:30.070Z",
+      "initial": 97,
+      "recorded": 97,
+      "improved": 0,
+      "closed": null,
+      "lastImproved": "2026-10-05T13:46:30.070Z"
     }
   },
   "concessions": [

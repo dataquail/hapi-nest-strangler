@@ -37,12 +37,10 @@ jobs:
         run: pnpm lint:edges
       - name: Architecture check
         run: pnpm lint:architecture
-      # Advisory for now: in --base mode the nudge scores a measure's rise
-      # against the base tree and ignores a concession the ledger carries, so
-      # a receipted rise reads as "back". `lint:architecture` above gates the
-      # ledger itself. Gate this step again when the engine honours concessions.
+      # A gate again since campaigns 0.1.1-beta.4: in --base mode a rise the
+      # ledger has conceded reads as conceded, and entering a phase's window
+      # is "now counted", not growth.
       - name: Campaign nudge
-        continue-on-error: true
         run: pnpm exec architecture campaigns status --changed --base "origin/${{ github.base_ref || 'main' }}" packages
 
   typecheck:

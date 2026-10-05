@@ -229,6 +229,22 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/internal/billing/webhook-events": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations["internalBilling.recordWebhookEvent"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/internal/orgs/{organizationId}/billing/subscriptions": {
     parameters: {
       query?: never;
@@ -698,6 +714,17 @@ export interface components {
       status: string;
       stripeCustomerId: string;
       stripeSubscriptionId: string;
+    };
+    InternalRecordWebhookEventPayload: {
+      /** Format: date-time */
+      receivedAt: string;
+      stripeEventId: string;
+      subscription: {
+        /** Format: date-time */
+        currentPeriodEnd: string | null;
+        status: string;
+        stripeSubscriptionId: string;
+      } | null;
     };
     InternalSubscription: {
       /** Format: date-time */
@@ -1707,6 +1734,54 @@ export interface operations {
             /** @enum {string} */
             _tag: "CliTodoNotFoundError";
             message: string;
+          };
+        };
+      };
+      /** @description The server is not ready to handle the request */
+      503: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @enum {string} */
+            _tag: "ServiceUnavailable";
+            message?: string;
+          };
+        };
+      };
+    };
+  };
+  "internalBilling.recordWebhookEvent": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: {
+      content: {
+        "application/json": components["schemas"]["InternalRecordWebhookEventPayload"];
+      };
+    };
+    responses: {
+      /** @description No content */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Authentication is required and has failed or has not been provided */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @enum {string} */
+            _tag: "Unauthorized";
+            message?: string;
           };
         };
       };

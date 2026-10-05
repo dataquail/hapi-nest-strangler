@@ -4,12 +4,19 @@ import { RecordCancellationCommand } from "./commands/record-cancellation.comman
 import { RecordCancellationHandler } from "./commands/record-cancellation.handler.js";
 import { RecordSubscriptionCommand } from "./commands/record-subscription.command.js";
 import { RecordSubscriptionHandler } from "./commands/record-subscription.handler.js";
+import { RecordWebhookEventCommand } from "./commands/record-webhook-event.command.js";
+import { RecordWebhookEventHandler } from "./commands/record-webhook-event.handler.js";
 
-export const billingCommands = [RecordSubscriptionCommand, RecordCancellationCommand] as const;
+export const billingCommands = [
+  RecordSubscriptionCommand,
+  RecordCancellationCommand,
+  RecordWebhookEventCommand,
+] as const;
 
 export const billingCommandHandlers = [
   RecordSubscriptionHandler,
   RecordCancellationHandler,
+  RecordWebhookEventHandler,
 ] as const;
 
 export const billingCommandSpanAttributes: MessageSpanAttributes = {
@@ -19,5 +26,8 @@ export const billingCommandSpanAttributes: MessageSpanAttributes = {
   }),
   RecordCancellationCommand: ({ payload }: RecordCancellationCommand) => ({
     "organization.id": payload.organizationId,
+  }),
+  RecordWebhookEventCommand: ({ payload }: RecordWebhookEventCommand) => ({
+    "billing.stripe.event.id": payload.stripeEventId,
   }),
 };

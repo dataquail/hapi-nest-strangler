@@ -20,6 +20,12 @@ type SubscriptionRow = {
 
 const UNIQUE_VIOLATION = "23505";
 
+type MirroredWebhookState = {
+  stripeSubscriptionId: string;
+  status: string;
+  currentPeriodEnd: Date | null;
+};
+
 const toJson = (row: SubscriptionRow) => ({
   id: row.id,
   organizationId: row.organization_id,
@@ -127,30 +133,55 @@ class BillingService {
       payload,
       signature,
     });
-    await this.knex.transaction(async (t) => {
-      try {
-        await this.knex("webhook_events").transacting(t).insert({ stripe_event_id: event.eventId });
-      } catch (error: any) {
-        if (error?.code === UNIQUE_VIOLATION) return;
-        throw error;
-      }
-      if (
-        event.type === "customer.subscription.created" ||
-        event.type === "customer.subscription.updated" ||
-        event.type === "customer.subscription.deleted"
-      ) {
-        const status =
-          event.type === "customer.subscription.deleted" ? "canceled" : event.subscription.status;
+    const receivedAt = new Date();
+    // `undefined` is a redelivery: the claim was taken and nothing was written.
+    const applied = await this.knex.transaction(
+      async (t): Promise<MirroredWebhookState | null | undefined> => {
+        try {
+          await this.knex("webhook_events")
+            .transacting(t)
+            .insert({ stripe_event_id: event.eventId });
+        } catch (error: any) {
+          if (error?.code === UNIQUE_VIOLATION) return undefined;
+          throw error;
+        }
+        if (
+          event.type !== "customer.subscription.created" &&
+          event.type !== "customer.subscription.updated" &&
+          event.type !== "customer.subscription.deleted"
+        ) {
+          return null;
+        }
+        const state: MirroredWebhookState = {
+          stripeSubscriptionId: event.subscription.stripeSubscriptionId,
+          status:
+            event.type === "customer.subscription.deleted" ? "canceled" : event.subscription.status,
+          currentPeriodEnd: event.subscription.currentPeriodEnd,
+        };
         // A delivery for a subscription this side has never seen is dropped; the eventual create resyncs.
         await this.knex("subscriptions")
           .transacting(t)
-          .where({ stripe_subscription_id: event.subscription.stripeSubscriptionId })
+          .where({ stripe_subscription_id: state.stripeSubscriptionId })
           .update({
-            status,
-            current_period_end: event.subscription.currentPeriodEnd,
-            updated_at: new Date(),
+            status: state.status,
+            current_period_end: state.currentPeriodEnd,
+            updated_at: receivedAt,
           });
-      }
+        return state;
+      },
+    );
+    if (applied === undefined) return;
+    this.server.events.emit(mirrorEvents.WEBHOOK_EVENT_INGESTED, {
+      stripeEventId: event.eventId,
+      receivedAt: receivedAt.toISOString(),
+      subscription:
+        applied === null
+          ? null
+          : {
+              stripeSubscriptionId: applied.stripeSubscriptionId,
+              status: applied.status,
+              currentPeriodEnd: applied.currentPeriodEnd?.toISOString() ?? null,
+            },
     });
   }
 }

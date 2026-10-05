@@ -167,6 +167,53 @@ describe.sequential("billing routes (integration)", () => {
     deepStrictEqual(call.payload, { canceledAt: new Date(row.updated_at).toISOString() });
   });
 
+  it("mirrors each webhook event it claims, once, with the state it applied", async () => {
+    const owner = await signedInAs("owner@example.com");
+    const orgId = await createOrg(owner);
+    await server.inject({
+      method: "POST",
+      url: `/orgs/${orgId}/billing/subscriptions`,
+      headers: owner.headers,
+      payload: {},
+    });
+    const stripeSubscriptionId = (await getKnex()("subscriptions").first()).stripe_subscription_id;
+    const event = {
+      eventId: "evt_1",
+      type: "customer.subscription.updated",
+      subscription: {
+        stripeSubscriptionId,
+        status: "past_due",
+        currentPeriodEnd: "2030-01-01T00:00:00.000Z",
+      },
+    };
+    await webhook(event);
+    await webhook(event);
+    await webhook({ eventId: "evt_2", type: "unknown" });
+
+    await wallets.waitForCall(
+      (one) =>
+        one.path === "/internal/billing/webhook-events" &&
+        (one.payload as { stripeEventId: string }).stripeEventId === "evt_2",
+    );
+    const forwards = wallets.calls.filter((one) => one.path === "/internal/billing/webhook-events");
+    const row = await getKnex()("subscriptions").first();
+    deepStrictEqual(
+      forwards.map((one) => one.payload),
+      [
+        {
+          stripeEventId: "evt_1",
+          receivedAt: new Date(row.updated_at).toISOString(),
+          subscription: event.subscription,
+        },
+        {
+          stripeEventId: "evt_2",
+          receivedAt: (forwards[1].payload as { receivedAt: string }).receivedAt,
+          subscription: null,
+        },
+      ],
+    );
+  });
+
   it("answers a start the Nest server refuses to mirror, since hapi is the source of truth", async () => {
     wallets.refuseMirrors(true);
     const owner = await signedInAs("owner@example.com");

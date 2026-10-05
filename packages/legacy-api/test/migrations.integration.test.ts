@@ -15,9 +15,7 @@ const EXPECTED_TABLES = [
   "organizations",
   "roles",
   "sessions",
-  "subscriptions",
   "users",
-  "webhook_events",
 ];
 
 describe("legacy migrations (integration)", () => {

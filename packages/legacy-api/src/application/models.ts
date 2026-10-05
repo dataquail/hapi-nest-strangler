@@ -4,8 +4,6 @@ import apiTokenModel from "./auth/api-token-model";
 import authIdentityModel from "./auth/auth-identity-model";
 import deviceGrantModel from "./auth/device-grant-model";
 import sessionModel from "./auth/session-model";
-import subscriptionModel from "./billing/subscription-model";
-import webhookEventModel from "./billing/webhook-event-model";
 import invitationModel from "./organization/invitation-model";
 import membershipModel from "./organization/membership-model";
 import organizationModel from "./organization/organization-model";
@@ -28,6 +26,4 @@ export const models: Array<{ name: string; model: ModelFactory }> = [
   { name: "membership", model: membershipModel },
   { name: "organizationRole", model: organizationRoleModel },
   { name: "invitation", model: invitationModel },
-  { name: "subscription", model: subscriptionModel },
-  { name: "webhookEvent", model: webhookEventModel },
 ];

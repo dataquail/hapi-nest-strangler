@@ -1,7 +1,9 @@
+import type { Server } from "@hapi/hapi";
 import type Bookshelf from "bookshelf";
 import { randomUUID } from "crypto";
 import type { Knex } from "knex";
 
+import { mirrorEvents } from "../../constants/mirror-events";
 import { problem } from "../../lib/problem";
 import type { StripeGateway, StripeWebhookEvent } from "./stripe-gateway-contract";
 
@@ -35,10 +37,12 @@ const subscriptionNotFound = (organizationId: string) =>
 class BillingService {
   public bookshelf: Bookshelf;
   public stripeGateway: StripeGateway;
+  private server: Server;
 
-  constructor(bookshelf: Bookshelf, stripeGateway: StripeGateway) {
+  constructor(bookshelf: Bookshelf, stripeGateway: StripeGateway, server: Server) {
     this.bookshelf = bookshelf;
     this.stripeGateway = stripeGateway;
+    this.server = server;
   }
 
   // @types/bookshelf is typed against knex 0.21; the instance is knex 2.
@@ -83,6 +87,15 @@ class BillingService {
       updated_at: now,
     };
     await this.knex("subscriptions").insert(row);
+    this.server.events.emit(mirrorEvents.SUBSCRIPTION_STARTED, {
+      id: row.id,
+      organizationId: row.organization_id,
+      stripeCustomerId: row.stripe_customer_id,
+      stripeSubscriptionId: row.stripe_subscription_id,
+      status: row.status,
+      currentPeriodEnd: row.current_period_end?.toISOString() ?? null,
+      createdAt: row.created_at.toISOString(),
+    });
     return toJson(row);
   }
 
@@ -139,6 +152,6 @@ class BillingService {
 }
 
 BillingService["@singleton"] = true;
-BillingService["@require"] = ["bookshelf", "billing/stripe-gateway"];
+BillingService["@require"] = ["bookshelf", "billing/stripe-gateway", "server"];
 
 export = BillingService;

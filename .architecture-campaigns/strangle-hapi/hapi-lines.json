@@ -17,7 +17,7 @@
     "billing": {
       "entered": "2026-09-29T14:11:00.373Z",
       "initial": 791,
-      "recorded": 586,
+      "recorded": 639,
       "improved": 205,
       "closed": null,
       "lastImproved": "2026-09-30T14:20:26.933Z"
@@ -95,6 +95,14 @@
       "from": 737,
       "to": 819,
       "reason": "The organization assertions and their spec moved from the organization module into src/lib/access, as no-cross-module-reach asks, so billing reaches them through the substrate: organization fell by 81 lines as the legacy rose by 82; nothing was added."
+    },
+    {
+      "sector": "billing",
+      "at": "2026-10-05T13:53:05.903Z",
+      "by": "zweidenbach@gmail.com",
+      "from": 586,
+      "to": 639,
+      "reason": "phase mirrored grows hapi-lines"
     }
   ]
 }

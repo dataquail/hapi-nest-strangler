@@ -13,12 +13,13 @@ type Recorded = {
 
 // Stands in for the Nest server's internal API on a fixed port: records every
 // call, verifies the inter-service token the way the real guard does, and can
-// be armed to refuse the next wallet create.
+// be armed to refuse the next wallet create or every billing mirror.
 export const startFakeWalletServer = async (sharedSecret: string) => {
   const { jwtVerify } = await import("jose");
   const key = new TextEncoder().encode(sharedSecret);
   const calls: Recorded[] = [];
   let refuseCreates = false;
+  let refuseMirrors = false;
 
   const record = async (request: Hapi.Request) => {
     const authorization = String(request.headers.authorization ?? "");
@@ -59,6 +60,19 @@ export const startFakeWalletServer = async (sharedSecret: string) => {
       },
     },
     {
+      method: ["POST", "PUT"],
+      path: "/internal/orgs/{organizationId}/billing/{rest*}",
+      handler: async (request, h) => {
+        const ok = await record(request);
+        if (!ok) return h.response({ _tag: "Unauthorized" }).code(401);
+        if (refuseMirrors)
+          return h
+            .response({ _tag: "ServiceUnavailable", message: "billing store down" })
+            .code(503);
+        return h.response(request.payload).code(request.method === "post" ? 201 : 200);
+      },
+    },
+    {
       method: "DELETE",
       path: "/internal/wallets/{organizationId}",
       handler: async (request, h) => {
@@ -73,6 +87,9 @@ export const startFakeWalletServer = async (sharedSecret: string) => {
     calls,
     refuseNextCreates: (value: boolean) => {
       refuseCreates = value;
+    },
+    refuseMirrors: (value: boolean) => {
+      refuseMirrors = value;
     },
     // The mirror runs after the response, so a test waits for the call to land.
     waitForCall: async (predicate: (call: Recorded) => boolean): Promise<Recorded> => {

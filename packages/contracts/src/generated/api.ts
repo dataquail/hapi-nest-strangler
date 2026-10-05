@@ -229,6 +229,22 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/internal/orgs/{organizationId}/billing/subscriptions": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations["internalBilling.recordSubscription"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/internal/wallets": {
     parameters: {
       query?: never;
@@ -651,6 +667,28 @@ export interface components {
       expires_at: string | null;
       /** @enum {string} */
       token_type: "Bearer";
+    };
+    InternalRecordSubscriptionPayload: {
+      /** Format: date-time */
+      createdAt: string;
+      /** Format: date-time */
+      currentPeriodEnd: string | null;
+      /** Format: uuid */
+      id: string;
+      status: string;
+      stripeCustomerId: string;
+      stripeSubscriptionId: string;
+    };
+    InternalSubscription: {
+      /** Format: date-time */
+      currentPeriodEnd: string | null;
+      /** Format: uuid */
+      id: string;
+      /** Format: uuid */
+      organizationId: string;
+      status: string;
+      stripeCustomerId: string;
+      stripeSubscriptionId: string;
     };
     InviteUserPayload: {
       email: string;
@@ -1648,6 +1686,71 @@ export interface operations {
           "application/json": {
             /** @enum {string} */
             _tag: "CliTodoNotFoundError";
+            message: string;
+          };
+        };
+      };
+      /** @description The server is not ready to handle the request */
+      503: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @enum {string} */
+            _tag: "ServiceUnavailable";
+            message?: string;
+          };
+        };
+      };
+    };
+  };
+  "internalBilling.recordSubscription": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        organizationId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: {
+      content: {
+        "application/json": components["schemas"]["InternalRecordSubscriptionPayload"];
+      };
+    };
+    responses: {
+      /** @description Success */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["InternalSubscription"];
+        };
+      };
+      /** @description Authentication is required and has failed or has not been provided */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @enum {string} */
+            _tag: "Unauthorized";
+            message?: string;
+          };
+        };
+      };
+      /** @description A subscription for that organization has already been mirrored to this server */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @enum {string} */
+            _tag: "InternalSubscriptionAlreadyExistsError";
             message: string;
           };
         };

@@ -46,12 +46,14 @@ const makeKnex = (subscriptions: Row[] = []) => {
   return { knex, inserts, updates };
 };
 
+const makeServer = () => ({ events: { emit: vi.fn() } });
+
 const organization = (id: string) => ({ get: (key: string) => (key === "id" ? id : undefined) });
 
 describe("BillingService", () => {
   it("creates the provider customer and subscription before the local row", async () => {
     const { inserts, knex } = makeKnex();
-    const service = new BillingService({ knex } as any, createFakeGateway());
+    const service = new BillingService({ knex } as any, createFakeGateway(), makeServer() as any);
 
     const result = await service.startSubscription(organization("org-1"));
 
@@ -62,11 +64,35 @@ describe("BillingService", () => {
     deepStrictEqual(inserts[0].row.stripe_subscription_id, "sub_test_2");
   });
 
+  it("announces the started subscription for the mirror once the row is in", async () => {
+    const { inserts, knex } = makeKnex();
+    const server = makeServer();
+    const service = new BillingService({ knex } as any, createFakeGateway(), server as any);
+
+    await service.startSubscription(organization("org-1"));
+
+    const row = inserts[0].row;
+    deepStrictEqual(server.events.emit.mock.calls, [
+      [
+        "mirror-subscription-started",
+        {
+          id: row.id,
+          organizationId: "org-1",
+          stripeCustomerId: "cus_test_1",
+          stripeSubscriptionId: "sub_test_2",
+          status: "active",
+          currentPeriodEnd: (row.current_period_end as Date).toISOString(),
+          createdAt: (row.created_at as Date).toISOString(),
+        },
+      ],
+    ]);
+  });
+
   it("refuses a second subscription for the same organization without calling the provider", async () => {
     const { inserts, knex } = makeKnex([{ organization_id: "org-1", id: "s1" }]);
     const gateway = createFakeGateway();
     gateway.createCustomer = vi.fn();
-    const service = new BillingService({ knex } as any, gateway);
+    const service = new BillingService({ knex } as any, gateway, makeServer() as any);
 
     await rejects(service.startSubscription(organization("org-1")), (error: any) => {
       deepStrictEqual(error.output.statusCode, 409);
@@ -81,7 +107,7 @@ describe("BillingService", () => {
     const { inserts, knex } = makeKnex();
     const gateway = createFakeGateway();
     gateway.createSubscription = vi.fn().mockRejectedValue(new Error("stripe down"));
-    const service = new BillingService({ knex } as any, gateway);
+    const service = new BillingService({ knex } as any, gateway, makeServer() as any);
 
     await rejects(service.startSubscription(organization("org-1")), /stripe down/);
     deepStrictEqual(inserts.length, 0);
@@ -103,7 +129,7 @@ describe("BillingService", () => {
       order.push("provider");
       return { status: "canceled", currentPeriodEnd: null };
     });
-    const service = new BillingService({ knex } as any, gateway);
+    const service = new BillingService({ knex } as any, gateway, makeServer() as any);
 
     const result = await service.cancelSubscription(organization("org-1"));
 
@@ -117,7 +143,7 @@ describe("BillingService", () => {
 
   it("applies a webhook once and acknowledges its redelivery without touching the subscription", async () => {
     const { inserts, knex, updates } = makeKnex();
-    const service = new BillingService({ knex } as any, createFakeGateway());
+    const service = new BillingService({ knex } as any, createFakeGateway(), makeServer() as any);
     const payload = JSON.stringify({
       eventId: "evt_1",
       type: "customer.subscription.deleted",
@@ -138,7 +164,7 @@ describe("BillingService", () => {
 
   it("rejects a webhook whose signature does not verify before consuming the event", async () => {
     const { inserts, knex } = makeKnex();
-    const service = new BillingService({ knex } as any, createFakeGateway());
+    const service = new BillingService({ knex } as any, createFakeGateway(), makeServer() as any);
 
     await rejects(service.ingestStripeWebhook("{}", "t=1,v1=bad"), (error: any) => {
       deepStrictEqual(error.output.statusCode, 401);

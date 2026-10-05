@@ -2,4 +2,5 @@
 // module is dual-written; a service emits one once its row is written.
 export const mirrorEvents = {
   SUBSCRIPTION_STARTED: "mirror-subscription-started",
+  SUBSCRIPTION_CANCELED: "mirror-subscription-canceled",
 } as const;

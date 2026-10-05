@@ -11,6 +11,13 @@ export const InternalSubscriptionAlreadyExistsError = defineError(
   "A subscription for that organization has already been mirrored to this server",
 );
 
+export const InternalSubscriptionNotFoundError = defineError(
+  "InternalSubscriptionNotFoundError",
+  404,
+  { message: z.string() },
+  "No subscription for that organization has been mirrored to this server",
+);
+
 export const InternalSubscription = z
   .object({
     id: SubscriptionId,
@@ -35,6 +42,11 @@ export const InternalRecordSubscriptionPayload = z
   .meta({ id: "InternalRecordSubscriptionPayload" });
 export type InternalRecordSubscriptionPayload = z.infer<typeof InternalRecordSubscriptionPayload>;
 
+export const InternalRecordCancellationPayload = z
+  .object({ canceledAt: z.iso.datetime() })
+  .meta({ id: "InternalRecordCancellationPayload" });
+export type InternalRecordCancellationPayload = z.infer<typeof InternalRecordCancellationPayload>;
+
 const OrgParams = z.object({ organizationId: OrganizationId });
 
 // Service-to-service only: while the legacy API owns billing it mirrors every
@@ -51,6 +63,16 @@ export const Group = defineGroup({
       body: InternalRecordSubscriptionPayload,
       success: { status: 201, schema: InternalSubscription },
       errors: [InternalSubscriptionAlreadyExistsError, ServiceUnavailable],
+      security: "service",
+    }),
+    recordCancellation: defineRoute({
+      method: "post",
+      path: "/internal/orgs/{organizationId}/billing/subscriptions/current/cancellation",
+      operationId: "internalBilling.recordCancellation",
+      params: OrgParams,
+      body: InternalRecordCancellationPayload,
+      success: { status: 200, schema: InternalSubscription },
+      errors: [InternalSubscriptionNotFoundError, ServiceUnavailable],
       security: "service",
     }),
   },

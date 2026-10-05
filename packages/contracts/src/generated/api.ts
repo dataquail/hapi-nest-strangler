@@ -245,6 +245,22 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/internal/orgs/{organizationId}/billing/subscriptions/current/cancellation": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations["internalBilling.recordCancellation"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/internal/wallets": {
     parameters: {
       query?: never;
@@ -667,6 +683,10 @@ export interface components {
       expires_at: string | null;
       /** @enum {string} */
       token_type: "Bearer";
+    };
+    InternalRecordCancellationPayload: {
+      /** Format: date-time */
+      canceledAt: string;
     };
     InternalRecordSubscriptionPayload: {
       /** Format: date-time */
@@ -1751,6 +1771,71 @@ export interface operations {
           "application/json": {
             /** @enum {string} */
             _tag: "InternalSubscriptionAlreadyExistsError";
+            message: string;
+          };
+        };
+      };
+      /** @description The server is not ready to handle the request */
+      503: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @enum {string} */
+            _tag: "ServiceUnavailable";
+            message?: string;
+          };
+        };
+      };
+    };
+  };
+  "internalBilling.recordCancellation": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        organizationId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: {
+      content: {
+        "application/json": components["schemas"]["InternalRecordCancellationPayload"];
+      };
+    };
+    responses: {
+      /** @description Success */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["InternalSubscription"];
+        };
+      };
+      /** @description Authentication is required and has failed or has not been provided */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @enum {string} */
+            _tag: "Unauthorized";
+            message?: string;
+          };
+        };
+      };
+      /** @description No subscription for that organization has been mirrored to this server */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            /** @enum {string} */
+            _tag: "InternalSubscriptionNotFoundError";
             message: string;
           };
         };

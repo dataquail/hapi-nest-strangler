@@ -143,6 +143,30 @@ describe.sequential("billing routes (integration)", () => {
     });
   });
 
+  it("mirrors a cancellation to the Nest server at the time it was made", async () => {
+    const owner = await signedInAs("owner@example.com");
+    const orgId = await createOrg(owner);
+    await server.inject({
+      method: "POST",
+      url: `/orgs/${orgId}/billing/subscriptions`,
+      headers: owner.headers,
+      payload: {},
+    });
+    await server.inject({
+      method: "DELETE",
+      url: `/orgs/${orgId}/billing/subscriptions/current`,
+      headers: owner.headers,
+    });
+    const row = await getKnex()("subscriptions").first();
+
+    const call = await wallets.waitForCall(
+      (one) => one.path === `/internal/orgs/${orgId}/billing/subscriptions/current/cancellation`,
+    );
+    deepStrictEqual(call.method, "POST");
+    deepStrictEqual(call.tokenValid, true);
+    deepStrictEqual(call.payload, { canceledAt: new Date(row.updated_at).toISOString() });
+  });
+
   it("answers a start the Nest server refuses to mirror, since hapi is the source of truth", async () => {
     wallets.refuseMirrors(true);
     const owner = await signedInAs("owner@example.com");

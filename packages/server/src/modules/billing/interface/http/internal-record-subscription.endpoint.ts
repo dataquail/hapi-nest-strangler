@@ -11,7 +11,7 @@ import { InterServiceAuthGuard } from "@/platform/middlewares/inter-service-auth
 
 const route = InternalBillingContract.Group.routes.recordSubscription;
 
-const toContract = (
+export const toContract = (
   subscription: SubscriptionRoot,
 ): InternalBillingContract.InternalSubscription => ({
   id: subscription.id,

@@ -20,6 +20,12 @@ const nextConfig: NextConfig = {
         source: "/api/cli/orgs/:orgId/todos/:rest*",
         destination: `${NEST_INTERNAL_URL}/cli/orgs/:orgId/todos/:rest*`,
       },
+      {
+        source: "/api/orgs/:orgId/billing/:rest*",
+        destination: `${NEST_INTERNAL_URL}/orgs/:orgId/billing/:rest*`,
+      },
+      // Stripe signs the raw bytes; a rewrite proxies the body untouched.
+      { source: "/api/webhooks/stripe", destination: `${NEST_INTERNAL_URL}/webhooks/stripe` },
       { source: "/api/:path*", destination: `${SERVER_INTERNAL_URL}/:path*` },
     ];
   },

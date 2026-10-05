@@ -17,10 +17,10 @@
     "billing": {
       "entered": "2026-09-29T14:11:00.373Z",
       "initial": 791,
-      "recorded": 71,
-      "improved": 846,
+      "recorded": 31,
+      "improved": 886,
       "closed": null,
-      "lastImproved": "2026-10-05T14:11:19.636Z"
+      "lastImproved": "2026-10-05T14:13:56.141Z"
     },
     "organization": {
       "entered": "2026-09-29T14:11:00.373Z",
@@ -57,10 +57,10 @@
     "shared": {
       "entered": "2026-10-05T13:46:30.070Z",
       "initial": 97,
-      "recorded": 157,
-      "improved": 0,
+      "recorded": 97,
+      "improved": 60,
       "closed": null,
-      "lastImproved": "2026-10-05T13:46:30.070Z"
+      "lastImproved": "2026-10-05T14:13:56.141Z"
     }
   },
   "concessions": [

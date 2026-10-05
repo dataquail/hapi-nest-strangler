@@ -22,7 +22,7 @@ const LEGACY_ONLY_ROUTES = ["GET /health-check"];
 // Contract groups the Nest server serves now (ADR-0035): the web proxy and the
 // CLI reach them there, and this server no longer has their routes. A group
 // leaves this list only with its hapi folder.
-const SERVED_BY_NEST = new Set(["todos", "cliTodos"]);
+const SERVED_BY_NEST = new Set(["todos", "cliTodos", "billing", "billingWebhooks"]);
 const stillHere = (groups: readonly ContractGroup[]) =>
   groups.filter((group) => !SERVED_BY_NEST.has(group.name));
 

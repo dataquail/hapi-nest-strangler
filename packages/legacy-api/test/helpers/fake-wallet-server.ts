@@ -2,21 +2,18 @@ import * as Hapi from "@hapi/hapi";
 
 export const FAKE_WALLET_PORT = 18081;
 
-type Canned = { status: number; body: unknown };
-
 type Recorded = {
   method: string;
   path: string;
   authorization: string;
   cookie: string;
-  stripeSignature: string;
   payload: unknown;
   tokenValid: boolean;
 };
 
 // Stands in for the Nest server's internal API on a fixed port: records every
 // call, verifies the inter-service token the way the real guard does, and can
-// be armed to refuse the next wallet create, and relays whatever a test arms for the user-facing routes proxied to it.
+// be armed to refuse the next wallet create.
 export const startFakeWalletServer = async (sharedSecret: string) => {
   const { jwtVerify } = await import("jose");
   const key = new TextEncoder().encode(sharedSecret);
@@ -39,32 +36,14 @@ export const startFakeWalletServer = async (sharedSecret: string) => {
       path: request.path,
       authorization,
       cookie: String(request.headers.cookie ?? ""),
-      stripeSignature: String(request.headers["stripe-signature"] ?? ""),
       payload: request.payload,
       tokenValid,
     });
     return tokenValid;
   };
 
-  // The user-facing API the legacy routes proxy to: answers whatever the test
-  // last armed, so a test asserts on the forward and the relay, not on Nest's
-  // behaviour.
-  let userApiAnswer: Canned = { status: 200, body: {} };
-  const relay: Hapi.Lifecycle.Method = async (request, h) => {
-    await record(request);
-    const reply = h.response(JSON.stringify(userApiAnswer.body)).code(userApiAnswer.status);
-    return reply.type("application/json");
-  };
-
   const server = Hapi.server({ port: FAKE_WALLET_PORT, host: "127.0.0.1" });
   server.route([
-    { method: "*", path: "/orgs/{rest*}", handler: relay },
-    {
-      method: "POST",
-      path: "/webhooks/{rest*}",
-      handler: relay,
-      options: { payload: { parse: false, output: "data" } },
-    },
     {
       method: "POST",
       path: "/internal/wallets",
@@ -95,10 +74,7 @@ export const startFakeWalletServer = async (sharedSecret: string) => {
     refuseNextCreates: (value: boolean) => {
       refuseCreates = value;
     },
-    userApiAnswers: (status: number, body: unknown) => {
-      userApiAnswer = { status, body };
-    },
-    // A call can land after the response, so a test waits for it.
+    // The mirror runs after the response, so a test waits for the call to land.
     waitForCall: async (predicate: (call: Recorded) => boolean): Promise<Recorded> => {
       for (let attempt = 0; attempt < 50; attempt += 1) {
         const found = calls.find(predicate);

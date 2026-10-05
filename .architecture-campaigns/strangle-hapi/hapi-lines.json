@@ -25,10 +25,10 @@
     "organization": {
       "entered": "2026-09-29T14:11:00.373Z",
       "initial": 1471,
-      "recorded": 955,
-      "improved": 516,
+      "recorded": 874,
+      "improved": 597,
       "closed": null,
-      "lastImproved": "2026-09-30T14:20:26.933Z"
+      "lastImproved": "2026-10-05T13:46:56.865Z"
     },
     "todo": {
       "entered": "2026-09-29T14:11:00.373Z",
@@ -49,7 +49,7 @@
     "legacy": {
       "entered": "2026-09-29T14:11:00.373Z",
       "initial": 1474,
-      "recorded": 737,
+      "recorded": 819,
       "improved": 798,
       "closed": null,
       "lastImproved": "2026-10-05T13:46:30.070Z"
@@ -87,6 +87,14 @@
       "from": 838,
       "to": 899,
       "reason": "The legacy substrate gains the proxy handler every sector's routes will use to forward to the Nest server; it is strangler scaffolding that goes when the last route does."
+    },
+    {
+      "sector": "legacy",
+      "at": "2026-10-05T13:46:56.054Z",
+      "by": "zweidenbach@gmail.com",
+      "from": 737,
+      "to": 819,
+      "reason": "The organization assertions and their spec moved from the organization module into src/lib/access, as no-cross-module-reach asks, so billing reaches them through the substrate: organization fell by 81 lines as the legacy rose by 82; nothing was added."
     }
   ]
 }

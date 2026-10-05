@@ -3,7 +3,7 @@ import type { Acl } from "virgen-acl";
 import { actionConstants } from "../../constants/acl/action-constants";
 import { resourceConstants } from "../../constants/acl/resource-constants";
 import { roleConstants } from "../../constants/acl/role-constants";
-import { asOrganizationAdmin } from "../organization/organization-access";
+import { asOrganizationAdmin } from "../../lib/access/organization-assertions";
 
 const { MANAGE_BILLING } = actionConstants;
 

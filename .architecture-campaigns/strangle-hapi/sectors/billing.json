@@ -2,8 +2,8 @@
   "version": 1,
   "campaign": "strangle-hapi",
   "sector": "billing",
-  "reached": "served",
-  "since": "2026-10-05T13:59:40.628Z",
+  "reached": "routes-moved",
+  "since": "2026-10-05T14:11:19.636Z",
   "attested": [
     {
       "phase": "backfilled",

@@ -1,6 +1,5 @@
 import { Acl } from "virgen-acl";
 
-import { billingAccess } from "../../application/billing/billing-access";
 import { organizationAccess } from "../../application/organization/organization-access";
 import { userAccess } from "../../application/user/user-access";
 import { roleConstants } from "../../constants/acl/role-constants";
@@ -14,6 +13,5 @@ acl.allow(roleConstants.SUPER_ADMIN); // super admins can do anything
 
 userAccess(acl);
 organizationAccess(acl);
-billingAccess(acl);
 
 export = acl;

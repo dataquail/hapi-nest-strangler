@@ -3,7 +3,6 @@ import { deepStrictEqual } from "node:assert";
 import { afterAll, beforeAll, beforeEach, describe, it } from "vitest";
 
 import config = require("../../../config");
-import { FAKE_WEBHOOK_SIGNATURE } from "../../../src/application/billing/fake-stripe-gateway";
 import { closeKnex, getKnex, truncateAll } from "../../helpers/db";
 import { startFakeWalletServer } from "../../helpers/fake-wallet-server";
 import { signedInAs } from "../../helpers/sessions";
@@ -11,295 +10,104 @@ import { getServer } from "../../server";
 
 type Session = Awaited<ReturnType<typeof signedInAs>>;
 
+const orgId = "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa";
+const subscription = {
+  id: "11111111-1111-1111-1111-111111111111",
+  organizationId: orgId,
+  status: "active",
+  currentPeriodEnd: "2026-11-04T00:00:00.000Z",
+};
+
+// Every billing route forwards to the Nest server and relays its answer;
+// these tests hold the forward and the relay, not what the Nest server does.
 describe.sequential("billing routes (integration)", () => {
   let server: Awaited<ReturnType<typeof getServer>>;
-  let wallets: Awaited<ReturnType<typeof startFakeWalletServer>>;
+  let nest: Awaited<ReturnType<typeof startFakeWalletServer>>;
+  let owner: Session;
 
   beforeAll(async () => {
-    wallets = await startFakeWalletServer(config("/auth/interServiceJWTSecret"));
+    nest = await startFakeWalletServer(config("/auth/interServiceJWTSecret"));
     server = await getServer();
     await server.initialize();
   });
 
   afterAll(async () => {
     await server.stop();
-    await wallets.stop();
+    await nest.stop();
     await closeKnex();
   });
 
   beforeEach(async () => {
     await truncateAll();
-    wallets.calls.length = 0;
-    wallets.refuseMirrors(false);
+    owner = await signedInAs("owner@example.com");
+    nest.calls.length = 0;
+    nest.userApiAnswers(200, subscription);
   });
 
   const body = (res: { payload: string }) => JSON.parse(res.payload);
-  const createOrg = async (owner: Session) =>
-    body(
-      await server.inject({
-        method: "POST",
-        url: "/orgs",
+
+  const routes = [
+    { method: "POST", url: `/orgs/${orgId}/billing/subscriptions`, payload: {} },
+    { method: "GET", url: `/orgs/${orgId}/billing/subscriptions/current`, payload: undefined },
+    { method: "DELETE", url: `/orgs/${orgId}/billing/subscriptions/current`, payload: undefined },
+  ];
+
+  for (const route of routes) {
+    it(`forwards ${route.method} ${route.url} with the caller's cookie and relays the answer`, async () => {
+      const res = await server.inject({
+        method: route.method,
+        url: route.url,
         headers: owner.headers,
-        payload: { name: "Acme" },
-      }),
-    ).id as string;
-  const webhook = (event: unknown, signature = FAKE_WEBHOOK_SIGNATURE) =>
-    server.inject({
+        ...(route.payload === undefined ? {} : { payload: route.payload }),
+      });
+
+      deepStrictEqual(res.statusCode, 200);
+      deepStrictEqual(body(res), subscription);
+      const call = await nest.waitForCall(
+        (one) => one.path === new URL(route.url, "http://x").pathname,
+      );
+      deepStrictEqual(call.method, route.method);
+      deepStrictEqual(call.cookie, owner.headers.cookie);
+      deepStrictEqual(call.tokenValid, false);
+    });
+  }
+
+  it("relays a refusal as the Nest server gave it", async () => {
+    nest.userApiAnswers(403, { _tag: "Forbidden", message: "not an admin" });
+    const res = await server.inject({
+      method: "POST",
+      url: `/orgs/${orgId}/billing/subscriptions`,
+      headers: owner.headers,
+      payload: {},
+    });
+    deepStrictEqual(res.statusCode, 403);
+    deepStrictEqual(body(res)._tag, "Forbidden");
+  });
+
+  it("forwards a Stripe webhook's bytes and signature untouched", async () => {
+    nest.userApiAnswers(204, null);
+    const raw = '{"eventId":"evt_1",  "type":"unknown"}';
+    const res = await server.inject({
       method: "POST",
       url: "/webhooks/stripe",
-      headers: { "stripe-signature": signature, "content-type": "application/json" },
-      payload: JSON.stringify(event),
+      headers: { "stripe-signature": "t=1,v1=abc", "content-type": "application/json" },
+      payload: raw,
     });
 
-  it("starts and cancels a subscription; only admins commit", async () => {
-    const owner = await signedInAs("owner@example.com");
-    const member = await signedInAs("member@example.com");
-    const orgId = await createOrg(owner);
-    await getKnex()("memberships").insert({ user_id: member.userId, organization_id: orgId });
-
-    const memberStarts = await server.inject({
-      method: "POST",
-      url: `/orgs/${orgId}/billing/subscriptions`,
-      headers: member.headers,
-      payload: {},
-    });
-    deepStrictEqual(memberStarts.statusCode, 403);
-
-    const started = await server.inject({
-      method: "POST",
-      url: `/orgs/${orgId}/billing/subscriptions`,
-      headers: owner.headers,
-      payload: {},
-    });
-    deepStrictEqual(started.statusCode, 201);
-    deepStrictEqual(body(started).status, "active");
-    deepStrictEqual(body(started).organizationId, orgId);
-
-    const again = await server.inject({
-      method: "POST",
-      url: `/orgs/${orgId}/billing/subscriptions`,
-      headers: owner.headers,
-      payload: {},
-    });
-    deepStrictEqual(again.statusCode, 409);
-    deepStrictEqual(body(again)._tag, "SubscriptionAlreadyExistsError");
-
-    const canceled = await server.inject({
-      method: "DELETE",
-      url: `/orgs/${orgId}/billing/subscriptions/current`,
-      headers: owner.headers,
-    });
-    deepStrictEqual(canceled.statusCode, 200);
-    deepStrictEqual(body(canceled).status, "canceled");
-    deepStrictEqual((await getKnex()("subscriptions").first()).status, "canceled");
+    deepStrictEqual(res.statusCode, 204);
+    const call = await nest.waitForCall((one) => one.path === "/webhooks/stripe");
+    deepStrictEqual(call.stripeSignature, "t=1,v1=abc");
+    deepStrictEqual(String(call.payload), raw);
   });
 
-  it("forwards a read of the current subscription to the Nest server and relays its answer", async () => {
-    const owner = await signedInAs("owner@example.com");
-    const orgId = await createOrg(owner);
-    wallets.userApiAnswers(404, { _tag: "SubscriptionNotFoundError", organizationId: orgId });
-
-    const read = await server.inject({
-      method: "GET",
-      url: `/orgs/${orgId}/billing/subscriptions/current`,
-      headers: owner.headers,
-    });
-
-    deepStrictEqual(read.statusCode, 404);
-    deepStrictEqual(body(read)._tag, "SubscriptionNotFoundError");
-    const call = await wallets.waitForCall(
-      (one) => one.path === `/orgs/${orgId}/billing/subscriptions/current`,
-    );
-    deepStrictEqual(call.method, "GET");
-    deepStrictEqual(call.cookie, owner.headers.cookie);
-  });
-
-  it("mirrors a started subscription to the Nest server under the same ids", async () => {
-    const owner = await signedInAs("owner@example.com");
-    const orgId = await createOrg(owner);
-    const started = await server.inject({
-      method: "POST",
-      url: `/orgs/${orgId}/billing/subscriptions`,
-      headers: owner.headers,
-      payload: {},
-    });
-    const row = await getKnex()("subscriptions").first();
-
-    const call = await wallets.waitForCall(
-      (one) => one.path === `/internal/orgs/${orgId}/billing/subscriptions`,
-    );
-    deepStrictEqual(call.method, "POST");
-    deepStrictEqual(call.tokenValid, true);
-    deepStrictEqual(call.payload, {
-      id: body(started).id,
-      stripeCustomerId: row.stripe_customer_id,
-      stripeSubscriptionId: row.stripe_subscription_id,
-      status: "active",
-      currentPeriodEnd: body(started).currentPeriodEnd,
-      createdAt: new Date(row.created_at).toISOString(),
-    });
-  });
-
-  it("mirrors a cancellation to the Nest server at the time it was made", async () => {
-    const owner = await signedInAs("owner@example.com");
-    const orgId = await createOrg(owner);
+  it("writes nothing to the legacy tables", async () => {
     await server.inject({
       method: "POST",
       url: `/orgs/${orgId}/billing/subscriptions`,
       headers: owner.headers,
       payload: {},
     });
-    await server.inject({
-      method: "DELETE",
-      url: `/orgs/${orgId}/billing/subscriptions/current`,
-      headers: owner.headers,
-    });
-    const row = await getKnex()("subscriptions").first();
-
-    const call = await wallets.waitForCall(
-      (one) => one.path === `/internal/orgs/${orgId}/billing/subscriptions/current/cancellation`,
-    );
-    deepStrictEqual(call.method, "POST");
-    deepStrictEqual(call.tokenValid, true);
-    deepStrictEqual(call.payload, { canceledAt: new Date(row.updated_at).toISOString() });
-  });
-
-  it("mirrors each webhook event it claims, once, with the state it applied", async () => {
-    const owner = await signedInAs("owner@example.com");
-    const orgId = await createOrg(owner);
-    await server.inject({
-      method: "POST",
-      url: `/orgs/${orgId}/billing/subscriptions`,
-      headers: owner.headers,
-      payload: {},
-    });
-    const stripeSubscriptionId = (await getKnex()("subscriptions").first()).stripe_subscription_id;
-    const event = {
-      eventId: "evt_1",
-      type: "customer.subscription.updated",
-      subscription: {
-        stripeSubscriptionId,
-        status: "past_due",
-        currentPeriodEnd: "2030-01-01T00:00:00.000Z",
-      },
-    };
-    await webhook(event);
-    await webhook(event);
-    await webhook({ eventId: "evt_2", type: "unknown" });
-
-    await wallets.waitForCall(
-      (one) =>
-        one.path === "/internal/billing/webhook-events" &&
-        (one.payload as { stripeEventId: string }).stripeEventId === "evt_2",
-    );
-    const forwards = wallets.calls.filter((one) => one.path === "/internal/billing/webhook-events");
-    const row = await getKnex()("subscriptions").first();
-    deepStrictEqual(
-      forwards.map((one) => one.payload),
-      [
-        {
-          stripeEventId: "evt_1",
-          receivedAt: new Date(row.updated_at).toISOString(),
-          subscription: event.subscription,
-        },
-        {
-          stripeEventId: "evt_2",
-          receivedAt: (forwards[1].payload as { receivedAt: string }).receivedAt,
-          subscription: null,
-        },
-      ],
-    );
-  });
-
-  it("answers a start the Nest server refuses to mirror, since hapi is the source of truth", async () => {
-    wallets.refuseMirrors(true);
-    const owner = await signedInAs("owner@example.com");
-    const orgId = await createOrg(owner);
-    const started = await server.inject({
-      method: "POST",
-      url: `/orgs/${orgId}/billing/subscriptions`,
-      headers: owner.headers,
-      payload: {},
-    });
-    deepStrictEqual(started.statusCode, 201);
-    await wallets.waitForCall((one) => one.path.endsWith("/billing/subscriptions"));
-    deepStrictEqual((await getKnex()("subscriptions")).length, 1);
-  });
-
-  it("ingests Stripe webhooks once each, syncing the subscription status", async () => {
-    const owner = await signedInAs("owner@example.com");
-    const orgId = await createOrg(owner);
-    const started = body(
-      await server.inject({
-        method: "POST",
-        url: `/orgs/${orgId}/billing/subscriptions`,
-        headers: owner.headers,
-        payload: {},
-      }),
-    );
-    const stripeSubscriptionId = (await getKnex()("subscriptions").first()).stripe_subscription_id;
-
-    const updated = await webhook({
-      eventId: "evt_1",
-      type: "customer.subscription.updated",
-      subscription: {
-        stripeSubscriptionId,
-        status: "past_due",
-        currentPeriodEnd: "2030-01-01T00:00:00.000Z",
-      },
-    });
-    deepStrictEqual(updated.statusCode, 204);
-    const afterUpdate = await getKnex()("subscriptions").first();
-    deepStrictEqual(afterUpdate.status, "past_due");
-    deepStrictEqual(
-      new Date(afterUpdate.current_period_end).toISOString(),
-      "2030-01-01T00:00:00.000Z",
-    );
-    deepStrictEqual(afterUpdate.id, started.id);
-
-    // Replayed delivery: acknowledged, applied once.
-    deepStrictEqual(
-      (
-        await webhook({
-          eventId: "evt_1",
-          type: "customer.subscription.updated",
-          subscription: { stripeSubscriptionId, status: "active", currentPeriodEnd: null },
-        })
-      ).statusCode,
-      204,
-    );
-    deepStrictEqual((await getKnex()("subscriptions").first()).status, "past_due");
-    deepStrictEqual((await getKnex()("webhook_events")).length, 1);
-
-    const deleted = await webhook({
-      eventId: "evt_2",
-      type: "customer.subscription.deleted",
-      subscription: { stripeSubscriptionId, status: "canceled", currentPeriodEnd: null },
-    });
-    deepStrictEqual(deleted.statusCode, 204);
-    deepStrictEqual((await getKnex()("subscriptions").first()).status, "canceled");
-
-    deepStrictEqual((await webhook({ eventId: "evt_3", type: "unknown" })).statusCode, 204);
-    deepStrictEqual(
-      (await webhook({ eventId: "evt_4", type: "invoice.paid", invoice: { stripeSubscriptionId } }))
-        .statusCode,
-      204,
-    );
-    deepStrictEqual((await getKnex()("webhook_events")).length, 4);
-  });
-
-  it("refuses a webhook with a bad signature, a missing signature or no body", async () => {
-    const bad = await webhook({ eventId: "evt_x", type: "unknown" }, "t=1,v1=nope");
-    deepStrictEqual(bad.statusCode, 401);
-    deepStrictEqual(body(bad)._tag, "Unauthorized");
-    const missing = await server.inject({ method: "POST", url: "/webhooks/stripe", payload: "{}" });
-    deepStrictEqual(missing.statusCode, 401);
-    const empty = await server.inject({
-      method: "POST",
-      url: "/webhooks/stripe",
-      headers: { "stripe-signature": FAKE_WEBHOOK_SIGNATURE },
-    });
-    deepStrictEqual(empty.statusCode, 400);
+    deepStrictEqual(await getKnex()("subscriptions"), []);
     deepStrictEqual(await getKnex()("webhook_events"), []);
   });
 });

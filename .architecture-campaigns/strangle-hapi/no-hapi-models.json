@@ -11,6 +11,17 @@
       "closed": 0,
       "lastCleared": "2026-10-01T16:36:32.062Z",
       "holdouts": []
+    },
+    "billing": {
+      "entered": "2026-10-05T14:13:56.141Z",
+      "initial": 2,
+      "cleared": 0,
+      "closed": 0,
+      "lastCleared": "2026-10-05T14:13:56.141Z",
+      "holdouts": [
+        "subscription-model.ts",
+        "webhook-event-model.ts"
+      ]
     }
   },
   "concessions": []

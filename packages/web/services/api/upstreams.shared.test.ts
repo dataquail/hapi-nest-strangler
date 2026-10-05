@@ -17,11 +17,24 @@ describe("upstreams", () => {
     }
   });
 
+  it("sends the billing paths and Stripe's webhook to the Nest server", () => {
+    for (const path of [
+      "/orgs/abc/billing/subscriptions",
+      "/orgs/abc/billing/subscriptions/current",
+      "/webhooks/stripe",
+    ]) {
+      expect(isServedByNest(path), path).toBe(true);
+      expect(upstreamFor(path, upstreams)).toBe(upstreams.nest);
+    }
+  });
+
   it("sends everything else to the legacy API", () => {
     for (const path of [
       "/orgs",
       "/orgs/abc",
       "/orgs/abc/todosx",
+      "/orgs/abc/billingx",
+      "/webhooks/other",
       "/users",
       "/auth/me",
       "/cli/orgs",

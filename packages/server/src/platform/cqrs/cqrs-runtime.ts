@@ -4,6 +4,11 @@ import { makeEventBus, makeUnhandledFailures } from "@org/event-bus";
 import { makeUnitOfWork } from "@org/unit-of-work";
 
 import {
+  billingCommandSpanAttributes,
+  billingEventSpanAttributes,
+  billingQuerySpanAttributes,
+} from "@/modules/billing/billing.platform.js";
+import {
   todoCommandSpanAttributes,
   todoQuerySpanAttributes,
 } from "@/modules/todos/todos.platform.js";
@@ -50,7 +55,11 @@ const mergeUnique = <V>(
       useFactory: (unhandledFailures: UnhandledFailures) =>
         makeEventBus({
           unhandledFailures,
-          spanAttributes: mergeUnique("event span attributes", walletEventSpanAttributes),
+          spanAttributes: mergeUnique(
+            "event span attributes",
+            walletEventSpanAttributes,
+            billingEventSpanAttributes,
+          ),
         }),
     },
     {
@@ -66,12 +75,18 @@ const mergeUnique = <V>(
           "command span attributes",
           walletCommandSpanAttributes,
           todoCommandSpanAttributes,
+          billingCommandSpanAttributes,
         ),
     },
     {
       provide: QuerySpanAttributes,
       useFactory: () =>
-        mergeUnique("query span attributes", walletQuerySpanAttributes, todoQuerySpanAttributes),
+        mergeUnique(
+          "query span attributes",
+          walletQuerySpanAttributes,
+          todoQuerySpanAttributes,
+          billingQuerySpanAttributes,
+        ),
     },
     AppCommandBus,
     AppQueryBus,

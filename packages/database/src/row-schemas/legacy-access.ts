@@ -13,3 +13,10 @@ export const LegacyRoleRow = z.object({
   role: z.string(),
 });
 export type LegacyRoleRow = z.infer<typeof LegacyRoleRow>;
+
+export const LegacyOrganizationRoleRow = z.object({
+  user_id: z.guid(),
+  organization_id: z.guid(),
+  role: z.string(),
+});
+export type LegacyOrganizationRoleRow = z.infer<typeof LegacyOrganizationRoleRow>;

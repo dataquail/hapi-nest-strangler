@@ -2,8 +2,28 @@
   "version": 1,
   "campaign": "strangle-hapi",
   "sector": "billing",
-  "reached": "fenced",
-  "since": "2026-09-29T14:11:00.373Z",
-  "attested": [],
-  "notes": []
+  "reached": "settled",
+  "since": "2026-10-05T14:15:43.713Z",
+  "attested": [
+    {
+      "phase": "backfilled",
+      "reason": "db:backfill:billing (commit 90c2a22) run against hapi-strangler-dev, migrated by both migrators, after every billing write was mirrored: the legacy side held 2 subscriptions and 3 claimed webhook events the replica had never received; the run upserted 2 and 3 and deleted 0, and a second run upserted the same and deleted 0.",
+      "at": "2026-10-05T13:59:39.644Z",
+      "by": "zweidenbach@gmail.com"
+    }
+  ],
+  "notes": [
+    {
+      "at": "2026-10-05T14:16:22.339Z",
+      "by": "zweidenbach@gmail.com",
+      "phase": "settled",
+      "text": "Arrived at settled 2026-10-05. Left in hapi: the MANAGE_BILLING action and SUBSCRIPTION resource constants (MANAGE_BILLING survives only as the can.spec example of an action no rule grants), the organization assertions moved to src/lib/access at fenced (the organization sector's to take), the billing migrations and the drop, and the marker. Outside the repo: Stripe's webhook endpoint must point at the gateway's /api/webhooks/stripe, which now rewrites to the Nest server."
+    },
+    {
+      "phase": "settled",
+      "text": "Left in the Nest server: the billing ACL adapters reading public.memberships, public.organization_roles and public.roles with the legacy row schemas they use, the legacy-row test seeds, and billing.subscriptions' missing FK to organizations; all of it goes when organization and role move. The shared scaffolding (proxy, mirror plugin, mirror events) left with billing's last use; the next sector restores it under the shared globs.",
+      "by": "zweidenbach@gmail.com",
+      "at": "2026-10-05T14:16:23.150Z"
+    }
+  ]
 }

@@ -4,6 +4,9 @@ import * as m0001 from "./0001_create_schema_wallet.js";
 import * as m0002 from "./0002_create_table_wallet_wallets.js";
 import * as m0003 from "./0003_create_schema_todos.js";
 import * as m0004 from "./0004_create_table_todos_todos.js";
+import * as m0005 from "./0005_create_schema_billing.js";
+import * as m0006 from "./0006_create_table_billing_subscriptions.js";
+import * as m0007 from "./0007_create_table_billing_webhook_events.js";
 
 export type MigrationModule = {
   readonly up: (knex: Knex) => Promise<void>;
@@ -18,4 +21,7 @@ export const migrations: Readonly<Record<string, MigrationModule>> = {
   "0002_create_table_wallet_wallets": m0002,
   "0003_create_schema_todos": m0003,
   "0004_create_table_todos_todos": m0004,
+  "0005_create_schema_billing": m0005,
+  "0006_create_table_billing_subscriptions": m0006,
+  "0007_create_table_billing_webhook_events": m0007,
 };

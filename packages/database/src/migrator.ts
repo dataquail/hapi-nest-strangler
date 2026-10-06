@@ -11,7 +11,7 @@ export type MigratorConfig = {
 // its folder. Every table not listed here is the legacy API's, in `public`,
 // and arrives schema by schema as the strangler moves a module across.
 // Adding a module means a migration and an entry here.
-export const MODULE_SCHEMAS = ["wallet", "todos"] as const;
+export const MODULE_SCHEMAS = ["wallet", "todos", "billing"] as const;
 
 // Not the default name: the legacy API's migrator owns `knex_migrations` in
 // the same database, and neither history may read, or drop, the other's.

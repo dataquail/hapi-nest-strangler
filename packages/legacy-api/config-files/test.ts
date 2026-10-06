@@ -11,7 +11,6 @@ export const testConfig = {
   // ports; an environment that names the real ones (CI does) must not win.
   backend: { url: "http://127.0.0.1:18081" },
   mail: { transport: "log" },
-  stripe: { useFake: true },
   auth: {
     interServiceJWTSecret: "test-inter-service-secret-0123456789abcdef",
     sessionCookieSecret: "test-session-cookie-secret",

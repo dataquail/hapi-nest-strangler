@@ -17,18 +17,18 @@
     "billing": {
       "entered": "2026-09-29T14:11:00.373Z",
       "initial": 791,
-      "recorded": 586,
-      "improved": 205,
+      "recorded": 31,
+      "improved": 886,
       "closed": null,
-      "lastImproved": "2026-09-30T14:20:26.933Z"
+      "lastImproved": "2026-10-05T14:13:56.141Z"
     },
     "organization": {
       "entered": "2026-09-29T14:11:00.373Z",
       "initial": 1471,
-      "recorded": 955,
-      "improved": 516,
+      "recorded": 874,
+      "improved": 597,
       "closed": null,
-      "lastImproved": "2026-09-30T14:20:26.933Z"
+      "lastImproved": "2026-10-05T13:46:56.865Z"
     },
     "todo": {
       "entered": "2026-09-29T14:11:00.373Z",
@@ -49,10 +49,18 @@
     "legacy": {
       "entered": "2026-09-29T14:11:00.373Z",
       "initial": 1474,
-      "recorded": 836,
-      "improved": 699,
+      "recorded": 819,
+      "improved": 798,
       "closed": null,
-      "lastImproved": "2026-10-01T16:30:10.397Z"
+      "lastImproved": "2026-10-05T13:46:30.070Z"
+    },
+    "shared": {
+      "entered": "2026-10-05T13:46:30.070Z",
+      "initial": 97,
+      "recorded": 97,
+      "improved": 60,
+      "closed": null,
+      "lastImproved": "2026-10-05T14:13:56.141Z"
     }
   },
   "concessions": [
@@ -79,6 +87,38 @@
       "from": 838,
       "to": 899,
       "reason": "The legacy substrate gains the proxy handler every sector's routes will use to forward to the Nest server; it is strangler scaffolding that goes when the last route does."
+    },
+    {
+      "sector": "legacy",
+      "at": "2026-10-05T13:46:56.054Z",
+      "by": "zweidenbach@gmail.com",
+      "from": 737,
+      "to": 819,
+      "reason": "The organization assertions and their spec moved from the organization module into src/lib/access, as no-cross-module-reach asks, so billing reaches them through the substrate: organization fell by 81 lines as the legacy rose by 82; nothing was added."
+    },
+    {
+      "sector": "billing",
+      "at": "2026-10-05T13:53:05.903Z",
+      "by": "zweidenbach@gmail.com",
+      "from": 586,
+      "to": 639,
+      "reason": "phase mirrored grows hapi-lines"
+    },
+    {
+      "sector": "billing",
+      "at": "2026-10-05T13:57:38.568Z",
+      "by": "zweidenbach@gmail.com",
+      "from": 639,
+      "to": 712,
+      "reason": "phase mirrored grows hapi-lines"
+    },
+    {
+      "sector": "shared",
+      "at": "2026-10-05T14:03:52.629Z",
+      "by": "zweidenbach@gmail.com",
+      "from": 97,
+      "to": 157,
+      "reason": "the shared files hold no number: hapi-lines is measured there"
     }
   ]
 }

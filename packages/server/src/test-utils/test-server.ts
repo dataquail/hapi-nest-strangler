@@ -8,6 +8,7 @@ import type { Database } from "@org/database";
 import createClient, { type Client } from "openapi-fetch";
 
 import { EnvVars } from "@/common/env-vars.js";
+import { BillingGateway, BillingGatewayFake } from "@/modules/billing/billing.platform.js";
 import { AppCommandBus } from "@/platform/cqrs/command-bus.js";
 import { AppQueryBus } from "@/platform/cqrs/query-bus.js";
 import { Database as DatabaseToken } from "@/platform/database/database.js";
@@ -28,6 +29,7 @@ export type TestServer = {
   readonly database: Database;
   readonly commandBus: AppCommandBus;
   readonly queryBus: AppQueryBus;
+  readonly billingGateway: BillingGatewayFake;
   readonly close: () => Promise<void>;
 };
 
@@ -35,19 +37,23 @@ const TEST_ENV: Readonly<Record<string, string>> = {
   DATABASE_URL: "postgres://unused",
   INTER_SERVICE_JWT_SECRET: TEST_SERVICE_SECRET,
   SESSION_COOKIE_SECRET: "test-session-cookie-secret",
+  STRIPE_USE_FAKE: "true",
 };
 
 // The same application production runs. What this root does differently is
-// the environment below: a test database, a known inter-service secret, and a
-// fixed caller in place of the user auth guard.
+// the environment below: a test database, a known inter-service secret, a
+// fixed caller in place of the user auth guard, and billing's fake gateway.
 export const startTestServer = async (
   caller: CurrentUser = SUPER_ADMIN_CALLER,
 ): Promise<TestServer> => {
   const database = await createTestDatabase();
   const env = EnvVars.load({ ...TEST_ENV, DATABASE_URL: assertTestDatabaseConfigured() });
+  const billingGateway = new BillingGatewayFake();
   const moduleRef = await Test.createTestingModule({ imports: [AppModule] })
     .overrideProvider(EnvVars)
     .useValue(env)
+    .overrideProvider(BillingGateway)
+    .useValue(billingGateway)
     .overrideProvider(DatabaseToken)
     .useValue(database)
     .overrideGuard(UserAuthGuard)
@@ -68,6 +74,7 @@ export const startTestServer = async (
     database,
     commandBus: app.get(AppCommandBus),
     queryBus: app.get(AppQueryBus),
+    billingGateway,
     close: async () => {
       await app.close();
       await database.end();

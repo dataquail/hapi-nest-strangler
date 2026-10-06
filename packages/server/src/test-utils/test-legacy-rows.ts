@@ -34,6 +34,18 @@ export const seedLegacyMembership = async (
   `);
 };
 
+export const seedLegacyOrganizationRole = async (
+  db: Database,
+  userId: string,
+  organizationId: string,
+  role: string,
+): Promise<void> => {
+  await db.exec(sql.unsafe`
+    INSERT INTO public.organization_roles (organization_id, user_id, role, issued_by)
+    VALUES (${organizationId}, ${userId}, ${role}, ${userId})
+  `);
+};
+
 export const seedMemberOrganization = async (
   db: Database,
   userId: string,
@@ -41,5 +53,15 @@ export const seedMemberOrganization = async (
 ): Promise<string> => {
   const organizationId = await seedLegacyOrganization(db, name);
   await seedLegacyMembership(db, userId, organizationId);
+  return organizationId;
+};
+
+export const seedAdminOrganization = async (
+  db: Database,
+  userId: string,
+  name: string,
+): Promise<string> => {
+  const organizationId = await seedMemberOrganization(db, userId, name);
+  await seedLegacyOrganizationRole(db, userId, organizationId, "admin");
   return organizationId;
 };

@@ -1,0 +1,42 @@
+{
+  "id": "P1",
+  "kind": "probe",
+  "branch": "billing-retire-internal",
+  "head": "cf4b2fd",
+  "started": "2026-10-06T19:54:37.937Z",
+  "steps": [
+    {
+      "step": "contracts build",
+      "cmd": "pnpm -s -F @org/contracts build",
+      "exit": 0,
+      "ms": 1384
+    }
+  ],
+  "gates": {
+    "G1": {
+      "exit": 0,
+      "ms": 1649
+    },
+    "G2": {
+      "exit": 0,
+      "ms": 1001
+    }
+  },
+  "pins": {
+    "core": "0.1.0-beta.15",
+    "typescript": "0.1.0-beta.15",
+    "cli": "0.1.0-beta.17",
+    "oxlint": "0.1.0-beta.17",
+    "campaigns": "0.1.1-beta.6"
+  },
+  "overlay": {
+    "from": "8ec6be2",
+    "fromSha": "8ec6be2",
+    "overlayBase": "00f59e7",
+    "base": "d2822381a2f059edd62572d55617bdffd07fd664",
+    "changed": ".../strangle-hapi/mirror-before-write.json         |  25 ++++\n .architecture-campaigns/strangle-hapi/plan.json    |  12 +-\n .../strangle-hapi/shared-state-split.json          |  25 ++++\n architecture.yaml                                  | 160 ++++++++++++++++++++-\n campaigns/strangle-hapi.mjs                        |  90 ++++++++++++\n package.json                                       |   6 +-\n pnpm-lock.yaml                                     |  34 ++---\n 7 files changed, 324 insertions(+), 28 deletions(-)",
+    "clear": "strangle-hapi/no-cross-module-reach: nothing to clear; 6 holdouts left.\nstrangle-hapi/no-role-checks-in-routes: nothing to clear; 2 holdouts left.\nstrangle-hapi/has-nest-module: nothing to clear; 1 holdout left.\nstrangle-hapi/no-hapi-routes: nothing to clear; 1 holdout left.\nstrangle-hapi/no-hapi-models: nothing to clear; 0 holdouts left.\nstrangle-hapi/no-hapi-files: nothing to clear; 0 holdouts left.\nstrangle-hapi/has-internal-write-api: nothing to clear; 0 holdouts left.\nstrangle-hapi/writes-not-mirrored: nothing to clear; 0 holdouts left.\nstrangle-hapi/has-nest-endpoints: nothing to clear; 0 holdouts left.\nstrangle-hapi/routes-still-local: nothing to clear; 0 holdouts left.\nstrangle-hapi/legacy-writes: nothing to clear; 0 holdouts left.\nstrangle-hapi/mirror-before-write: 2 sectors entered (billing, todo); 0 holdouts left.\nstrangle-hapi/shared-state-split: 2 sectors entered (billing, todo); 0 holdouts left.\nstrangle-hapi/legacy-table-dropped: nothing to clear; 0 holdouts left.\nstrangle-hapi/hapi-lines: nothing to clear; held to 2970.\n"
+  },
+  "diffStat": "packages/legacy-api/bootstrap.ts                   |   1 -\n .../src/application/billing/billing-routes.ts      |  44 --------\n .../src/lib/backend-client/proxy-to-nest.ts        |  63 ------------\n .../billing/billing-routes.integration.test.ts     | 113 ---------------------\n .../legacy-api/test/helpers/fake-wallet-server.ts  |  28 +----\n packages/legacy-api/test/route-parity.test.ts      |   2 +-\n packages/web/next.config.ts                        |   6 ++\n packages/web/services/api/upstreams.shared.test.ts |  13 +++\n packages/web/services/api/upstreams.shared.ts      |   6 +-\n 9 files changed, 27 insertions(+), 249 deletions(-)",
+  "finished": "2026-10-06T19:54:47.131Z"
+}

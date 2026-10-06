@@ -1,0 +1,21 @@
+$ pnpm -s campaigns:nudge
+exit 0
+
+--- stdout
+strangle-hapi
+  billing — phase served (5 of 9), 1 day here
+    intent: The Nest module answers: hapi's routes forward to it operation by operation, and the legacy service writes nothing itself any more.
+    toward the next phase: has-nest-endpoints 1 · routes-still-local 4 · legacy-writes 4
+    of the sector as a whole:
+      has-nest-endpoints: Give the Nest module its user-facing endpoints behind the user guard, with the policies that authorize them.
+    in the files you touched, nearest your change (4 of 4; 9 in the sector):
+      packages/legacy-api/src/application/billing/billing-service.ts#outcome:141  legacy-writes
+      packages/legacy-api/src/application/billing/billing-service.ts#outcome:162  legacy-writes
+      packages/legacy-api/src/application/billing/billing-service.ts#cancelSubscription:119  legacy-writes
+      packages/legacy-api/src/application/billing/billing-service.ts#startSubscription:95  legacy-writes
+    onTouch: ratchet — ok
+    ask: hold — leave the sector no worse; paydown is welcome in its own commit, not asked for
+
+ok
+
+--- stderr

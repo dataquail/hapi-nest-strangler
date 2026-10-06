@@ -1,0 +1,13 @@
+$ pnpm -s exec architecture campaigns status --sector billing packages
+exit 0
+
+--- stdout
+strangle-hapi · billing — phase mirrored (3 of 9), reached served since 2026-10-05
+  intent: Every write the legacy module takes is forwarded to the Nest module's internal API, so the Nest table fills as a replica while hapi stays the source of truth.
+  attested backfilled: 2026-10-05 by zweidenbach@gmail.com — db:backfill:billing (commit 90c2a22) run against hapi-strangler-dev, migrated by both migrators, after every billing write was mirrored: the legacy side held 2 subscriptions and 3 claimed webhook events the replica had never received; the run upserted 2 and 3 and deleted 0, and a second run upserted the same and deleted 0. (revoked 2026-10-06 by zweidenbach@gmail.com: conceded mirror-before-write: temporary)
+  toward the next phase: mirror-before-write 1
+  mirror-before-write — 1 holdout in window: Move the mirror emit below the write it announces (after the transaction, when the write is inside one), so a failed write sends nothing to the replica.
+    packages/legacy-api/src/application/billing/billing-service.ts:95  startSubscription
+  hapi-lines: 712 (held to 712, tolerance 20)
+
+--- stderr

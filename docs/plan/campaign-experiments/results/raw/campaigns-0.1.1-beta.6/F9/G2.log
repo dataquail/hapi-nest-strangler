@@ -1,0 +1,14 @@
+$ pnpm -s exec architecture campaigns status --changed --base 75f1d18c62c2ff98b1cd82766aedb69ecaa525bd packages
+exit 0
+
+--- stdout
+strangle-hapi
+  billing — phase served (5 of 9), 1 day here
+    intent: The Nest module answers: hapi's routes forward to it operation by operation, and the legacy service writes nothing itself any more.
+    toward the next phase: routes-still-local 3 · legacy-writes 4
+    onTouch: ratchet — ok
+    ask: hold — leave the sector no worse; paydown is welcome in its own commit, not asked for
+
+ok
+
+--- stderr

@@ -1,0 +1,113 @@
+[
+  {
+    "layer": "fenced",
+    "exit": 0,
+    "verdicts": [
+      "onTouch: ratchet (of fenced) — ok",
+      "onTouch: ratchet — ok",
+      "onTouch: ratchet — ok"
+    ],
+    "ahead": [],
+    "stdout": "strangle-hapi\n  billing — phase rebuilt (2 of 9), 1 day here\n    this diff moves it from fenced: it is judged by the phase it was found at\n    intent: The module exists on the Nest server in the hexagonal layout, with hapi still serving its routes.\n    toward the next phase: has-nest-module 1\n    of the sector as a whole:\n      has-nest-module: Rebuild the module under packages/server/src/modules/ with its taxonomy and tests.\n      (its marker owns `packages/server/src/modules/billing/**`, which no file matches)\n    this diff: −no-cross-module-reach: billing-access.ts#imports:../organization/organization-access  forward\n    now counted: has-nest-module 1 — in window from rebuilt, not growth\n    onTouch: ratchet (of fenced) — ok\n    ask: hold — leave the sector no worse; paydown is welcome in its own commit, not asked for\n  legacy — phase fenced (1 of 9)\n    intent: The module names no sibling module: what it needs from a peer arrives through the substrate, and its role checks live in its access file, not its routes.\n    hapi-lines: 737 → 819 (recorded 819, tolerance 20)  conceded\n    packages/legacy-api/src/lib/access/organization-assertions.ts landed in the legacy inside the scope: this belongs in a sector\n    onTouch: ratchet — ok\n    ask: hold — leave the sector no worse; paydown is welcome in its own commit, not asked for\n  organization — phase fenced (1 of 9), 7 days here\n    intent: The module names no sibling module: what it needs from a peer arrives through the substrate, and its role checks live in its access file, not its routes.\n    toward the next phase: no-cross-module-reach 2 · no-role-checks-in-routes 1\n    hapi-lines: 955 → 874 (recorded 874, tolerance 20)\n    onTouch: ratchet — ok\n    ask: hold — leave the sector no worse; paydown is welcome in its own commit, not asked for\n\nok\n"
+  },
+  {
+    "layer": "rebuilt",
+    "exit": 0,
+    "verdicts": ["onTouch: ratchet (of rebuilt) — ok"],
+    "ahead": [],
+    "stdout": "strangle-hapi\n  billing — phase mirrored (3 of 9), 1 day here\n    this diff moves it from rebuilt: it is judged by the phase it was found at\n    intent: Every write the legacy module takes is forwarded to the Nest module's internal API, so the Nest table fills as a replica while hapi stays the source of truth.\n    toward the next phase: has-internal-write-api 1 · writes-not-mirrored 4\n    of the sector as a whole:\n      has-internal-write-api: Give the Nest module an internal write API behind the inter-service guard, so the legacy module can forward each write to it; it goes again once the Nest module serves the routes itself.\n    this diff: −has-nest-module: ~  forward\n    now counted: has-internal-write-api 1 · writes-not-mirrored 4 — in window from mirrored, not growth\n    onTouch: ratchet (of rebuilt) — ok\n    ask: hold — leave the sector no worse; paydown is welcome in its own commit, not asked for\n\nok\n"
+  },
+  {
+    "layer": "mirror-start",
+    "exit": 0,
+    "verdicts": ["onTouch: advise — ok", "onTouch: ratchet — ok", "onTouch: advise — ok"],
+    "ahead": [],
+    "stdout": "strangle-hapi\n  billing — phase mirrored (3 of 9), 1 day here\n    intent: Every write the legacy module takes is forwarded to the Nest module's internal API, so the Nest table fills as a replica while hapi stays the source of truth.\n    toward the next phase: writes-not-mirrored 3\n    in the files you touched, nearest your change (3 of 3; 3 in the sector):\n      packages/legacy-api/src/application/billing/billing-service.ts#ingestStripeWebhook:141  writes-not-mirrored\n      packages/legacy-api/src/application/billing/billing-service.ts#cancelSubscription:113  writes-not-mirrored\n      packages/legacy-api/src/application/billing/billing-service.ts#ingestStripeWebhook:128  writes-not-mirrored\n    this diff: −has-internal-write-api: ~ · −writes-not-mirrored: billing-service.ts#startSubscription#cff14458  forward\n    hapi-lines: 586 → 639 (recorded 639, tolerance 20)  conceded\n    onTouch: advise — ok\n    ask: none — the holdouts above are context; paydown is welcome in its own commit, not asked for\n  legacy at phase fenced (1 of 9) · nothing in your files, diff neutral\n  organization — phase fenced (1 of 9), 7 days here\n    intent: The module names no sibling module: what it needs from a peer arrives through the substrate, and its role checks live in its access file, not its routes.\n    toward the next phase: no-cross-module-reach 2 · no-role-checks-in-routes 1\n    hapi-lines: 874 → 875 (recorded 874, tolerance 20)\n    onTouch: ratchet — ok\n    ask: hold — leave the sector no worse; paydown is welcome in its own commit, not asked for\n  shared — held by every sector, on no phase\n    hapi-lines: 97 → 104 (recorded 97, tolerance 20)\n    onTouch: advise — ok\n    ask: none — the holdouts above are context; paydown is welcome in its own commit, not asked for\n\nok\n"
+  },
+  {
+    "layer": "mirror-cancel",
+    "exit": 0,
+    "verdicts": ["onTouch: advise — ok", "onTouch: ratchet — ok", "onTouch: advise — ok"],
+    "ahead": [],
+    "stdout": "strangle-hapi\n  billing — phase mirrored (3 of 9), 1 day here\n    intent: Every write the legacy module takes is forwarded to the Nest module's internal API, so the Nest table fills as a replica while hapi stays the source of truth.\n    toward the next phase: writes-not-mirrored 2\n    in the files you touched, nearest your change (2 of 2; 2 in the sector):\n      packages/legacy-api/src/application/billing/billing-service.ts#ingestStripeWebhook:132  writes-not-mirrored\n      packages/legacy-api/src/application/billing/billing-service.ts#ingestStripeWebhook:145  writes-not-mirrored\n    this diff: −writes-not-mirrored: billing-service.ts#cancelSubscription#ac56a836  forward\n    hapi-lines: 639 → 656 (recorded 639, tolerance 20)\n    onTouch: advise — ok\n    ask: none — the holdouts above are context; paydown is welcome in its own commit, not asked for\n  organization — phase fenced (1 of 9), 7 days here\n    intent: The module names no sibling module: what it needs from a peer arrives through the substrate, and its role checks live in its access file, not its routes.\n    toward the next phase: no-cross-module-reach 2 · no-role-checks-in-routes 1\n    onTouch: ratchet — ok\n    ask: hold — leave the sector no worse; paydown is welcome in its own commit, not asked for\n  shared — held by every sector, on no phase\n    hapi-lines: 104 → 105 (recorded 97, tolerance 20)\n    onTouch: advise — ok\n    ask: none — the holdouts above are context; paydown is welcome in its own commit, not asked for\n\nok\n"
+  },
+  {
+    "layer": "mirror-webhook",
+    "exit": 0,
+    "verdicts": [
+      "onTouch: advise (of mirrored) — ok",
+      "onTouch: ratchet — ok",
+      "onTouch: advise — ok"
+    ],
+    "ahead": [],
+    "stdout": "strangle-hapi\n  billing — phase backfilled (4 of 9, attested), 1 day here\n    this diff moves it from mirrored: it is judged by the phase it was found at\n    intent: The Nest table has been backfilled from the legacy table once, after every write was mirrored; no detector sees a script run, so whoever ran it attests to it.\n    this phase is attested, not detected: no objective sees it done. When it is, record it —\n      architecture campaigns attest billing backfilled --reason \"…\" [--evidence <url>] --campaign strangle-hapi\n    this diff: −writes-not-mirrored: billing-service.ts#ingestStripeWebhook#9e8ae549 · −writes-not-mirrored: billing-service.ts#ingestStripeWebhook#dad5b32b  forward\n    hapi-lines: 656 → 712 (recorded 712, tolerance 20)  conceded\n    onTouch: advise (of mirrored) — ok\n    ask: none — the holdouts above are context; paydown is welcome in its own commit, not asked for\n  legacy at phase fenced (1 of 9) · nothing in your files, diff neutral\n  organization — phase fenced (1 of 9), 7 days here\n    intent: The module names no sibling module: what it needs from a peer arrives through the substrate, and its role checks live in its access file, not its routes.\n    toward the next phase: no-cross-module-reach 2 · no-role-checks-in-routes 1\n    onTouch: ratchet — ok\n    ask: hold — leave the sector no worse; paydown is welcome in its own commit, not asked for\n  shared — held by every sector, on no phase\n    hapi-lines: 105 → 106 (recorded 97, tolerance 20)\n    onTouch: advise — ok\n    ask: none — the holdouts above are context; paydown is welcome in its own commit, not asked for\n\nok\n"
+  },
+  {
+    "layer": "backfill",
+    "exit": 0,
+    "verdicts": [],
+    "ahead": [],
+    "stdout": "nothing you touched is under a campaign (8 files in the diff).\n"
+  },
+  {
+    "layer": "attest",
+    "exit": 0,
+    "verdicts": [],
+    "ahead": [],
+    "stdout": "nothing you touched is under a campaign (6 files in the diff).\n"
+  },
+  {
+    "layer": "serve-read",
+    "exit": 0,
+    "verdicts": ["onTouch: ratchet — ok", "onTouch: advise — ok"],
+    "ahead": [],
+    "stdout": "strangle-hapi\n  billing — phase served (5 of 9), 1 day here\n    intent: The Nest module answers: hapi's routes forward to it operation by operation, and the legacy service writes nothing itself any more.\n    toward the next phase: routes-still-local 3 · legacy-writes 4\n    in the files you touched, nearest your change (5 of 7; 7 in the sector):\n      packages/legacy-api/src/application/billing/billing-routes.ts#billingRoutes:50  routes-still-local\n      packages/legacy-api/src/application/billing/billing-routes.ts#billingRoutes:28  routes-still-local\n      packages/legacy-api/src/application/billing/billing-routes.ts#billingRoutes:62  routes-still-local\n      packages/legacy-api/src/application/billing/billing-service.ts#startSubscription:87  legacy-writes\n      packages/legacy-api/src/application/billing/billing-service.ts#cancelSubscription:111  legacy-writes\n    this diff: −has-nest-endpoints: ~ · −routes-still-local: billing-routes.ts#billingRoutes#cc76f797  forward\n    hapi-lines: 712 → 703 (recorded 712, tolerance 20)\n    onTouch: ratchet — ok\n    ask: hold — leave the sector no worse; paydown is welcome in its own commit, not asked for\n  legacy at phase fenced (1 of 9) · nothing in your files, diff neutral\n  shared — held by every sector, on no phase\n    hapi-lines: 106 → 157 (recorded 157, tolerance 20)  conceded\n    onTouch: advise — ok\n    ask: none — the holdouts above are context; paydown is welcome in its own commit, not asked for\n\nok\n"
+  },
+  {
+    "layer": "serve-writes-nest",
+    "exit": 0,
+    "verdicts": ["onTouch: ratchet — ok"],
+    "ahead": [],
+    "stdout": "strangle-hapi\n  billing — phase served (5 of 9), 1 day here\n    intent: The Nest module answers: hapi's routes forward to it operation by operation, and the legacy service writes nothing itself any more.\n    toward the next phase: routes-still-local 3 · legacy-writes 4\n    onTouch: ratchet — ok\n    ask: hold — leave the sector no worse; paydown is welcome in its own commit, not asked for\n\nok\n"
+  },
+  {
+    "layer": "serve-writes-proxy",
+    "exit": 0,
+    "verdicts": [
+      "onTouch: ratchet (of served) — ok",
+      "onTouch: ratchet — ok",
+      "onTouch: ratchet — ok",
+      "onTouch: advise — ok"
+    ],
+    "ahead": [],
+    "stdout": "strangle-hapi\n  billing — phase routes-moved (6 of 9), 1 day here\n    this diff moves it from served: it is judged by the phase it was found at\n    intent: The web proxy sends the module's routes to the Nest server and the hapi routes are deleted.\n    toward the next phase: no-hapi-routes 1\n    in the files you touched, nearest your change (1 of 1; 1 in the sector):\n      packages/legacy-api/src/application/billing/billing-routes.ts  no-hapi-routes\n    this diff: −legacy-writes: billing-service.ts#applied#03ade66f · −legacy-writes: billing-service.ts#applied#5a2b4f97 · −legacy-writes: billing-service.ts#cancelSubscription#ac56a836 · −legacy-writes: billing-service.ts#startSubscription#cff14458 · −routes-still-local: billing-routes.ts#billingRoutes#9c1acaf5 · −routes-still-local: billing-routes.ts#billingRoutes#ad2a056c · −routes-still-local: billing-routes.ts#billingRoutes#c52c2599  forward\n    now counted: no-hapi-routes 1 — in window from routes-moved, not growth\n    hapi-lines: 703 → 71 (recorded 71, tolerance 20)\n    onTouch: ratchet (of served) — ok\n    ask: hold — leave the sector no worse; paydown is welcome in its own commit, not asked for\n  legacy — phase fenced (1 of 9)\n    intent: The module names no sibling module: what it needs from a peer arrives through the substrate, and its role checks live in its access file, not its routes.\n    hapi-lines: 819 → 817 (recorded 819, tolerance 20)\n    onTouch: ratchet — ok\n    ask: hold — leave the sector no worse; paydown is welcome in its own commit, not asked for\n  organization — phase fenced (1 of 9), 7 days here\n    intent: The module names no sibling module: what it needs from a peer arrives through the substrate, and its role checks live in its access file, not its routes.\n    toward the next phase: no-cross-module-reach 2 · no-role-checks-in-routes 1\n    hapi-lines: 875 → 874 (recorded 874, tolerance 20)\n    onTouch: ratchet — ok\n    ask: hold — leave the sector no worse; paydown is welcome in its own commit, not asked for\n  shared — held by every sector, on no phase\n    hapi-lines: 157 → 155 (recorded 157, tolerance 20)\n    onTouch: advise — ok\n    ask: none — the holdouts above are context; paydown is welcome in its own commit, not asked for\n\nok\n"
+  },
+  {
+    "layer": "retire-internal",
+    "exit": 0,
+    "verdicts": ["onTouch: ratchet — ok"],
+    "ahead": [],
+    "stdout": "strangle-hapi\n  billing — phase routes-moved (6 of 9), 1 day here\n    intent: The web proxy sends the module's routes to the Nest server and the hapi routes are deleted.\n    toward the next phase: no-hapi-routes 1\n    onTouch: ratchet — ok\n    ask: hold — leave the sector no worse; paydown is welcome in its own commit, not asked for\n\nok\n"
+  },
+  {
+    "layer": "routes-moved",
+    "exit": 0,
+    "verdicts": ["onTouch: ratchet (of routes-moved) — ok", "onTouch: advise — ok"],
+    "ahead": [],
+    "stdout": "strangle-hapi\n  billing — phase data-moved (7 of 9), 1 day here\n    this diff moves it from routes-moved: it is judged by the phase it was found at\n    intent: The module's tables belong to its Nest schema, the legacy table is dropped by a legacy migration, and the bookshelf models are gone.\n    toward the next phase: no-hapi-models 2 · legacy-table-dropped 1\n    of the sector as a whole:\n      legacy-table-dropped: Write a legacy migration that drops the module's table, now that nothing on hapi reads or writes it; the Nest table is the only copy.\n      (its marker owns `packages/legacy-api/test/application/billing/**`, which no file matches)\n    this diff: −no-hapi-routes: billing-routes.ts  forward\n    now counted: no-hapi-models 2 · legacy-table-dropped 1 — in window from data-moved, not growth\n    hapi-lines: 71 → 31 (recorded 31, tolerance 20)\n    onTouch: ratchet (of routes-moved) — ok\n    ask: hold — leave the sector no worse; paydown is welcome in its own commit, not asked for\n  legacy at phase fenced (1 of 9) · nothing in your files, diff neutral\n  shared — held by every sector, on no phase\n    hapi-lines: 155 → 97 (recorded 97, tolerance 20)\n    onTouch: advise — ok\n    ask: none — the holdouts above are context; paydown is welcome in its own commit, not asked for\n\nok\n"
+  },
+  {
+    "layer": "data-moved",
+    "exit": 0,
+    "verdicts": ["onTouch: ratchet (of data-moved) — ok", "onTouch: ratchet — ok"],
+    "ahead": [],
+    "stdout": "strangle-hapi\n  billing — phase settled (9 of 9, open), 1 day here\n    this diff moves it from data-moved: it is judged by the phase it was found at\n    intent: Decide what the module's departure leaves in the substrate — its ACL entries, its container ids, the shared public tables — and whether the substrate itself is next.\n    if this change taught you something about that shape: refine phase `settled` in the manifest\n    (a defined phase needs at least one objective with a probe), in its own commit — or leave a note:\n      architecture campaigns note billing \"…\" --campaign strangle-hapi\n    this diff: −legacy-table-dropped: ~ · −no-hapi-models: subscription-model.ts · −no-hapi-models: webhook-event-model.ts  forward\n    hapi-lines: 31 → 11 (recorded 31, tolerance 20)\n    onTouch: ratchet (of data-moved) — ok\n    ask: hold — leave the sector no worse; paydown is welcome in its own commit, not asked for\n  legacy — phase fenced (1 of 9)\n    intent: The module names no sibling module: what it needs from a peer arrives through the substrate, and its role checks live in its access file, not its routes.\n    hapi-lines: 817 → 813 (recorded 819, tolerance 20)\n    onTouch: ratchet — ok\n    ask: hold — leave the sector no worse; paydown is welcome in its own commit, not asked for\n\nok\n"
+  },
+  {
+    "layer": "settled",
+    "exit": 0,
+    "verdicts": [],
+    "ahead": [],
+    "stdout": "nothing you touched is under a campaign (3 files in the diff).\n"
+  }
+]

@@ -193,6 +193,19 @@ the operations of a shared-state group are all local or all proxied. F6 is an as
 `precedes`/`follows`: the mirror emit follows the write. If writing them exposes a missing term, report
 that back as a separate item.
 
+### T1 — a term that sees more than one file of a sector _(found in step 3b; not needed for gate 3b)_
+
+Step 3b wrote F5 as a per-file `fn` (`shared-state-split`), which works because billing's and
+organization's write groups each sit in one route file. A group that spans files cannot be
+expressed: an `fn` sees one file, and a `sector` objective's only quantifier is `has`, one detector
+that some file satisfies. "Some file has a local member of group G **and** some file has a
+proxied one" needs two `has` terms joined by `all` at the sector level (or an `fn` handed the
+sector's files). Today an `fn` that read the other file from disk would also be wrong in base
+mode, which evaluates the base tree from git. Where it bites here: organization's reads-first
+ordering spans `organization-routes.ts` and `organization-cli-routes.ts`, so the campaign does not
+check it (`03-ab-plan-vs-campaign.md`, Appendix A). Acceptance: a sector objective whose holdout is
+`all: [{ has: A }, { has: B }]`, with probes over a set of files.
+
 ## Tests to add in goodbones
 
 For each fix, a test in the engine's own suite that reproduces the billing situation in a

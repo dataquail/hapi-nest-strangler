@@ -206,11 +206,82 @@ results/ab/
   scoring.md                  # the table feeding README.md's write-up template
 ```
 
-## Appendix A — shared-state groups (to be written before the pilot)
+## Appendix A — shared-state groups
 
-Derive from `organization-service.ts` and the route files. A starting point, to be checked: org
-create (with its wallet open and compensation) / soft delete / restore; invitation create / resend
-/ accept (and the membership accept creates); member remove / admin grant / admin revoke / leave.
+Derived 2026-10-06 from `main` (`00f59e7`): `organization-service.ts`, `organization-routes.ts` and
+`organization-cli-routes.ts` in `packages/legacy-api/src/application/organization/`. Fixed for the
+pilot and the scored runs. The campaign's `shared-state-split` objective reads the same list from
+`SHARED_STATE_GROUPS` in `campaigns/strangle-hapi.mjs`; arm A's plan document states it in prose.
+
+**What makes two operations share state.** In `served`, a route that is proxied writes the Nest
+module's tables only, while a route hapi still serves writes the legacy table and mirrors it
+forward. Nothing flows back. So two write operations must flip together when one writes rows the
+other reads or writes. Reads are not group members: they flip first, once the backfill is
+recorded, because the replica is then complete and every local write still reaches it (the
+billing stack served its read in its own layer for this reason).
+
+### What each write operation touches
+
+| Route                                                  | Service method       | Writes                                                                                          | Reads before writing             |
+| ------------------------------------------------------ | -------------------- | ----------------------------------------------------------------------------------------------- | -------------------------------- |
+| `POST /orgs`                                           | `createOrganization` | insert `organizations`, `memberships`, `organization_roles` (one transaction; opens the wallet) | —                                |
+| `DELETE /orgs/{id}`                                    | `softDelete`         | update `organizations.deleted_at`                                                               | the organization row             |
+| `POST /orgs/{id}/restore`                              | `restore`            | update `organizations.deleted_at`                                                               | the organization row             |
+| `POST /orgs/{orgId}/invitations`                       | `inviteUser`         | insert `invitations`, or update the open one (reissue)                                          | open invitations for the address |
+| `DELETE /orgs/{orgId}/invitations/{invitationId}`      | `revokeInvitation`   | update `invitations.revoked_at`                                                                 | the invitation                   |
+| `POST /orgs/{orgId}/invitations/{invitationId}/resend` | `resendInvitation`   | update `invitations` (token, expiry)                                                            | the invitation                   |
+| `POST /invitations/{token}/accept`                     | `acceptInvitation`   | update `invitations.accepted_at`, insert `memberships` (one transaction)                        | the invitation by token          |
+| `DELETE /orgs/{orgId}/members/{userId}`                | `removeMember`       | delete `memberships`                                                                            | —                                |
+| `POST /orgs/{orgId}/leave`                             | `leave`              | delete `memberships`                                                                            | —                                |
+| `POST /orgs/{orgId}/members/{userId}/admin`            | `promoteMember`      | insert `organization_roles`                                                                     | the member's admin role          |
+| `DELETE /orgs/{orgId}/members/{userId}/admin`          | `demoteMember`       | delete `organization_roles`                                                                     | —                                |
+
+Every route above with an organization in its path, except `leave`, also checks that organization
+against the legacy `organizations` table (`rowExists`), and all but `accept` authorize through
+hapi's ACL, which reads the caller's `memberships` and `organization_roles` from the legacy tables.
+
+### The groups
+
+The starting point proposed three groups. The code does not allow them to flip separately:
+
+- _Organization lifecycle_ (create / soft delete / restore) shares `organizations` rows. Create
+  also inserts the creator's membership and admin role, so it shares rows with remove, leave and
+  demote. If create were proxied and demote stayed local, demoting the creator would find no
+  legacy role row (409); if demote were proxied and create stayed local, the creator would keep the
+  admin role hapi's ACL reads.
+- _Invitations_ (invite / revoke / resend / accept) share `invitations` rows. Accept also inserts a
+  membership, so it shares rows with remove and leave.
+- _Members and roles_ (remove / leave / promote / demote) share `memberships` and
+  `organization_roles` rows with create and accept.
+
+Create bridges the first and third group; accept bridges the second and third. Every write therefore
+falls in one group:
+
+| Group                 | Operations (all in `organization-routes.ts`)                                                                                                                                                                                                                                                                                                                                                                   | Why they share state                                                                                                             |
+| --------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| `organization-writes` | `POST /orgs`, `DELETE /orgs/{id}`, `POST /orgs/{id}/restore`, `POST /orgs/{orgId}/invitations`, `DELETE /orgs/{orgId}/invitations/{invitationId}`, `POST /orgs/{orgId}/invitations/{invitationId}/resend`, `POST /invitations/{token}/accept`, `DELETE /orgs/{orgId}/members/{userId}`, `POST /orgs/{orgId}/leave`, `POST /orgs/{orgId}/members/{userId}/admin`, `DELETE /orgs/{orgId}/members/{userId}/admin` | one connected set over `organizations`, `memberships`, `organization_roles` and `invitations`; create and accept join the tables |
+
+The reads, which flip before the group and may flip in any order among themselves: `GET /orgs`,
+`GET /orgs/{orgId}/invitations`, `GET /orgs/{orgId}/members`, `GET /admin/orgs` and the CLI's
+`GET /cli/orgs` (in `organization-cli-routes.ts`).
+
+### Constraints the groups do not capture
+
+- **Readers outside the sector.** Hapi's session strategy preloads every user's `memberships` and
+  `organization_roles` (`user-service.ts`), and hapi's `can(...)` checks read them for every module
+  still on hapi. On the Nest side, the todos and billing ACL adapters read `public.memberships`
+  (billing also `public.organization_roles`). Once the group is proxied, the Nest module's tables
+  receive membership and role changes and the legacy ones do not, so all of those readers go stale.
+  Flipping the group together does not solve this; the plan has to (a reverse forward, or those
+  readers moving to the Nest module's tables first). Both arms meet it; the auditor records how each
+  handles it, under I1–I3 as data-severity when a stale read reaches a decision.
+- **D2's archive write.** `PUT /orgs/{orgId}/archive` writes `organizations` rows, so it joins
+  `organization-writes`. The campaign's table names the group's operations as of this appendix and
+  does not learn the new route; only an agent that adds it to `SHARED_STATE_GROUPS` makes the
+  objective check it. The auditor scores I3 and I4 with the archive route in the group either way.
+- **Readers in a second file.** `shared-state-split` judges one route file at a time. The group is
+  in one file, so it is checked whole; the reads-first ordering, which would span
+  `organization-cli-routes.ts`, is not checked by the campaign (see `02-engine-fixes.md`).
 
 ## Appendix B — operator answer sheet (to be written before the pilot)
 

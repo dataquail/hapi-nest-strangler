@@ -424,9 +424,15 @@ campaigns:
         intent: >-
           Every write the legacy module takes is forwarded to the Nest module's internal API, so
           the Nest table fills as a replica while hapi stays the source of truth.
-        objectives: [has-internal-write-api, writes-not-mirrored]
+        objectives: [has-internal-write-api, writes-not-mirrored, mirror-before-write]
         onTouch: advise
         concessions:
+          - reason: >-
+              A mirror emitted before the write it announces reaches the replica even when the
+              write fails, so `mirror-before-write` now asks that the emit follow the write; it
+              stays in window while legacy writes remain (2026-10-06, experiment 1's F6).
+            at: "2026-10-06"
+            by: "@dataquail"
           - reason: >-
               The internal write API is dual-write scaffolding: `has-internal-write-api` now stops
               counting at `served`, so the Nest module may retire it once it serves the routes
@@ -447,7 +453,14 @@ campaigns:
         intent: >-
           The Nest module answers: hapi's routes forward to it operation by operation, and the
           legacy service writes nothing itself any more.
-        objectives: [has-nest-endpoints, routes-still-local, legacy-writes]
+        objectives: [has-nest-endpoints, routes-still-local, legacy-writes, shared-state-split]
+        concessions:
+          - reason: >-
+              Write operations that share rows leave hapi in one step, so `shared-state-split` now
+              counts a sector's declared group that is part proxied, part local (2026-10-06,
+              experiment 1's F5).
+            at: "2026-10-06"
+            by: "@dataquail"
       - id: routes-moved
         intent: The web proxy sends the module's routes to the Nest server and the hapi routes are deleted.
         objectives: [no-hapi-routes]
@@ -683,6 +696,141 @@ campaigns:
               source: 'const rows = await this.knex("todos").where({ id }).first();'
             - path: packages/legacy-api/src/application/todo/todo-service.spec.ts
               source: 'await this.knex("todos").insert(row);'
+      mirror-before-write:
+        holdout: match
+        intent: A mirror event announces a row that is written, never one that may not be.
+        how: >-
+          Move the mirror emit below the write it announces (after the transaction, when the
+          write is inside one), so a failed write sends nothing to the replica.
+        match:
+          all:
+            - path:
+                {
+                  file: "^packages/legacy-api/src/application/[^/]+/[^/]*-service\\.ts$",
+                  fileNot: "\\.spec\\.ts$",
+                }
+            - syntax:
+                pattern: "$BUS.emit(mirrorEvents.$EVENT, $$$)"
+                inside: { kind: method_definition, stopBy: end }
+                not:
+                  inside:
+                    stopBy: end
+                    inside: { kind: statement_block }
+                    follows:
+                      stopBy: end
+                      any:
+                        - has: { pattern: "$Q.insert($$$)", stopBy: end }
+                        - has: { pattern: "$Q.update($$$)", stopBy: end }
+                        - has: { pattern: "$Q.del($$$)", stopBy: end }
+        probes:
+          fires:
+            - path: packages/legacy-api/src/application/todo/todo-service.ts
+              source: |
+                class TodoService {
+                  async createTodo(row) {
+                    this.server.events.emit(mirrorEvents.TODO_CREATED, row);
+                    await this.knex("todos").insert(row);
+                  }
+                }
+            - path: packages/legacy-api/src/application/todo/todo-service.ts
+              source: |
+                class TodoService {
+                  async firstTodo() {
+                    await this.knex("todos").insert(this.seed);
+                  }
+                  async createTodo(row) {
+                    if (row.title) {
+                      this.server.events.emit(mirrorEvents.TODO_CREATED, row);
+                    }
+                    await this.knex.transaction(async (t) => {
+                      await this.knex("todos").transacting(t).insert(row);
+                    });
+                  }
+                }
+          ignores:
+            - path: packages/legacy-api/src/application/todo/todo-service.ts
+              source: |
+                class TodoService {
+                  async createTodo(row) {
+                    await this.knex("todos").insert(row);
+                    this.server.events.emit(mirrorEvents.TODO_CREATED, row);
+                  }
+                }
+            - path: packages/legacy-api/src/application/todo/todo-service.ts
+              source: |
+                class TodoService {
+                  async renameTodo(id, title) {
+                    const applied = await this.knex.transaction(async (t) => {
+                      return this.knex("todos").transacting(t).where({ id }).update({ title });
+                    });
+                    if (applied === 0) return;
+                    if (title) {
+                      this.server.events.emit(mirrorEvents.TODO_RENAMED, { id, title });
+                    }
+                  }
+                }
+            - path: packages/legacy-api/src/application/todo/todo-service.spec.ts
+              source: |
+                class TodoService {
+                  async createTodo(row) {
+                    this.server.events.emit(mirrorEvents.TODO_CREATED, row);
+                    await this.knex("todos").insert(row);
+                  }
+                }
+      shared-state-split:
+        holdout: match
+        intent: >-
+          Write operations that share rows leave hapi together: once one is served by the Nest
+          server, the rows it writes stop reaching the legacy table the others still use.
+        how: >-
+          Proxy every operation of this group in the same change, or none: a group part served by
+          hapi and part forwarded to the Nest server loses writes between the two tables. The
+          groups are declared per sector in campaigns/strangle-hapi.mjs (SHARED_STATE_GROUPS); an
+          `undeclared` holdout means the group names an operation its route file no longer has.
+        match:
+          all:
+            - path:
+                {
+                  file: "^packages/legacy-api/src/application/[^/]+/[^/]*route[^/]*\\.ts$",
+                  fileNot: "\\.spec\\.ts$",
+                }
+            - fn: "./campaigns/strangle-hapi.mjs#sharedStateSplit"
+        probes:
+          fires:
+            - path: packages/legacy-api/src/application/billing/billing-routes.ts
+              source: |
+                const billingRoutes = (billingService) => [
+                  { method: "POST", path: "/orgs/{orgId}/billing/subscriptions", handler: proxyToNest() },
+                  {
+                    method: "DELETE",
+                    path: "/orgs/{orgId}/billing/subscriptions/current",
+                    handler: (request) => billingService.cancelSubscription(request.params.orgId),
+                    options: { ext: { onPreHandler: [{ method: can("manage", "params.orgId") }] } },
+                  },
+                  { method: "POST", path: "/webhooks/stripe", handler: proxyToNest() },
+                ];
+          ignores:
+            - path: packages/legacy-api/src/application/billing/billing-routes.ts
+              source: |
+                const billingRoutes = (billingService) => [
+                  { method: "GET", path: "/orgs/{orgId}/billing/subscriptions/current", handler: proxyToNest() },
+                  { method: "POST", path: "/orgs/{orgId}/billing/subscriptions", handler: (r) => billingService.start(r) },
+                  { method: "DELETE", path: "/orgs/{orgId}/billing/subscriptions/current", handler: (r) => billingService.cancel(r) },
+                  { method: "POST", path: "/webhooks/stripe", handler: (r) => billingService.ingest(r) },
+                ];
+            - path: packages/legacy-api/src/application/billing/billing-routes.ts
+              source: |
+                const billingRoutes = () => [
+                  { method: "POST", path: "/orgs/{orgId}/billing/subscriptions", handler: proxyToNest() },
+                  { method: "DELETE", path: "/orgs/{orgId}/billing/subscriptions/current", handler: proxyToNest() },
+                  { method: "POST", path: "/webhooks/stripe", handler: proxyToNest() },
+                ];
+            - path: packages/legacy-api/src/application/todo/todo-routes.ts
+              source: |
+                const todoRoutes = (todoService) => [
+                  { method: "POST", path: "/orgs/{orgId}/todos", handler: proxyToNest() },
+                  { method: "DELETE", path: "/orgs/{orgId}/todos/{id}", handler: (r) => todoService.remove(r) },
+                ];
       legacy-table-dropped:
         holdout: sector
         how: >-

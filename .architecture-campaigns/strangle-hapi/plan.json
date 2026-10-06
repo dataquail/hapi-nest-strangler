@@ -16,9 +16,9 @@
     },
     {
       "id": "mirrored",
-      "hash": "4801ee04",
+      "hash": "65cf8ce5",
       "defined": true,
-      "concessions": 2
+      "concessions": 3
     },
     {
       "id": "backfilled",
@@ -28,9 +28,9 @@
     },
     {
       "id": "served",
-      "hash": "3a72d1a4",
+      "hash": "b84d4c76",
       "defined": true,
-      "concessions": 0
+      "concessions": 1
     },
     {
       "id": "routes-moved",

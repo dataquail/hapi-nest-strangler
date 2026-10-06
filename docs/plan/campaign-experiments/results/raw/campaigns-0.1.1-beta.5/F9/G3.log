@@ -1,0 +1,14 @@
+$ pnpm -s lint:architecture
+exit 1
+
+--- stdout
+  packages/server/src/modules/billing/commands/start-subscription.handler.ts
+      [use-cases-reach-no-adapter] A use case transitively reaches an adapter. Commands, queries, event handlers and sagas depend on ports and messages; an adapter is wired against them in a module's @Module() and nowhere beneath them. Whichever file on the route named the adapter has stepped outside its tier. (route: packages/server/src/modules/billing/commands/start-subscription.handler.ts → packages/server/src/modules/billing/infrastructure/clients/billing-gateway.client-live.ts)
+  packages/server/src/modules/billing/commands/start-subscription.handler.ts
+      [server-src/modules/{module}/commands/imports] Module commands (write-side use cases) may only import: their own module's domain and sibling commands, Nest's CQRS (the Command base class and the handler decorator — ADR-0006) and DI, oxide, the DDD tokens under platform/ddd/ (UnitOfWork, the event bus, the contracts tier) and platform/ids/. Mail goes through a client port in the module's own domain/ports/clients/, never the platform Mailer directly. No platform Live (adapters are bound in a @Module()), no infrastructure, no interface, no queries, no event-handlers, no @org/contracts (a command's failure channel names domain errors; the endpoint maps them to wire errors — ADR-0004), no @org/database, and no other module's surface — a cross-module call goes through a domain/ports/acl/ port whose adapter lives in infrastructure/acl/ (ADR-0022).
+
+690 files, 2 violations
+
+--- stderr
+
+architecture violations

@@ -1,0 +1,21 @@
+$ pnpm -s campaigns:nudge
+exit 0
+
+--- stdout
+strangle-hapi
+  billing — phase mirrored (3 of 9), 1 day here
+    intent: Every write the legacy module takes is forwarded to the Nest module's internal API, so the Nest table fills as a replica while hapi stays the source of truth.
+    toward the next phase: writes-not-mirrored 3 · mirror-before-write 1
+      mirror-before-write — A mirror event announces a row that is written, never one that may not be.
+    in the files you touched, nearest your change (4 of 4; 4 in the sector):
+      packages/legacy-api/src/application/billing/billing-service.ts#startSubscription:89  mirror-before-write
+      packages/legacy-api/src/application/billing/billing-service.ts#cancelSubscription:113  writes-not-mirrored
+      packages/legacy-api/src/application/billing/billing-service.ts#ingestStripeWebhook:128  writes-not-mirrored
+      packages/legacy-api/src/application/billing/billing-service.ts#ingestStripeWebhook:141  writes-not-mirrored
+    this diff: +mirror-before-write: billing-service.ts#startSubscription#16aee292  back
+    onTouch: advise — ok
+    ask: none — the holdouts above are context; paydown is welcome in its own commit, not asked for
+
+ok
+
+--- stderr

@@ -1,0 +1,12 @@
+$ pnpm -s exec architecture campaigns status --sector billing packages
+exit 0
+
+--- stdout
+strangle-hapi · billing — phase mirrored (3 of 9), reached backfilled since 2026-10-05
+  intent: Every write the legacy module takes is forwarded to the Nest module's internal API, so the Nest table fills as a replica while hapi stays the source of truth.
+  toward the next phase: writes-not-mirrored 1
+  writes-not-mirrored — 1 holdout in window: Emit the module's mirror event from the same service method once the row is written; the mirror plugin forwards it to the Nest module's internal API, so the Nest table receives what hapi wrote.
+    packages/legacy-api/src/application/billing/billing-service.ts:109  touchSubscription
+  hapi-lines: 717 (held to 712, tolerance 20)
+
+--- stderr

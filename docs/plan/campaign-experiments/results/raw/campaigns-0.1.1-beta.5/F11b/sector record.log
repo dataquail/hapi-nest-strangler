@@ -1,0 +1,27 @@
+$ cat .architecture-campaigns/strangle-hapi/sectors/billing.json
+exit 0
+
+--- stdout
+{
+  "version": 1,
+  "campaign": "strangle-hapi",
+  "sector": "billing",
+  "reached": "served",
+  "since": "2026-10-05T13:59:40.628Z",
+  "attested": [
+    {
+      "phase": "backfilled",
+      "reason": "db:backfill:billing (commit 90c2a22) run against hapi-strangler-dev, migrated by both migrators, after every billing write was mirrored: the legacy side held 2 subscriptions and 3 claimed webhook events the replica had never received; the run upserted 2 and 3 and deleted 0, and a second run upserted the same and deleted 0.",
+      "at": "2026-10-05T13:59:39.644Z",
+      "by": "zweidenbach@gmail.com",
+      "revoked": {
+        "at": "2026-10-06T18:39:16.172Z",
+        "by": "zweidenbach@gmail.com",
+        "reason": "conceded mirror-before-write: temporary"
+      }
+    }
+  ],
+  "notes": []
+}
+
+--- stderr

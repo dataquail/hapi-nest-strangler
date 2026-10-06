@@ -1,0 +1,20 @@
+$ pnpm -s exec architecture campaigns status --changed --base 18c034f884b4b66f25fcfa9d04741568c76a3fa1 packages
+exit 0
+
+--- stdout
+strangle-hapi
+  billing — phase mirrored (3 of 9), 1 day here
+    this diff moves it from served: it is judged by the phase it was found at
+    intent: Every write the legacy module takes is forwarded to the Nest module's internal API, so the Nest table fills as a replica while hapi stays the source of truth.
+    toward the next phase: mirror-before-write 1
+      mirror-before-write — A mirror event announces a row that is written, never one that may not be.
+    in the files you touched, nearest your change (1 of 1; 1 in the sector):
+      packages/legacy-api/src/application/billing/billing-service.ts#startSubscription:95  mirror-before-write
+    this diff: mirror-before-write 0 → mirror-before-write 1  neutral
+    conceded on this branch, in the ledger: mirror-before-write: billing-service.ts#startSubscription#16aee292
+    onTouch: ratchet (of served) — ok
+    ask: hold — leave the sector no worse; paydown is welcome in its own commit, not asked for
+
+ok
+
+--- stderr

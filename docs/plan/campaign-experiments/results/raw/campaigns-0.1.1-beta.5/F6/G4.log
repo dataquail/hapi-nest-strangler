@@ -1,0 +1,7 @@
+$ pnpm -s lint
+exit 1
+
+--- stdout
+packages/legacy-api/src/application/billing/billing-service.ts:89:5: error architecture(campaigns): [campaign/strangle-hapi/mirror-before-write] Move the mirror emit below the write it announces (after the transaction, when the write is inside one), so a failed write sends nothing to the replica.
+
+--- stderr

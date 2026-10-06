@@ -38,7 +38,7 @@ The Nest server: NestJS + `@nestjs/cqrs`, hexagonal architecture, DDD, no Effect
 | `@org/acceptance`   | Playwright acceptance tests (specs / drivers / pages / infrastructure).                                        |
 | `@org/test-drivers` | Tier-agnostic page-driver contracts + per-tier adapters (Playwright / RTL).                                    |
 
-**Workspace kernel, installed engine.** The CQRS, unit-of-work and authorization patterns are the three `@org/*` workspace packages above, written from scratch for this edition and held apart from the server by their own manifest nodes (ADR-0029). The architecture engine is installed: `@goodbones/{core,typescript}` pinned to `0.1.0-beta.15`, `@goodbones/{cli,oxlint}` to `0.1.0-beta.16` and `@goodbones/campaigns` to `0.1.1-beta.5`.
+**Workspace kernel, installed engine.** The CQRS, unit-of-work and authorization patterns are the three `@org/*` workspace packages above, written from scratch for this edition and held apart from the server by their own manifest nodes (ADR-0029). The architecture engine is installed: `@goodbones/{core,typescript}` pinned to `0.1.0-beta.15`, `@goodbones/{cli,oxlint}` to `0.1.0-beta.17` and `@goodbones/campaigns` to `0.1.1-beta.6`.
 
 ## Commands
 

@@ -1,0 +1,11 @@
+{
+  "campaigns": "0.1.1-beta.6",
+  "cli": "0.1.0-beta.17",
+  "core": "0.1.0-beta.15",
+  "oxlint": "0.1.0-beta.17",
+  "typescript": "0.1.0-beta.15",
+  "campaignFrom": "8ec6be2",
+  "campaignSha": "8ec6be2",
+  "overlayBase": "00f59e7",
+  "pinsCarried": true
+}

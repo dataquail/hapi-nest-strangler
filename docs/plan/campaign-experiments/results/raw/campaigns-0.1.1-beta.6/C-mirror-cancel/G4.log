@@ -1,0 +1,6 @@
+$ pnpm -s lint
+exit 0
+
+--- stdout
+
+--- stderr

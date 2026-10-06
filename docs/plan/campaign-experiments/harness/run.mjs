@@ -4,7 +4,7 @@
 //   node docs/plan/campaign-experiments/harness/run.mjs --worktree <path> [--only F1,F2] [--skip-controls]
 //     [--campaign-from <ref> [--overlay-base <ref>] [--carry-pins]] [--label <suffix>]
 //
-// For each entry: reset the scratch worktree to the entry's branch, apply the
+// For each entry: reset the scratch worktree to the entry's branch (as tagged exp1/billing-*), apply the
 // fault, stage it, run the gates, record exit codes and full logs, reset.
 // Results land in ../results/raw/<campaigns-version>[-<label>]/ (one JSON + logs per entry).
 //
@@ -166,7 +166,7 @@ const lockHash = () =>
     .digest("hex");
 
 const reset = (branch) => {
-  must(`git checkout -q --detach campaign/${branch} && git reset -q --hard && git clean -fdq`);
+  must(`git checkout -q --detach exp1/${branch} && git reset -q --hard && git clean -fdq`);
   const hash = lockHash();
   // Carried pins reinstall in overlay(), against the branch's lockfile.
   if (!carryPins && hash !== lastLockHash) {
@@ -202,7 +202,7 @@ const overlayPatch = () => {
 };
 
 const overlay = (record) => {
-  if (OVERLAY === null) return `campaign/${record.branch}`;
+  if (OVERLAY === null) return `exp1/${record.branch}`;
   must(`git apply --3way ${JSON.stringify(OVERLAY.file)}`);
   if (OVERLAY.pins !== null) {
     let manifest = ctx.read("package.json");

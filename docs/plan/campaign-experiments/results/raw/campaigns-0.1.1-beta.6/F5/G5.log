@@ -1,0 +1,6 @@
+$ pnpm -s check
+exit 0
+
+--- stdout
+
+--- stderr

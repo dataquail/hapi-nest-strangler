@@ -1,0 +1,15 @@
+$ pnpm -s campaigns:nudge
+exit 0
+
+--- stdout
+strangle-hapi
+  billing — phase served (5 of 9), 1 day here
+    intent: The Nest module answers: hapi's routes forward to it operation by operation, and the legacy service writes nothing itself any more.
+    toward the next phase: routes-still-local 3 · legacy-writes 4
+    hapi-lines: recorded 712 → now 703 (tolerance 20)
+    onTouch: ratchet — ok
+    ask: hold — leave the sector no worse; paydown is welcome in its own commit, not asked for
+
+ok
+
+--- stderr

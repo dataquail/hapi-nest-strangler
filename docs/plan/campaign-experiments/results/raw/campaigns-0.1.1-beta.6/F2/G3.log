@@ -1,0 +1,16 @@
+$ pnpm -s lint:architecture
+exit 1
+
+--- stdout
+
+662 files, 0 violations
+
+campaign strangle-hapi: 1 new hit the ledger does not carry. Fix them, or record why the count may rise:
+  routes-still-local · billing · billing-routes.ts#billingRoutes#e3de09f7
+      packages/legacy-api/src/application/billing/billing-routes.ts: Replace this route's handler with `proxyToNest(...)`, so hapi forwards the operation to the Nest module instead of serving it.
+
+  architecture objectives concede strangle-hapi --reason "<why>"
+
+--- stderr
+
+unrecorded campaign growth

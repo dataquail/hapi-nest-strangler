@@ -1,0 +1,80 @@
+{
+  "id": "C-backfill",
+  "kind": "control",
+  "branch": "billing-backfill",
+  "head": "90c2a22",
+  "started": "2026-10-06T19:32:54.314Z",
+  "steps": [
+    {
+      "step": "contracts build",
+      "cmd": "pnpm -s -F @org/contracts build",
+      "exit": 0,
+      "ms": 1423
+    }
+  ],
+  "gates": {
+    "G1": {
+      "exit": 0,
+      "ms": 1346
+    },
+    "G2": {
+      "exit": 0,
+      "ms": 1003
+    },
+    "G3": {
+      "exit": 0,
+      "ms": 992
+    },
+    "G4": {
+      "exit": 0,
+      "ms": 2829
+    },
+    "G5": {
+      "exit": 0,
+      "ms": 7671
+    },
+    "G6": {
+      "exit": 0,
+      "ms": 16537
+    },
+    "G7": {
+      "exit": 0,
+      "ms": 25002,
+      "parts": [
+        {
+          "cmd": "pnpm -s -F @org/legacy-api db:reset:test",
+          "exit": 0
+        },
+        {
+          "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/server",
+          "exit": 0
+        },
+        {
+          "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/legacy-api",
+          "exit": 0
+        },
+        {
+          "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/database",
+          "exit": 0
+        }
+      ]
+    }
+  },
+  "pins": {
+    "core": "0.1.0-beta.15",
+    "typescript": "0.1.0-beta.15",
+    "cli": "0.1.0-beta.17",
+    "oxlint": "0.1.0-beta.17",
+    "campaigns": "0.1.1-beta.6"
+  },
+  "overlay": {
+    "from": "8ec6be2",
+    "fromSha": "8ec6be2",
+    "overlayBase": "00f59e7",
+    "base": "fea00e9e28d67abc3a9fa8c800e92439d22d9dd5",
+    "changed": ".../strangle-hapi/mirror-before-write.json         |  25 ++++\n .architecture-campaigns/strangle-hapi/plan.json    |  12 +-\n .../strangle-hapi/shared-state-split.json          |  17 +++\n architecture.yaml                                  | 160 ++++++++++++++++++++-\n campaigns/strangle-hapi.mjs                        |  90 ++++++++++++\n package.json                                       |   6 +-\n pnpm-lock.yaml                                     |  34 ++---\n 7 files changed, 316 insertions(+), 28 deletions(-)",
+    "clear": "strangle-hapi/no-cross-module-reach: nothing to clear; 6 holdouts left.\nstrangle-hapi/no-role-checks-in-routes: nothing to clear; 2 holdouts left.\nstrangle-hapi/has-nest-module: nothing to clear; 1 holdout left.\nstrangle-hapi/no-hapi-routes: nothing to clear; 0 holdouts left.\nstrangle-hapi/no-hapi-models: nothing to clear; 0 holdouts left.\nstrangle-hapi/no-hapi-files: nothing to clear; 0 holdouts left.\nstrangle-hapi/has-internal-write-api: nothing to clear; 0 holdouts left.\nstrangle-hapi/writes-not-mirrored: nothing to clear; 0 holdouts left.\nstrangle-hapi/has-nest-endpoints: nothing to clear; 0 holdouts left.\nstrangle-hapi/routes-still-local: nothing to clear; 0 holdouts left.\nstrangle-hapi/legacy-writes: nothing to clear; 0 holdouts left.\nstrangle-hapi/mirror-before-write: 2 sectors entered (billing, todo); 0 holdouts left.\nstrangle-hapi/shared-state-split: 1 sector entered (todo); 0 holdouts left.\nstrangle-hapi/legacy-table-dropped: nothing to clear; 0 holdouts left.\nstrangle-hapi/hapi-lines: nothing to clear; held to 3551.\n"
+  },
+  "diffStat": "",
+  "finished": "2026-10-06T19:33:56.032Z"
+}

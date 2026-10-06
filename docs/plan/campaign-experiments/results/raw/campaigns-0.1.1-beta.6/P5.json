@@ -1,0 +1,46 @@
+{
+  "id": "P5",
+  "kind": "probe",
+  "branch": "billing-attest",
+  "head": "3f48de7",
+  "started": "2026-10-06T19:55:14.014Z",
+  "steps": [
+    {
+      "step": "contracts build",
+      "cmd": "pnpm -s -F @org/contracts build",
+      "exit": 0,
+      "ms": 598
+    }
+  ],
+  "gates": {
+    "G1": {
+      "exit": 0,
+      "ms": 1675
+    },
+    "G2": {
+      "exit": 0,
+      "ms": 1032
+    },
+    "G3": {
+      "exit": 0,
+      "ms": 1019
+    }
+  },
+  "pins": {
+    "core": "0.1.0-beta.15",
+    "typescript": "0.1.0-beta.15",
+    "cli": "0.1.0-beta.17",
+    "oxlint": "0.1.0-beta.17",
+    "campaigns": "0.1.1-beta.6"
+  },
+  "overlay": {
+    "from": "8ec6be2",
+    "fromSha": "8ec6be2",
+    "overlayBase": "00f59e7",
+    "base": "b59094123333de7825c68b8eee6edbfd168ff823",
+    "changed": ".../strangle-hapi/mirror-before-write.json         |  25 ++++\n .architecture-campaigns/strangle-hapi/plan.json    |  12 +-\n .../strangle-hapi/shared-state-split.json          |  25 ++++\n architecture.yaml                                  | 160 ++++++++++++++++++++-\n campaigns/strangle-hapi.mjs                        |  90 ++++++++++++\n package.json                                       |   6 +-\n pnpm-lock.yaml                                     |  34 ++---\n 7 files changed, 324 insertions(+), 28 deletions(-)",
+    "clear": "strangle-hapi/no-cross-module-reach: nothing to clear; 6 holdouts left.\nstrangle-hapi/no-role-checks-in-routes: nothing to clear; 2 holdouts left.\nstrangle-hapi/has-nest-module: nothing to clear; 1 holdout left.\nstrangle-hapi/no-hapi-routes: nothing to clear; 0 holdouts left.\nstrangle-hapi/no-hapi-models: nothing to clear; 0 holdouts left.\nstrangle-hapi/no-hapi-files: nothing to clear; 0 holdouts left.\nstrangle-hapi/has-internal-write-api: nothing to clear; 0 holdouts left.\nstrangle-hapi/writes-not-mirrored: nothing to clear; 0 holdouts left.\nstrangle-hapi/has-nest-endpoints: nothing to clear; 1 holdout left.\nstrangle-hapi/routes-still-local: nothing to clear; 4 holdouts left.\nstrangle-hapi/legacy-writes: nothing to clear; 4 holdouts left.\nstrangle-hapi/mirror-before-write: 2 sectors entered (billing, todo); 0 holdouts left.\nstrangle-hapi/shared-state-split: 2 sectors entered (billing, todo); 0 holdouts left.\nstrangle-hapi/legacy-table-dropped: nothing to clear; 0 holdouts left.\nstrangle-hapi/hapi-lines: nothing to clear; held to 3551.\n"
+  },
+  "diffStat": ".../legacy-api/src/application/billing/billing-service.ts    | 12 ++++++------\n 1 file changed, 6 insertions(+), 6 deletions(-)",
+  "finished": "2026-10-06T19:55:23.426Z"
+}

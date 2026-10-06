@@ -1,0 +1,7 @@
+$ pnpm -s lint
+exit 1
+
+--- stdout
+packages/legacy-api/src/application/billing/billing-routes.ts:40:5: error architecture(campaigns): [campaign/strangle-hapi/shared-state-split] Proxy every operation of this group in the same change, or none: a group part served by hapi and part forwarded to the Nest server loses writes between the two tables. The groups are declared per sector in campaigns/strangle-hapi.mjs (SHARED_STATE_GROUPS); an `undeclared` holdout means the group names an operation its route file no longer has.
+
+--- stderr

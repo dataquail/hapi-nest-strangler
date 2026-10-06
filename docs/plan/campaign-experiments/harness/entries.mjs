@@ -140,7 +140,7 @@ const OrgParams = z.object({ orgId: OrganizationId });`,
     kind: "fault",
     branch: "billing-data-moved",
     apply: (ctx) => {
-      ctx.checkoutFrom("campaign/billing-routes-moved", SUBSCRIPTION_MODEL);
+      ctx.checkoutFrom("exp1/billing-routes-moved", SUBSCRIPTION_MODEL);
       ctx.replace(
         MODELS,
         `import sessionModel from "./auth/session-model";\n`,

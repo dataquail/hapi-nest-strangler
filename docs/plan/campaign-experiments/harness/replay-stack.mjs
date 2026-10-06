@@ -56,9 +56,7 @@ const must = (cmd) => {
 };
 
 const overlaid = (branch) => {
-  must(
-    `git checkout -q --detach campaign/billing-${branch} && git reset -q --hard && git clean -fdq`,
-  );
+  must(`git checkout -q --detach exp1/billing-${branch} && git reset -q --hard && git clean -fdq`);
   must(`git apply --3way ${JSON.stringify(overlayFile)}`);
   let manifest = readFileSync(`${worktree}/package.json`, "utf8");
   for (const [name, version] of Object.entries(pins))

@@ -39,7 +39,7 @@ const START = "00f59e7";
 const stackUpTo = (branch) => [
   START,
   ...LAYERS.slice(0, LAYERS.indexOf(branch.replace(/^billing-/, "")) + 1).map(
-    (b) => `campaign/billing-${b}`,
+    (b) => `exp1/billing-${b}`,
   ),
 ];
 
@@ -110,13 +110,11 @@ const audit = (stack) => {
 };
 
 const rows = [];
-const clean = audit([START, ...LAYERS.map((b) => `campaign/billing-${b}`)]);
+const clean = audit([START, ...LAYERS.map((b) => `exp1/billing-${b}`)]);
 rows.push({ id: "clean stack", expected: "none", found: clean, ok: clean.length === 0 });
 
 for (const entry of entries.filter((e) => e.kind === "fault" && e.id in EXPECTED)) {
-  must(
-    `git reset -q --hard && git clean -fdq && git checkout -q --detach campaign/${entry.branch}`,
-  );
+  must(`git reset -q --hard && git clean -fdq && git checkout -q --detach exp1/${entry.branch}`);
   entry.apply(ctx, { steps: [] });
   must(
     `git add -A && git -c user.name=calibrate -c user.email=calibrate@local commit -q --no-verify -m "fault ${entry.id}"`,

@@ -1,0 +1,22 @@
+$ pnpm -s exec architecture campaigns status --changed --base e08e6016451f67f5a357a0dc3be9dff40dd28367 packages
+exit 1
+
+--- stdout
+strangle-hapi
+  billing — phase fenced (1 of 9), 1 day here
+    this diff moves it from served: it is judged by the phase it was found at
+    intent: The module names no sibling module: what it needs from a peer arrives through the substrate, and its role checks live in its access file, not its routes.
+    toward the next phase: no-cross-module-reach 2
+    in the files you touched, nearest your change (2 of 2; 2 in the sector):
+      packages/legacy-api/src/application/billing/billing-service.ts#imports:../organization/organization-service:8  no-cross-module-reach
+      packages/legacy-api/src/application/billing/billing-service.ts#requires:organization/organization-service:195  no-cross-module-reach
+    this diff: +no-cross-module-reach: billing-service.ts#imports:../organization/organization-service · +no-cross-module-reach: billing-service.ts#requires:organization/organization-service  back
+    hapi-lines: 703 → 719 (recorded 712, tolerance 20)
+    onTouch: ratchet (of served) — back
+    ask: hold — leave the sector no worse; paydown is welcome in its own commit, not asked for
+
+not ok
+
+--- stderr
+
+the diff sends a sector back under its onTouch

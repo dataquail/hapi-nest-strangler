@@ -1,0 +1,7 @@
+$ pnpm -s lint
+exit 1
+
+--- stdout
+packages/legacy-api/src/application/billing/billing-service.ts:25:11: error architecture(campaigns): [campaign/strangle-hapi/legacy-writes] The Nest module is the source of truth now: delete this write and the forward beside it; the route that reached it is a proxy.
+
+--- stderr

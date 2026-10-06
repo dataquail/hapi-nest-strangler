@@ -1,0 +1,21 @@
+$ pnpm -s exec architecture campaigns status --changed --base 6cfe4a36ce94f7a9e0eb833e9136e545c85a24c0 packages
+exit 1
+
+--- stdout
+strangle-hapi
+  billing — phase served (5 of 9), 1 day here
+    this diff moves it from routes-moved: it is judged by the phase it was found at
+    intent: The Nest module answers: hapi's routes forward to it operation by operation, and the legacy service writes nothing itself any more.
+    toward the next phase: legacy-writes 1
+    in the files you touched, nearest your change (1 of 1; 1 in the sector):
+      packages/legacy-api/src/application/billing/billing-service.ts#repairSubscription:25  legacy-writes
+    this diff: +legacy-writes: billing-service.ts#repairSubscription#172d763f  back
+    hapi-lines: 71 → 102 (recorded 71, tolerance 20)  back
+    onTouch: ratchet (of routes-moved) — back
+    ask: hold — leave the sector no worse; paydown is welcome in its own commit, not asked for
+
+not ok
+
+--- stderr
+
+the diff sends a sector back under its onTouch

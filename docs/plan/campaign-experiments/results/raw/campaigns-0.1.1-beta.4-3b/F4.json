@@ -1,0 +1,72 @@
+{
+  "id": "F4",
+  "kind": "fault",
+  "branch": "billing-backfill",
+  "head": "90c2a22",
+  "started": "2026-10-06T17:01:34.753Z",
+  "steps": [
+    {
+      "step": "contracts build",
+      "cmd": "pnpm -s -F @org/contracts build",
+      "exit": 0,
+      "ms": 1540
+    }
+  ],
+  "gates": {
+    "G1": {
+      "exit": 0,
+      "ms": 1075
+    },
+    "G2": {
+      "exit": 0,
+      "ms": 1423
+    },
+    "G3": {
+      "exit": 1,
+      "ms": 1044
+    },
+    "G4": {
+      "exit": 0,
+      "ms": 3087
+    },
+    "G5": {
+      "exit": 0,
+      "ms": 8202
+    },
+    "G6": {
+      "exit": 0,
+      "ms": 16851
+    },
+    "G7": {
+      "exit": 0,
+      "ms": 27507,
+      "parts": [
+        {
+          "cmd": "pnpm -s -F @org/legacy-api db:reset:test",
+          "exit": 0
+        },
+        {
+          "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/server",
+          "exit": 0
+        },
+        {
+          "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/legacy-api",
+          "exit": 0
+        },
+        {
+          "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/database",
+          "exit": 0
+        }
+      ]
+    }
+  },
+  "overlay": {
+    "from": "campaign/shared-state-objectives",
+    "fromSha": "680421b",
+    "base": "91ecc6cbfb168c721536aa2bbf89b35c63645242",
+    "changed": ".../strangle-hapi/mirror-before-write.json         |  25 ++++\n .architecture-campaigns/strangle-hapi/plan.json    |   8 +-\n .../strangle-hapi/shared-state-split.json          |  17 +++\n architecture.yaml                                  | 152 ++++++++++++++++++++-\n campaigns/strangle-hapi.mjs                        |  90 ++++++++++++\n 5 files changed, 286 insertions(+), 6 deletions(-)",
+    "clear": "strangle-hapi/no-cross-module-reach: nothing to clear; 6 holdouts left.\nstrangle-hapi/no-role-checks-in-routes: nothing to clear; 2 holdouts left.\nstrangle-hapi/has-nest-module: nothing to clear; 1 holdout left.\nstrangle-hapi/no-hapi-routes: nothing to clear; 0 holdouts left.\nstrangle-hapi/no-hapi-models: nothing to clear; 0 holdouts left.\nstrangle-hapi/no-hapi-files: nothing to clear; 0 holdouts left.\nstrangle-hapi/has-internal-write-api: nothing to clear; 0 holdouts left.\nstrangle-hapi/writes-not-mirrored: nothing to clear; 0 holdouts left.\nstrangle-hapi/has-nest-endpoints: nothing to clear; 0 holdouts left.\nstrangle-hapi/routes-still-local: nothing to clear; 0 holdouts left.\nstrangle-hapi/legacy-writes: nothing to clear; 0 holdouts left.\nstrangle-hapi/mirror-before-write: 2 sectors entered (billing, todo); 0 holdouts left.\nstrangle-hapi/shared-state-split: 1 sector entered (todo); 0 holdouts left.\nstrangle-hapi/legacy-table-dropped: nothing to clear; 0 holdouts left.\nstrangle-hapi/hapi-lines: nothing to clear; held to 3551.\n"
+  },
+  "diffStat": "packages/database/src/row-schemas/legacy-access.ts |  7 +++\n .../src/application/billing/billing-routes.ts      | 14 ++---\n .../src/application/billing/billing-service.ts     |  8 ---\n .../src/lib/backend-client/proxy-to-nest.ts        | 56 +++++++++++++++++\n .../billing/billing-routes.integration.test.ts     | 50 +++++++---------\n .../legacy-api/test/helpers/fake-wallet-server.ts  | 19 +++++-\n .../src/modules/billing/billing.handlers.test.ts   |  5 ++\n .../server/src/modules/billing/billing.module.ts   | 15 +++++\n .../server/src/modules/billing/billing.platform.ts |  3 +\n .../src/modules/billing/billing.query-handlers.ts  | 14 +++++\n .../domain/ports/acl/organization-access.acl.ts    | 19 ++++++\n .../billing/domain/ports/acl/platform-roles.acl.ts |  8 +++\n .../acl/organization-access.acl-fake.ts            | 36 +++++++++++\n ...rganization-access.acl-live.integration.test.ts | 63 +++++++++++++++++++\n .../acl/organization-access.acl-live.ts            | 51 ++++++++++++++++\n .../infrastructure/acl/platform-roles.acl-fake.ts  | 15 +++++\n .../platform-roles.acl-live.integration.test.ts    | 39 ++++++++++++\n .../infrastructure/acl/platform-roles.acl-live.ts  | 30 ++++++++++\n ...rrent-subscription.endpoint.integration.test.ts | 70 ++++++++++++++++++++++\n .../http/get-current-subscription.endpoint.ts      | 57 ++++++++++++++++++\n .../src/modules/billing/interface/http/index.ts    |  2 +\n .../billing/policies/billing.policies.test.ts      | 51 ++++++++++++++++\n .../modules/billing/policies/billing.policies.ts   | 41 +++++++++++++\n .../billing/policies/billing.resource-resolver.ts  | 21 +++++++\n .../policies/is-billing-org-admin.policy.test.ts   | 41 +++++++++++++\n .../policies/is-billing-org-admin.policy.ts        | 11 ++++\n .../policies/is-billing-org-member.policy.test.ts  | 35 +++++++++++\n .../policies/is-billing-org-member.policy.ts       |  9 +++\n .../policies/is-billing-super-admin.policy.ts      | 11 ++++\n ...ion-by-organization.handler.integration.test.ts | 67 +++++++++++++++++++++\n .../find-subscription-by-organization.handler.ts   | 37 ++++++++++++\n .../find-subscription-by-organization.query.ts     | 28 +++++++++\n packages/server/src/platform/cqrs/cqrs-runtime.ts  | 12 +++-\n .../server/src/platform/modules/authz.module.ts    | 21 +++++--\n packages/server/src/test-utils/test-legacy-rows.ts | 12 ++++\n 35 files changed, 926 insertions(+), 52 deletions(-)",
+  "finished": "2026-10-06T17:02:39.345Z"
+}

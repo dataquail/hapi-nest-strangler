@@ -1,0 +1,78 @@
+$ pnpm -s -F @org/legacy-api db:reset:test && TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/server && TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/legacy-api && TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/database
+exit 0
+
+--- stdout
+### pnpm -s -F @org/legacy-api db:reset:test (exit 0)
+[09:58:00.356] [32mINFO[39m (12837): [36mReset public and applied 14 migration(s)[39m
+
+### TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/server (exit 0)
+
+ RUN  v4.1.11 /private/tmp/claude-501/-Users-zacharyweidenbach-orca-workspaces-hapi-nest-strangler-dolphin/124110df-9eca-4fbe-b108-e14b629fa032/scratchpad/wt-faults
+
+
+> @org/legacy-api@0.0.0 db:migrate:test /private/tmp/claude-501/-Users-zacharyweidenbach-orca-workspaces-hapi-nest-strangler-dolphin/124110df-9eca-4fbe-b108-e14b629fa032/scratchpad/wt-faults/packages/legacy-api
+> tsx src/bin/migrate.ts --test
+
+
+ Test Files  24 passed (24)
+      Tests  79 passed (79)
+   Start at  09:58:00
+   Duration  14.27s (transform 379ms, setup 167ms, import 7.41s, tests 4.04s, environment 1ms)
+
+
+### TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/legacy-api (exit 0)
+
+ RUN  v4.1.11 /private/tmp/claude-501/-Users-zacharyweidenbach-orca-workspaces-hapi-nest-strangler-dolphin/124110df-9eca-4fbe-b108-e14b629fa032/scratchpad/wt-faults
+
+
+ Test Files  10 passed (10)
+      Tests  41 passed (41)
+   Start at  09:58:15
+   Duration  7.65s (transform 80ms, setup 207ms, import 1.73s, tests 4.63s, environment 0ms)
+
+
+### TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/database (exit 0)
+
+ RUN  v4.1.11 /private/tmp/claude-501/-Users-zacharyweidenbach-orca-workspaces-hapi-nest-strangler-dolphin/124110df-9eca-4fbe-b108-e14b629fa032/scratchpad/wt-faults
+
+
+ Test Files  2 passed (2)
+      Tests  8 passed (8)
+   Start at  09:58:24
+   Duration  897ms (transform 29ms, setup 9ms, import 294ms, tests 168ms, environment 0ms)
+
+
+--- stderr
+### pnpm -s -F @org/legacy-api db:reset:test
+
+### TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/server
+(!) Your Vite config uses features that are unsupported by `configLoader: 'native'`, which is planned to become the default in a future major version of Vite:
+  - ESM syntax in a file loaded as CommonJS (vitest.config.ts:4:1). Use a `.mjs` extension or set `"type": "module"` in the closest package.json
+Set `VITE_CONFIG_NATIVE_IGNORE_WARNING=true` to suppress this warning.
+(!) Your Vite config uses features that are unsupported by `configLoader: 'native'`, which is planned to become the default in a future major version of Vite:
+  - ESM syntax in a file loaded as CommonJS (vitest.config.ts:1:1). Use a `.mjs` extension or set `"type": "module"` in the closest package.json
+Set `VITE_CONFIG_NATIVE_IGNORE_WARNING=true` to suppress this warning.
+
+### TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/legacy-api
+(!) Your Vite config uses features that are unsupported by `configLoader: 'native'`, which is planned to become the default in a future major version of Vite:
+  - ESM syntax in a file loaded as CommonJS (vitest.config.ts:4:1). Use a `.mjs` extension or set `"type": "module"` in the closest package.json
+Set `VITE_CONFIG_NATIVE_IGNORE_WARNING=true` to suppress this warning.
+(!) Your Vite config uses features that are unsupported by `configLoader: 'native'`, which is planned to become the default in a future major version of Vite:
+  - ESM syntax in a file loaded as CommonJS (vitest.config.ts:1:1). Use a `.mjs` extension or set `"type": "module"` in the closest package.json
+Set `VITE_CONFIG_NATIVE_IGNORE_WARNING=true` to suppress this warning.
+<claude-code-hint v="1" type="plugin" value="stripe@claude-plugins-official" />
+<claude-code-hint v="1" type="plugin" value="stripe@claude-plugins-official" />
+<claude-code-hint v="1" type="plugin" value="stripe@claude-plugins-official" />
+<claude-code-hint v="1" type="plugin" value="stripe@claude-plugins-official" />
+<claude-code-hint v="1" type="plugin" value="stripe@claude-plugins-official" />
+<claude-code-hint v="1" type="plugin" value="stripe@claude-plugins-official" />
+<claude-code-hint v="1" type="plugin" value="stripe@claude-plugins-official" />
+<claude-code-hint v="1" type="plugin" value="stripe@claude-plugins-official" />
+
+### TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/database
+(!) Your Vite config uses features that are unsupported by `configLoader: 'native'`, which is planned to become the default in a future major version of Vite:
+  - ESM syntax in a file loaded as CommonJS (vitest.config.ts:4:1). Use a `.mjs` extension or set `"type": "module"` in the closest package.json
+Set `VITE_CONFIG_NATIVE_IGNORE_WARNING=true` to suppress this warning.
+(!) Your Vite config uses features that are unsupported by `configLoader: 'native'`, which is planned to become the default in a future major version of Vite:
+  - ESM syntax in a file loaded as CommonJS (vitest.config.ts:1:1). Use a `.mjs` extension or set `"type": "module"` in the closest package.json
+Set `VITE_CONFIG_NATIVE_IGNORE_WARNING=true` to suppress this warning.

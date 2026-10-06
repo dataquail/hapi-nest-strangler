@@ -1,0 +1,24 @@
+$ pnpm -s campaigns:nudge
+exit 0
+
+--- stdout
+strangle-hapi
+  billing — phase data-moved (7 of 9), 1 day here
+    this diff moves it from settled: it is judged by the phase it was found at
+    intent: The module's tables belong to its Nest schema, the legacy table is dropped by a legacy migration, and the bookshelf models are gone.
+    toward the next phase: no-hapi-models 1
+    in the files you touched, nearest your change (1 of 1; 1 in the sector):
+      packages/legacy-api/src/application/billing/subscription-model.ts  no-hapi-models
+    this diff: +no-hapi-files: subscription-model.ts · +no-hapi-models: subscription-model.ts  mixed
+    hapi-lines: recorded 31 → now 25 (tolerance 20)
+    onTouch: ratchet (of settled) — ok
+    ask: note
+  legacy — phase fenced (1 of 9)
+    intent: The module names no sibling module: what it needs from a peer arrives through the substrate, and its role checks live in its access file, not its routes.
+    hapi-lines: recorded 819 → now 815 (tolerance 20)
+    onTouch: ratchet — ok
+    ask: hold — leave the sector no worse; paydown is welcome in its own commit, not asked for
+
+ok
+
+--- stderr

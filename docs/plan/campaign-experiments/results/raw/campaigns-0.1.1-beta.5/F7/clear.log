@@ -1,0 +1,22 @@
+$ pnpm -s campaigns:clear
+exit 0
+
+--- stdout
+strangle-hapi/no-cross-module-reach: nothing to clear; 6 holdouts left.
+strangle-hapi/no-role-checks-in-routes: nothing to clear; 2 holdouts left.
+strangle-hapi/has-nest-module: nothing to clear; 1 holdout left.
+strangle-hapi/no-hapi-routes: nothing to clear; 0 holdouts left.
+strangle-hapi/no-hapi-models: nothing to clear; 0 holdouts left.
+strangle-hapi/no-hapi-files: nothing to clear; 0 holdouts left.
+strangle-hapi/has-internal-write-api: nothing to clear; 0 holdouts left.
+strangle-hapi/writes-not-mirrored: nothing to clear; 0 holdouts left.
+strangle-hapi/has-nest-endpoints: nothing to clear; 0 holdouts left.
+strangle-hapi/routes-still-local: nothing to clear; 3 holdouts left.
+strangle-hapi/legacy-writes: nothing to clear; 4 holdouts left.
+strangle-hapi/mirror-before-write: nothing to clear; 0 holdouts left.
+strangle-hapi/shared-state-split: nothing to clear; 0 holdouts left.
+strangle-hapi/legacy-table-dropped: nothing to clear; 0 holdouts left.
+strangle-hapi/hapi-lines: nothing to clear; held to 3611.
+strangle-hapi: billing went back served → fenced.
+
+--- stderr

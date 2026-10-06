@@ -1,0 +1,2034 @@
+{
+  "pins": {
+    "campaigns": "0.1.1-beta.5",
+    "cli": "0.1.0-beta.16",
+    "core": "0.1.0-beta.15",
+    "oxlint": "0.1.0-beta.16",
+    "typescript": "0.1.0-beta.15",
+    "campaignFrom": "ece6748",
+    "campaignSha": "ece6748",
+    "overlayBase": "00f59e7",
+    "pinsCarried": true
+  },
+  "date": "2026-10-06",
+  "entries": [
+    {
+      "id": "C-mirror-cancel",
+      "kind": "control",
+      "branch": "billing-mirror-cancel",
+      "head": "f2090e9",
+      "started": "2026-10-06T18:17:16.781Z",
+      "steps": [
+        {
+          "step": "contracts build",
+          "cmd": "pnpm -s -F @org/contracts build",
+          "exit": 0,
+          "ms": 1484
+        }
+      ],
+      "gates": {
+        "G1": {
+          "exit": 0,
+          "ms": 1357
+        },
+        "G2": {
+          "exit": 0,
+          "ms": 1003
+        },
+        "G3": {
+          "exit": 0,
+          "ms": 1024
+        },
+        "G4": {
+          "exit": 0,
+          "ms": 3847
+        },
+        "G5": {
+          "exit": 0,
+          "ms": 10745
+        },
+        "G6": {
+          "exit": 0,
+          "ms": 18982
+        },
+        "G7": {
+          "exit": 0,
+          "ms": 25707,
+          "parts": [
+            {
+              "cmd": "pnpm -s -F @org/legacy-api db:reset:test",
+              "exit": 0
+            },
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/server",
+              "exit": 0
+            },
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/legacy-api",
+              "exit": 0
+            },
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/database",
+              "exit": 0
+            }
+          ]
+        }
+      },
+      "pins": {
+        "core": "0.1.0-beta.15",
+        "typescript": "0.1.0-beta.15",
+        "cli": "0.1.0-beta.16",
+        "oxlint": "0.1.0-beta.16",
+        "campaigns": "0.1.1-beta.5"
+      },
+      "overlay": {
+        "from": "ece6748",
+        "fromSha": "ece6748",
+        "overlayBase": "00f59e7",
+        "base": "3c811d9adc34364f13bbb8ffde76fba24b7706ff",
+        "changed": ".../strangle-hapi/mirror-before-write.json         |  25 ++++\n .architecture-campaigns/strangle-hapi/plan.json    |   8 +-\n .../strangle-hapi/shared-state-split.json          |  17 +++\n architecture.yaml                                  | 153 ++++++++++++++++++++-\n campaigns/strangle-hapi.mjs                        |  90 ++++++++++++\n package.json                                       |   6 +-\n pnpm-lock.yaml                                     |  34 ++---\n 7 files changed, 307 insertions(+), 26 deletions(-)",
+        "clear": "strangle-hapi/no-cross-module-reach: nothing to clear; 6 holdouts left.\nstrangle-hapi/no-role-checks-in-routes: nothing to clear; 2 holdouts left.\nstrangle-hapi/has-nest-module: nothing to clear; 1 holdout left.\nstrangle-hapi/no-hapi-routes: nothing to clear; 0 holdouts left.\nstrangle-hapi/no-hapi-models: nothing to clear; 0 holdouts left.\nstrangle-hapi/no-hapi-files: nothing to clear; 0 holdouts left.\nstrangle-hapi/has-internal-write-api: nothing to clear; 0 holdouts left.\nstrangle-hapi/writes-not-mirrored: nothing to clear; 2 holdouts left.\nstrangle-hapi/has-nest-endpoints: nothing to clear; 0 holdouts left.\nstrangle-hapi/routes-still-local: nothing to clear; 0 holdouts left.\nstrangle-hapi/legacy-writes: nothing to clear; 0 holdouts left.\nstrangle-hapi/mirror-before-write: 2 sectors entered (billing, todo); 0 holdouts left.\nstrangle-hapi/shared-state-split: 1 sector entered (todo); 0 holdouts left.\nstrangle-hapi/legacy-table-dropped: nothing to clear; 0 holdouts left.\nstrangle-hapi/hapi-lines: nothing to clear; held to 3478.\n"
+      },
+      "diffStat": "",
+      "finished": "2026-10-06T18:18:25.785Z"
+    },
+    {
+      "id": "C-backfill",
+      "kind": "control",
+      "branch": "billing-backfill",
+      "head": "90c2a22",
+      "started": "2026-10-06T18:42:27.671Z",
+      "steps": [
+        {
+          "step": "contracts build",
+          "cmd": "pnpm -s -F @org/contracts build",
+          "exit": 0,
+          "ms": 620
+        }
+      ],
+      "gates": {
+        "G1": {
+          "exit": 0,
+          "ms": 1303
+        },
+        "G2": {
+          "exit": 0,
+          "ms": 961
+        },
+        "G3": {
+          "exit": 0,
+          "ms": 977
+        },
+        "G4": {
+          "exit": 0,
+          "ms": 2851
+        },
+        "G5": {
+          "exit": 0,
+          "ms": 4167
+        },
+        "G6": {
+          "exit": 0,
+          "ms": 16215
+        },
+        "G7": {
+          "exit": 0,
+          "ms": 25218,
+          "parts": [
+            {
+              "cmd": "pnpm -s -F @org/legacy-api db:reset:test",
+              "exit": 0
+            },
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/server",
+              "exit": 0
+            },
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/legacy-api",
+              "exit": 0
+            },
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/database",
+              "exit": 0
+            }
+          ]
+        }
+      },
+      "pins": {
+        "core": "0.1.0-beta.15",
+        "typescript": "0.1.0-beta.15",
+        "cli": "0.1.0-beta.16",
+        "oxlint": "0.1.0-beta.16",
+        "campaigns": "0.1.1-beta.5"
+      },
+      "overlay": {
+        "from": "ece6748",
+        "fromSha": "ece6748",
+        "overlayBase": "00f59e7",
+        "base": "e4cefdb34ef13ab5d5a3ac4fae67591ce2e2ec25",
+        "changed": ".../strangle-hapi/mirror-before-write.json         |  25 ++++\n .architecture-campaigns/strangle-hapi/plan.json    |   8 +-\n .../strangle-hapi/shared-state-split.json          |  17 +++\n architecture.yaml                                  | 153 ++++++++++++++++++++-\n campaigns/strangle-hapi.mjs                        |  90 ++++++++++++\n package.json                                       |   6 +-\n pnpm-lock.yaml                                     |  34 ++---\n 7 files changed, 307 insertions(+), 26 deletions(-)",
+        "clear": "strangle-hapi/no-cross-module-reach: nothing to clear; 6 holdouts left.\nstrangle-hapi/no-role-checks-in-routes: nothing to clear; 2 holdouts left.\nstrangle-hapi/has-nest-module: nothing to clear; 1 holdout left.\nstrangle-hapi/no-hapi-routes: nothing to clear; 0 holdouts left.\nstrangle-hapi/no-hapi-models: nothing to clear; 0 holdouts left.\nstrangle-hapi/no-hapi-files: nothing to clear; 0 holdouts left.\nstrangle-hapi/has-internal-write-api: nothing to clear; 0 holdouts left.\nstrangle-hapi/writes-not-mirrored: nothing to clear; 0 holdouts left.\nstrangle-hapi/has-nest-endpoints: nothing to clear; 0 holdouts left.\nstrangle-hapi/routes-still-local: nothing to clear; 0 holdouts left.\nstrangle-hapi/legacy-writes: nothing to clear; 0 holdouts left.\nstrangle-hapi/mirror-before-write: 2 sectors entered (billing, todo); 0 holdouts left.\nstrangle-hapi/shared-state-split: 1 sector entered (todo); 0 holdouts left.\nstrangle-hapi/legacy-table-dropped: nothing to clear; 0 holdouts left.\nstrangle-hapi/hapi-lines: nothing to clear; held to 3551.\n"
+      },
+      "diffStat": "",
+      "finished": "2026-10-06T18:43:24.959Z"
+    },
+    {
+      "id": "C-serve-read",
+      "kind": "control",
+      "branch": "billing-serve-read",
+      "head": "0fa988d",
+      "started": "2026-10-06T18:19:29.525Z",
+      "steps": [
+        {
+          "step": "contracts build",
+          "cmd": "pnpm -s -F @org/contracts build",
+          "exit": 0,
+          "ms": 568
+        }
+      ],
+      "gates": {
+        "G1": {
+          "exit": 0,
+          "ms": 1299
+        },
+        "G2": {
+          "exit": 0,
+          "ms": 971
+        },
+        "G3": {
+          "exit": 0,
+          "ms": 950
+        },
+        "G4": {
+          "exit": 0,
+          "ms": 2820
+        },
+        "G5": {
+          "exit": 0,
+          "ms": 6026
+        },
+        "G6": {
+          "exit": 0,
+          "ms": 17894
+        },
+        "G7": {
+          "exit": 0,
+          "ms": 27433,
+          "parts": [
+            {
+              "cmd": "pnpm -s -F @org/legacy-api db:reset:test",
+              "exit": 0
+            },
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/server",
+              "exit": 0
+            },
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/legacy-api",
+              "exit": 0
+            },
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/database",
+              "exit": 0
+            }
+          ]
+        }
+      },
+      "pins": {
+        "core": "0.1.0-beta.15",
+        "typescript": "0.1.0-beta.15",
+        "cli": "0.1.0-beta.16",
+        "oxlint": "0.1.0-beta.16",
+        "campaigns": "0.1.1-beta.5"
+      },
+      "overlay": {
+        "from": "ece6748",
+        "fromSha": "ece6748",
+        "overlayBase": "00f59e7",
+        "base": "fccb762f4facb72738e707f8907892cf0e4cd8c7",
+        "changed": ".../strangle-hapi/mirror-before-write.json         |  25 ++++\n .architecture-campaigns/strangle-hapi/plan.json    |   8 +-\n .../strangle-hapi/shared-state-split.json          |  25 ++++\n architecture.yaml                                  | 153 ++++++++++++++++++++-\n campaigns/strangle-hapi.mjs                        |  90 ++++++++++++\n package.json                                       |   6 +-\n pnpm-lock.yaml                                     |  34 ++---\n 7 files changed, 315 insertions(+), 26 deletions(-)",
+        "clear": "strangle-hapi/no-cross-module-reach: nothing to clear; 6 holdouts left.\nstrangle-hapi/no-role-checks-in-routes: nothing to clear; 2 holdouts left.\nstrangle-hapi/has-nest-module: nothing to clear; 1 holdout left.\nstrangle-hapi/no-hapi-routes: nothing to clear; 0 holdouts left.\nstrangle-hapi/no-hapi-models: nothing to clear; 0 holdouts left.\nstrangle-hapi/no-hapi-files: nothing to clear; 0 holdouts left.\nstrangle-hapi/has-internal-write-api: nothing to clear; 0 holdouts left.\nstrangle-hapi/writes-not-mirrored: nothing to clear; 0 holdouts left.\nstrangle-hapi/has-nest-endpoints: nothing to clear; 0 holdouts left.\nstrangle-hapi/routes-still-local: nothing to clear; 3 holdouts left.\nstrangle-hapi/legacy-writes: nothing to clear; 4 holdouts left.\nstrangle-hapi/mirror-before-write: 2 sectors entered (billing, todo); 0 holdouts left.\nstrangle-hapi/shared-state-split: 2 sectors entered (billing, todo); 0 holdouts left.\nstrangle-hapi/legacy-table-dropped: nothing to clear; 0 holdouts left.\nstrangle-hapi/hapi-lines: nothing to clear; held to 3611.\n"
+      },
+      "diffStat": "",
+      "finished": "2026-10-06T18:20:32.115Z"
+    },
+    {
+      "id": "C-data-moved",
+      "kind": "control",
+      "branch": "billing-data-moved",
+      "head": "4a572ee",
+      "started": "2026-10-06T18:20:32.349Z",
+      "steps": [
+        {
+          "step": "contracts build",
+          "cmd": "pnpm -s -F @org/contracts build",
+          "exit": 0,
+          "ms": 1455
+        }
+      ],
+      "gates": {
+        "G1": {
+          "exit": 0,
+          "ms": 1302
+        },
+        "G2": {
+          "exit": 0,
+          "ms": 952
+        },
+        "G3": {
+          "exit": 0,
+          "ms": 951
+        },
+        "G4": {
+          "exit": 0,
+          "ms": 3099
+        },
+        "G5": {
+          "exit": 0,
+          "ms": 8094
+        },
+        "G6": {
+          "exit": 0,
+          "ms": 18589
+        },
+        "G7": {
+          "exit": 0,
+          "ms": 26609,
+          "parts": [
+            {
+              "cmd": "pnpm -s -F @org/legacy-api db:reset:test",
+              "exit": 0
+            },
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/server",
+              "exit": 0
+            },
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/legacy-api",
+              "exit": 0
+            },
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/database",
+              "exit": 0
+            }
+          ]
+        }
+      },
+      "pins": {
+        "core": "0.1.0-beta.15",
+        "typescript": "0.1.0-beta.15",
+        "cli": "0.1.0-beta.16",
+        "oxlint": "0.1.0-beta.16",
+        "campaigns": "0.1.1-beta.5"
+      },
+      "overlay": {
+        "from": "ece6748",
+        "fromSha": "ece6748",
+        "overlayBase": "00f59e7",
+        "base": "f03f28f56dd578e58246123bb8f59ed8f7d952d7",
+        "changed": ".../strangle-hapi/mirror-before-write.json         |  25 ++++\n .architecture-campaigns/strangle-hapi/plan.json    |   8 +-\n .../strangle-hapi/shared-state-split.json          |  25 ++++\n architecture.yaml                                  | 153 ++++++++++++++++++++-\n campaigns/strangle-hapi.mjs                        |  90 ++++++++++++\n package.json                                       |   6 +-\n pnpm-lock.yaml                                     |  34 ++---\n 7 files changed, 315 insertions(+), 26 deletions(-)",
+        "clear": "strangle-hapi/no-cross-module-reach: nothing to clear; 6 holdouts left.\nstrangle-hapi/no-role-checks-in-routes: nothing to clear; 2 holdouts left.\nstrangle-hapi/has-nest-module: nothing to clear; 1 holdout left.\nstrangle-hapi/no-hapi-routes: nothing to clear; 0 holdouts left.\nstrangle-hapi/no-hapi-models: nothing to clear; 0 holdouts left.\nstrangle-hapi/no-hapi-files: nothing to clear; 0 holdouts left.\nstrangle-hapi/has-internal-write-api: nothing to clear; 0 holdouts left.\nstrangle-hapi/writes-not-mirrored: nothing to clear; 0 holdouts left.\nstrangle-hapi/has-nest-endpoints: nothing to clear; 0 holdouts left.\nstrangle-hapi/routes-still-local: nothing to clear; 0 holdouts left.\nstrangle-hapi/legacy-writes: nothing to clear; 0 holdouts left.\nstrangle-hapi/mirror-before-write: 2 sectors entered (billing, todo); 0 holdouts left.\nstrangle-hapi/shared-state-split: 2 sectors entered (billing, todo); 0 holdouts left.\nstrangle-hapi/legacy-table-dropped: nothing to clear; 0 holdouts left.\nstrangle-hapi/hapi-lines: nothing to clear; held to 2870.\n"
+      },
+      "diffStat": "",
+      "finished": "2026-10-06T18:21:38.753Z"
+    },
+    {
+      "id": "C-serve-writes-nest",
+      "kind": "control",
+      "branch": "billing-serve-writes-nest",
+      "head": "41fc2e8",
+      "started": "2026-10-06T18:21:39.004Z",
+      "steps": [
+        {
+          "step": "contracts build",
+          "cmd": "pnpm -s -F @org/contracts build",
+          "exit": 0,
+          "ms": 1569
+        }
+      ],
+      "gates": {
+        "G1": {
+          "exit": 0,
+          "ms": 1398
+        },
+        "G2": {
+          "exit": 0,
+          "ms": 1019
+        },
+        "G3": {
+          "exit": 0,
+          "ms": 1175
+        },
+        "G4": {
+          "exit": 0,
+          "ms": 3233
+        },
+        "G5": {
+          "exit": 0,
+          "ms": 8559
+        },
+        "G6": {
+          "exit": 0,
+          "ms": 19031
+        },
+        "G7": {
+          "exit": 0,
+          "ms": 31630,
+          "parts": [
+            {
+              "cmd": "pnpm -s -F @org/legacy-api db:reset:test",
+              "exit": 0
+            },
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/server",
+              "exit": 0
+            },
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/legacy-api",
+              "exit": 0
+            },
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/database",
+              "exit": 0
+            }
+          ]
+        }
+      },
+      "pins": {
+        "core": "0.1.0-beta.15",
+        "typescript": "0.1.0-beta.15",
+        "cli": "0.1.0-beta.16",
+        "oxlint": "0.1.0-beta.16",
+        "campaigns": "0.1.1-beta.5"
+      },
+      "overlay": {
+        "from": "ece6748",
+        "fromSha": "ece6748",
+        "overlayBase": "00f59e7",
+        "base": "49a33178d0699f6c4557527b219c12c47ef8120b",
+        "changed": ".../strangle-hapi/mirror-before-write.json         |  25 ++++\n .architecture-campaigns/strangle-hapi/plan.json    |   8 +-\n .../strangle-hapi/shared-state-split.json          |  25 ++++\n architecture.yaml                                  | 153 ++++++++++++++++++++-\n campaigns/strangle-hapi.mjs                        |  90 ++++++++++++\n package.json                                       |   6 +-\n pnpm-lock.yaml                                     |  34 ++---\n 7 files changed, 315 insertions(+), 26 deletions(-)",
+        "clear": "strangle-hapi/no-cross-module-reach: nothing to clear; 6 holdouts left.\nstrangle-hapi/no-role-checks-in-routes: nothing to clear; 2 holdouts left.\nstrangle-hapi/has-nest-module: nothing to clear; 1 holdout left.\nstrangle-hapi/no-hapi-routes: nothing to clear; 0 holdouts left.\nstrangle-hapi/no-hapi-models: nothing to clear; 0 holdouts left.\nstrangle-hapi/no-hapi-files: nothing to clear; 0 holdouts left.\nstrangle-hapi/has-internal-write-api: nothing to clear; 0 holdouts left.\nstrangle-hapi/writes-not-mirrored: nothing to clear; 0 holdouts left.\nstrangle-hapi/has-nest-endpoints: nothing to clear; 0 holdouts left.\nstrangle-hapi/routes-still-local: nothing to clear; 3 holdouts left.\nstrangle-hapi/legacy-writes: nothing to clear; 4 holdouts left.\nstrangle-hapi/mirror-before-write: 2 sectors entered (billing, todo); 0 holdouts left.\nstrangle-hapi/shared-state-split: 2 sectors entered (billing, todo); 0 holdouts left.\nstrangle-hapi/legacy-table-dropped: nothing to clear; 0 holdouts left.\nstrangle-hapi/hapi-lines: nothing to clear; held to 3611.\n"
+      },
+      "diffStat": "",
+      "finished": "2026-10-06T18:22:51.867Z"
+    },
+    {
+      "id": "C-mirror-start",
+      "kind": "control",
+      "branch": "billing-mirror-start",
+      "head": "77a9d70",
+      "started": "2026-10-06T18:22:52.100Z",
+      "steps": [
+        {
+          "step": "contracts build",
+          "cmd": "pnpm -s -F @org/contracts build",
+          "exit": 0,
+          "ms": 1378
+        }
+      ],
+      "gates": {
+        "G1": {
+          "exit": 0,
+          "ms": 1293
+        },
+        "G2": {
+          "exit": 0,
+          "ms": 965
+        },
+        "G3": {
+          "exit": 0,
+          "ms": 974
+        },
+        "G4": {
+          "exit": 0,
+          "ms": 2955
+        },
+        "G5": {
+          "exit": 0,
+          "ms": 8261
+        },
+        "G6": {
+          "exit": 0,
+          "ms": 16314
+        },
+        "G7": {
+          "exit": 0,
+          "ms": 23137,
+          "parts": [
+            {
+              "cmd": "pnpm -s -F @org/legacy-api db:reset:test",
+              "exit": 0
+            },
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/server",
+              "exit": 0
+            },
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/legacy-api",
+              "exit": 0
+            },
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/database",
+              "exit": 0
+            }
+          ]
+        }
+      },
+      "pins": {
+        "core": "0.1.0-beta.15",
+        "typescript": "0.1.0-beta.15",
+        "cli": "0.1.0-beta.16",
+        "oxlint": "0.1.0-beta.16",
+        "campaigns": "0.1.1-beta.5"
+      },
+      "overlay": {
+        "from": "ece6748",
+        "fromSha": "ece6748",
+        "overlayBase": "00f59e7",
+        "base": "8dedc5c66d68e0759dedb995297c72e77b6caf66",
+        "changed": ".../strangle-hapi/mirror-before-write.json         |  25 ++++\n .architecture-campaigns/strangle-hapi/plan.json    |   8 +-\n .../strangle-hapi/shared-state-split.json          |  17 +++\n architecture.yaml                                  | 153 ++++++++++++++++++++-\n campaigns/strangle-hapi.mjs                        |  90 ++++++++++++\n package.json                                       |   6 +-\n pnpm-lock.yaml                                     |  34 ++---\n 7 files changed, 307 insertions(+), 26 deletions(-)",
+        "clear": "strangle-hapi/no-cross-module-reach: nothing to clear; 6 holdouts left.\nstrangle-hapi/no-role-checks-in-routes: nothing to clear; 2 holdouts left.\nstrangle-hapi/has-nest-module: nothing to clear; 1 holdout left.\nstrangle-hapi/no-hapi-routes: nothing to clear; 0 holdouts left.\nstrangle-hapi/no-hapi-models: nothing to clear; 0 holdouts left.\nstrangle-hapi/no-hapi-files: nothing to clear; 0 holdouts left.\nstrangle-hapi/has-internal-write-api: nothing to clear; 0 holdouts left.\nstrangle-hapi/writes-not-mirrored: nothing to clear; 3 holdouts left.\nstrangle-hapi/has-nest-endpoints: nothing to clear; 0 holdouts left.\nstrangle-hapi/routes-still-local: nothing to clear; 0 holdouts left.\nstrangle-hapi/legacy-writes: nothing to clear; 0 holdouts left.\nstrangle-hapi/mirror-before-write: 2 sectors entered (billing, todo); 0 holdouts left.\nstrangle-hapi/shared-state-split: 1 sector entered (todo); 0 holdouts left.\nstrangle-hapi/legacy-table-dropped: nothing to clear; 0 holdouts left.\nstrangle-hapi/hapi-lines: nothing to clear; held to 3478.\n"
+      },
+      "diffStat": "",
+      "finished": "2026-10-06T18:23:52.251Z"
+    },
+    {
+      "id": "C-retire-internal",
+      "kind": "control",
+      "branch": "billing-retire-internal",
+      "head": "cf4b2fd",
+      "started": "2026-10-06T18:23:52.478Z",
+      "steps": [
+        {
+          "step": "contracts build",
+          "cmd": "pnpm -s -F @org/contracts build",
+          "exit": 0,
+          "ms": 1469
+        }
+      ],
+      "gates": {
+        "G1": {
+          "exit": 0,
+          "ms": 1398
+        },
+        "G2": {
+          "exit": 0,
+          "ms": 1037
+        },
+        "G3": {
+          "exit": 0,
+          "ms": 1015
+        },
+        "G4": {
+          "exit": 0,
+          "ms": 2841
+        },
+        "G5": {
+          "exit": 0,
+          "ms": 8183
+        },
+        "G6": {
+          "exit": 0,
+          "ms": 17497
+        },
+        "G7": {
+          "exit": 0,
+          "ms": 28785,
+          "parts": [
+            {
+              "cmd": "pnpm -s -F @org/legacy-api db:reset:test",
+              "exit": 0
+            },
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/server",
+              "exit": 0
+            },
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/legacy-api",
+              "exit": 0
+            },
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/database",
+              "exit": 0
+            }
+          ]
+        }
+      },
+      "pins": {
+        "core": "0.1.0-beta.15",
+        "typescript": "0.1.0-beta.15",
+        "cli": "0.1.0-beta.16",
+        "oxlint": "0.1.0-beta.16",
+        "campaigns": "0.1.1-beta.5"
+      },
+      "overlay": {
+        "from": "ece6748",
+        "fromSha": "ece6748",
+        "overlayBase": "00f59e7",
+        "base": "5d292417a85677a991487fe3319d8bbe6b5300be",
+        "changed": ".../strangle-hapi/mirror-before-write.json         |  25 ++++\n .architecture-campaigns/strangle-hapi/plan.json    |   8 +-\n .../strangle-hapi/shared-state-split.json          |  25 ++++\n architecture.yaml                                  | 153 ++++++++++++++++++++-\n campaigns/strangle-hapi.mjs                        |  90 ++++++++++++\n package.json                                       |   6 +-\n pnpm-lock.yaml                                     |  34 ++---\n 7 files changed, 315 insertions(+), 26 deletions(-)",
+        "clear": "strangle-hapi/no-cross-module-reach: nothing to clear; 6 holdouts left.\nstrangle-hapi/no-role-checks-in-routes: nothing to clear; 2 holdouts left.\nstrangle-hapi/has-nest-module: nothing to clear; 1 holdout left.\nstrangle-hapi/no-hapi-routes: nothing to clear; 1 holdout left.\nstrangle-hapi/no-hapi-models: nothing to clear; 0 holdouts left.\nstrangle-hapi/no-hapi-files: nothing to clear; 0 holdouts left.\nstrangle-hapi/has-internal-write-api: nothing to clear; 0 holdouts left.\nstrangle-hapi/writes-not-mirrored: nothing to clear; 0 holdouts left.\nstrangle-hapi/has-nest-endpoints: nothing to clear; 0 holdouts left.\nstrangle-hapi/routes-still-local: nothing to clear; 0 holdouts left.\nstrangle-hapi/legacy-writes: nothing to clear; 0 holdouts left.\nstrangle-hapi/mirror-before-write: 2 sectors entered (billing, todo); 0 holdouts left.\nstrangle-hapi/shared-state-split: 2 sectors entered (billing, todo); 0 holdouts left.\nstrangle-hapi/legacy-table-dropped: nothing to clear; 0 holdouts left.\nstrangle-hapi/hapi-lines: nothing to clear; held to 2970.\n"
+      },
+      "diffStat": "",
+      "finished": "2026-10-06T18:24:59.789Z"
+    },
+    {
+      "id": "C-attest",
+      "kind": "control",
+      "branch": "billing-attest",
+      "head": "3f48de7",
+      "started": "2026-10-06T18:25:00.023Z",
+      "steps": [
+        {
+          "step": "contracts build",
+          "cmd": "pnpm -s -F @org/contracts build",
+          "exit": 0,
+          "ms": 1408
+        }
+      ],
+      "gates": {
+        "G1": {
+          "exit": 0,
+          "ms": 1294
+        },
+        "G2": {
+          "exit": 0,
+          "ms": 1027
+        },
+        "G3": {
+          "exit": 0,
+          "ms": 963
+        },
+        "G4": {
+          "exit": 0,
+          "ms": 2982
+        },
+        "G5": {
+          "exit": 0,
+          "ms": 7948
+        },
+        "G6": {
+          "exit": 0,
+          "ms": 16944
+        },
+        "G7": {
+          "exit": 0,
+          "ms": 26297,
+          "parts": [
+            {
+              "cmd": "pnpm -s -F @org/legacy-api db:reset:test",
+              "exit": 0
+            },
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/server",
+              "exit": 0
+            },
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/legacy-api",
+              "exit": 0
+            },
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/database",
+              "exit": 0
+            }
+          ]
+        }
+      },
+      "pins": {
+        "core": "0.1.0-beta.15",
+        "typescript": "0.1.0-beta.15",
+        "cli": "0.1.0-beta.16",
+        "oxlint": "0.1.0-beta.16",
+        "campaigns": "0.1.1-beta.5"
+      },
+      "overlay": {
+        "from": "ece6748",
+        "fromSha": "ece6748",
+        "overlayBase": "00f59e7",
+        "base": "16a420be6c5726cc6df93f4be98dda0c4b0bca2a",
+        "changed": ".../strangle-hapi/mirror-before-write.json         |  25 ++++\n .architecture-campaigns/strangle-hapi/plan.json    |   8 +-\n .../strangle-hapi/shared-state-split.json          |  25 ++++\n architecture.yaml                                  | 153 ++++++++++++++++++++-\n campaigns/strangle-hapi.mjs                        |  90 ++++++++++++\n package.json                                       |   6 +-\n pnpm-lock.yaml                                     |  34 ++---\n 7 files changed, 315 insertions(+), 26 deletions(-)",
+        "clear": "strangle-hapi/no-cross-module-reach: nothing to clear; 6 holdouts left.\nstrangle-hapi/no-role-checks-in-routes: nothing to clear; 2 holdouts left.\nstrangle-hapi/has-nest-module: nothing to clear; 1 holdout left.\nstrangle-hapi/no-hapi-routes: nothing to clear; 0 holdouts left.\nstrangle-hapi/no-hapi-models: nothing to clear; 0 holdouts left.\nstrangle-hapi/no-hapi-files: nothing to clear; 0 holdouts left.\nstrangle-hapi/has-internal-write-api: nothing to clear; 0 holdouts left.\nstrangle-hapi/writes-not-mirrored: nothing to clear; 0 holdouts left.\nstrangle-hapi/has-nest-endpoints: nothing to clear; 1 holdout left.\nstrangle-hapi/routes-still-local: nothing to clear; 4 holdouts left.\nstrangle-hapi/legacy-writes: nothing to clear; 4 holdouts left.\nstrangle-hapi/mirror-before-write: 2 sectors entered (billing, todo); 0 holdouts left.\nstrangle-hapi/shared-state-split: 2 sectors entered (billing, todo); 0 holdouts left.\nstrangle-hapi/legacy-table-dropped: nothing to clear; 0 holdouts left.\nstrangle-hapi/hapi-lines: nothing to clear; held to 3551.\n"
+      },
+      "diffStat": "",
+      "finished": "2026-10-06T18:26:03.959Z"
+    },
+    {
+      "id": "F1",
+      "kind": "fault",
+      "branch": "billing-mirror-cancel",
+      "head": "f2090e9",
+      "started": "2026-10-06T18:26:04.212Z",
+      "steps": [
+        {
+          "step": "contracts build",
+          "cmd": "pnpm -s -F @org/contracts build",
+          "exit": 0,
+          "ms": 1460
+        }
+      ],
+      "gates": {
+        "G1": {
+          "exit": 0,
+          "ms": 1713
+        },
+        "G2": {
+          "exit": 0,
+          "ms": 1011
+        },
+        "G3": {
+          "exit": 1,
+          "ms": 995
+        },
+        "G4": {
+          "exit": 1,
+          "ms": 2805
+        },
+        "G5": {
+          "exit": 0,
+          "ms": 7536
+        },
+        "G6": {
+          "exit": 0,
+          "ms": 16279
+        },
+        "G7": {
+          "exit": 0,
+          "ms": 24328,
+          "parts": [
+            {
+              "cmd": "pnpm -s -F @org/legacy-api db:reset:test",
+              "exit": 0
+            },
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/server",
+              "exit": 0
+            },
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/legacy-api",
+              "exit": 0
+            },
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/database",
+              "exit": 0
+            }
+          ]
+        }
+      },
+      "pins": {
+        "core": "0.1.0-beta.15",
+        "typescript": "0.1.0-beta.15",
+        "cli": "0.1.0-beta.16",
+        "oxlint": "0.1.0-beta.16",
+        "campaigns": "0.1.1-beta.5"
+      },
+      "overlay": {
+        "from": "ece6748",
+        "fromSha": "ece6748",
+        "overlayBase": "00f59e7",
+        "base": "639189586aacb763875d693c6e32985c484d5bdd",
+        "changed": ".../strangle-hapi/mirror-before-write.json         |  25 ++++\n .architecture-campaigns/strangle-hapi/plan.json    |   8 +-\n .../strangle-hapi/shared-state-split.json          |  17 +++\n architecture.yaml                                  | 153 ++++++++++++++++++++-\n campaigns/strangle-hapi.mjs                        |  90 ++++++++++++\n package.json                                       |   6 +-\n pnpm-lock.yaml                                     |  34 ++---\n 7 files changed, 307 insertions(+), 26 deletions(-)",
+        "clear": "strangle-hapi/no-cross-module-reach: nothing to clear; 6 holdouts left.\nstrangle-hapi/no-role-checks-in-routes: nothing to clear; 2 holdouts left.\nstrangle-hapi/has-nest-module: nothing to clear; 1 holdout left.\nstrangle-hapi/no-hapi-routes: nothing to clear; 0 holdouts left.\nstrangle-hapi/no-hapi-models: nothing to clear; 0 holdouts left.\nstrangle-hapi/no-hapi-files: nothing to clear; 0 holdouts left.\nstrangle-hapi/has-internal-write-api: nothing to clear; 0 holdouts left.\nstrangle-hapi/writes-not-mirrored: nothing to clear; 2 holdouts left.\nstrangle-hapi/has-nest-endpoints: nothing to clear; 0 holdouts left.\nstrangle-hapi/routes-still-local: nothing to clear; 0 holdouts left.\nstrangle-hapi/legacy-writes: nothing to clear; 0 holdouts left.\nstrangle-hapi/mirror-before-write: 2 sectors entered (billing, todo); 0 holdouts left.\nstrangle-hapi/shared-state-split: 1 sector entered (todo); 0 holdouts left.\nstrangle-hapi/legacy-table-dropped: nothing to clear; 0 holdouts left.\nstrangle-hapi/hapi-lines: nothing to clear; held to 3478.\n"
+      },
+      "diffStat": "packages/legacy-api/src/application/billing/billing-service.ts | 6 ++++++\n 1 file changed, 6 insertions(+)",
+      "finished": "2026-10-06T18:27:05.282Z"
+    },
+    {
+      "id": "F1b",
+      "kind": "fault",
+      "branch": "billing-backfill",
+      "head": "90c2a22",
+      "started": "2026-10-06T18:27:05.502Z",
+      "steps": [
+        {
+          "step": "contracts build",
+          "cmd": "pnpm -s -F @org/contracts build",
+          "exit": 0,
+          "ms": 1469
+        }
+      ],
+      "gates": {
+        "G1": {
+          "exit": 1,
+          "ms": 1579
+        },
+        "G2": {
+          "exit": 1,
+          "ms": 992
+        },
+        "G3": {
+          "exit": 1,
+          "ms": 985
+        },
+        "G4": {
+          "exit": 1,
+          "ms": 2850
+        },
+        "G5": {
+          "exit": 0,
+          "ms": 7545
+        },
+        "G6": {
+          "exit": 0,
+          "ms": 16023
+        },
+        "G7": {
+          "exit": 0,
+          "ms": 25752,
+          "parts": [
+            {
+              "cmd": "pnpm -s -F @org/legacy-api db:reset:test",
+              "exit": 0
+            },
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/server",
+              "exit": 0
+            },
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/legacy-api",
+              "exit": 0
+            },
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/database",
+              "exit": 0
+            }
+          ]
+        }
+      },
+      "pins": {
+        "core": "0.1.0-beta.15",
+        "typescript": "0.1.0-beta.15",
+        "cli": "0.1.0-beta.16",
+        "oxlint": "0.1.0-beta.16",
+        "campaigns": "0.1.1-beta.5"
+      },
+      "overlay": {
+        "from": "ece6748",
+        "fromSha": "ece6748",
+        "overlayBase": "00f59e7",
+        "base": "9c7c10ff95153352053b2e2d25a07bd2e100059a",
+        "changed": ".../strangle-hapi/mirror-before-write.json         |  25 ++++\n .architecture-campaigns/strangle-hapi/plan.json    |   8 +-\n .../strangle-hapi/shared-state-split.json          |  17 +++\n architecture.yaml                                  | 153 ++++++++++++++++++++-\n campaigns/strangle-hapi.mjs                        |  90 ++++++++++++\n package.json                                       |   6 +-\n pnpm-lock.yaml                                     |  34 ++---\n 7 files changed, 307 insertions(+), 26 deletions(-)",
+        "clear": "strangle-hapi/no-cross-module-reach: nothing to clear; 6 holdouts left.\nstrangle-hapi/no-role-checks-in-routes: nothing to clear; 2 holdouts left.\nstrangle-hapi/has-nest-module: nothing to clear; 1 holdout left.\nstrangle-hapi/no-hapi-routes: nothing to clear; 0 holdouts left.\nstrangle-hapi/no-hapi-models: nothing to clear; 0 holdouts left.\nstrangle-hapi/no-hapi-files: nothing to clear; 0 holdouts left.\nstrangle-hapi/has-internal-write-api: nothing to clear; 0 holdouts left.\nstrangle-hapi/writes-not-mirrored: nothing to clear; 0 holdouts left.\nstrangle-hapi/has-nest-endpoints: nothing to clear; 0 holdouts left.\nstrangle-hapi/routes-still-local: nothing to clear; 0 holdouts left.\nstrangle-hapi/legacy-writes: nothing to clear; 0 holdouts left.\nstrangle-hapi/mirror-before-write: 2 sectors entered (billing, todo); 0 holdouts left.\nstrangle-hapi/shared-state-split: 1 sector entered (todo); 0 holdouts left.\nstrangle-hapi/legacy-table-dropped: nothing to clear; 0 holdouts left.\nstrangle-hapi/hapi-lines: nothing to clear; held to 3551.\n"
+      },
+      "diffStat": "packages/legacy-api/src/application/billing/billing-service.ts | 6 ++++++\n 1 file changed, 6 insertions(+)",
+      "finished": "2026-10-06T18:28:07.728Z"
+    },
+    {
+      "id": "F2",
+      "kind": "fault",
+      "branch": "billing-serve-read",
+      "head": "0fa988d",
+      "started": "2026-10-06T18:28:07.940Z",
+      "steps": [
+        {
+          "step": "contracts build",
+          "cmd": "pnpm -s -F @org/contracts build",
+          "exit": 0,
+          "ms": 1494
+        }
+      ],
+      "gates": {
+        "G1": {
+          "exit": 1,
+          "ms": 1529
+        },
+        "G2": {
+          "exit": 1,
+          "ms": 949
+        },
+        "G3": {
+          "exit": 1,
+          "ms": 963
+        },
+        "G4": {
+          "exit": 1,
+          "ms": 2890
+        },
+        "G5": {
+          "exit": 0,
+          "ms": 7794
+        },
+        "G6": {
+          "exit": 0,
+          "ms": 17051
+        },
+        "G7": {
+          "exit": 0,
+          "ms": 28302,
+          "parts": [
+            {
+              "cmd": "pnpm -s -F @org/legacy-api db:reset:test",
+              "exit": 0
+            },
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/server",
+              "exit": 0
+            },
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/legacy-api",
+              "exit": 0
+            },
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/database",
+              "exit": 0
+            }
+          ]
+        }
+      },
+      "pins": {
+        "core": "0.1.0-beta.15",
+        "typescript": "0.1.0-beta.15",
+        "cli": "0.1.0-beta.16",
+        "oxlint": "0.1.0-beta.16",
+        "campaigns": "0.1.1-beta.5"
+      },
+      "overlay": {
+        "from": "ece6748",
+        "fromSha": "ece6748",
+        "overlayBase": "00f59e7",
+        "base": "db9402d763088a66865115be48d15bad7ad4b9b0",
+        "changed": ".../strangle-hapi/mirror-before-write.json         |  25 ++++\n .architecture-campaigns/strangle-hapi/plan.json    |   8 +-\n .../strangle-hapi/shared-state-split.json          |  25 ++++\n architecture.yaml                                  | 153 ++++++++++++++++++++-\n campaigns/strangle-hapi.mjs                        |  90 ++++++++++++\n package.json                                       |   6 +-\n pnpm-lock.yaml                                     |  34 ++---\n 7 files changed, 315 insertions(+), 26 deletions(-)",
+        "clear": "strangle-hapi/no-cross-module-reach: nothing to clear; 6 holdouts left.\nstrangle-hapi/no-role-checks-in-routes: nothing to clear; 2 holdouts left.\nstrangle-hapi/has-nest-module: nothing to clear; 1 holdout left.\nstrangle-hapi/no-hapi-routes: nothing to clear; 0 holdouts left.\nstrangle-hapi/no-hapi-models: nothing to clear; 0 holdouts left.\nstrangle-hapi/no-hapi-files: nothing to clear; 0 holdouts left.\nstrangle-hapi/has-internal-write-api: nothing to clear; 0 holdouts left.\nstrangle-hapi/writes-not-mirrored: nothing to clear; 0 holdouts left.\nstrangle-hapi/has-nest-endpoints: nothing to clear; 0 holdouts left.\nstrangle-hapi/routes-still-local: nothing to clear; 3 holdouts left.\nstrangle-hapi/legacy-writes: nothing to clear; 4 holdouts left.\nstrangle-hapi/mirror-before-write: 2 sectors entered (billing, todo); 0 holdouts left.\nstrangle-hapi/shared-state-split: 2 sectors entered (billing, todo); 0 holdouts left.\nstrangle-hapi/legacy-table-dropped: nothing to clear; 0 holdouts left.\nstrangle-hapi/hapi-lines: nothing to clear; held to 3611.\n"
+      },
+      "diffStat": "packages/contracts/openapi.json                    | 116 +++++++++++++++++++++\n packages/contracts/src/api/BillingContract.ts      |  14 +++\n packages/contracts/src/generated/api.ts            |  83 +++++++++++++++\n .../src/application/billing/billing-routes.ts      |  12 +++\n 4 files changed, 225 insertions(+)",
+      "finished": "2026-10-06T18:29:16.067Z"
+    },
+    {
+      "id": "F3",
+      "kind": "fault",
+      "branch": "billing-data-moved",
+      "head": "4a572ee",
+      "started": "2026-10-06T18:29:16.306Z",
+      "steps": [
+        {
+          "step": "contracts build",
+          "cmd": "pnpm -s -F @org/contracts build",
+          "exit": 0,
+          "ms": 1656
+        }
+      ],
+      "gates": {
+        "G1": {
+          "exit": 1,
+          "ms": 1741
+        },
+        "G2": {
+          "exit": 1,
+          "ms": 1055
+        },
+        "G3": {
+          "exit": 1,
+          "ms": 1047
+        },
+        "G4": {
+          "exit": 1,
+          "ms": 2978
+        },
+        "G5": {
+          "exit": 0,
+          "ms": 8512
+        },
+        "G6": {
+          "exit": 0,
+          "ms": 18001
+        },
+        "G7": {
+          "exit": 0,
+          "ms": 26423,
+          "parts": [
+            {
+              "cmd": "pnpm -s -F @org/legacy-api db:reset:test",
+              "exit": 0
+            },
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/server",
+              "exit": 0
+            },
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/legacy-api",
+              "exit": 0
+            },
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/database",
+              "exit": 0
+            }
+          ]
+        }
+      },
+      "pins": {
+        "core": "0.1.0-beta.15",
+        "typescript": "0.1.0-beta.15",
+        "cli": "0.1.0-beta.16",
+        "oxlint": "0.1.0-beta.16",
+        "campaigns": "0.1.1-beta.5"
+      },
+      "overlay": {
+        "from": "ece6748",
+        "fromSha": "ece6748",
+        "overlayBase": "00f59e7",
+        "base": "50da72165cdd3be1e00610b4352054bfd8166320",
+        "changed": ".../strangle-hapi/mirror-before-write.json         |  25 ++++\n .architecture-campaigns/strangle-hapi/plan.json    |   8 +-\n .../strangle-hapi/shared-state-split.json          |  25 ++++\n architecture.yaml                                  | 153 ++++++++++++++++++++-\n campaigns/strangle-hapi.mjs                        |  90 ++++++++++++\n package.json                                       |   6 +-\n pnpm-lock.yaml                                     |  34 ++---\n 7 files changed, 315 insertions(+), 26 deletions(-)",
+        "clear": "strangle-hapi/no-cross-module-reach: nothing to clear; 6 holdouts left.\nstrangle-hapi/no-role-checks-in-routes: nothing to clear; 2 holdouts left.\nstrangle-hapi/has-nest-module: nothing to clear; 1 holdout left.\nstrangle-hapi/no-hapi-routes: nothing to clear; 0 holdouts left.\nstrangle-hapi/no-hapi-models: nothing to clear; 0 holdouts left.\nstrangle-hapi/no-hapi-files: nothing to clear; 0 holdouts left.\nstrangle-hapi/has-internal-write-api: nothing to clear; 0 holdouts left.\nstrangle-hapi/writes-not-mirrored: nothing to clear; 0 holdouts left.\nstrangle-hapi/has-nest-endpoints: nothing to clear; 0 holdouts left.\nstrangle-hapi/routes-still-local: nothing to clear; 0 holdouts left.\nstrangle-hapi/legacy-writes: nothing to clear; 0 holdouts left.\nstrangle-hapi/mirror-before-write: 2 sectors entered (billing, todo); 0 holdouts left.\nstrangle-hapi/shared-state-split: 2 sectors entered (billing, todo); 0 holdouts left.\nstrangle-hapi/legacy-table-dropped: nothing to clear; 0 holdouts left.\nstrangle-hapi/hapi-lines: nothing to clear; held to 2870.\n"
+      },
+      "diffStat": ".../src/application/billing/subscription-model.ts      | 18 ++++++++++++++++++\n packages/legacy-api/src/application/models.ts          |  2 ++\n 2 files changed, 20 insertions(+)",
+      "finished": "2026-10-06T18:30:23.457Z"
+    },
+    {
+      "id": "F4",
+      "kind": "fault",
+      "branch": "billing-backfill",
+      "head": "90c2a22",
+      "started": "2026-10-06T18:30:23.689Z",
+      "steps": [
+        {
+          "step": "contracts build",
+          "cmd": "pnpm -s -F @org/contracts build",
+          "exit": 0,
+          "ms": 1426
+        }
+      ],
+      "gates": {
+        "G1": {
+          "exit": 1,
+          "ms": 1583
+        },
+        "G2": {
+          "exit": 1,
+          "ms": 985
+        },
+        "G3": {
+          "exit": 1,
+          "ms": 975
+        },
+        "G4": {
+          "exit": 0,
+          "ms": 2896
+        },
+        "G5": {
+          "exit": 0,
+          "ms": 8225
+        },
+        "G6": {
+          "exit": 0,
+          "ms": 16725
+        },
+        "G7": {
+          "exit": 0,
+          "ms": 27789,
+          "parts": [
+            {
+              "cmd": "pnpm -s -F @org/legacy-api db:reset:test",
+              "exit": 0
+            },
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/server",
+              "exit": 0
+            },
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/legacy-api",
+              "exit": 0
+            },
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/database",
+              "exit": 0
+            }
+          ]
+        }
+      },
+      "pins": {
+        "core": "0.1.0-beta.15",
+        "typescript": "0.1.0-beta.15",
+        "cli": "0.1.0-beta.16",
+        "oxlint": "0.1.0-beta.16",
+        "campaigns": "0.1.1-beta.5"
+      },
+      "overlay": {
+        "from": "ece6748",
+        "fromSha": "ece6748",
+        "overlayBase": "00f59e7",
+        "base": "f93dac1ac72cb4e6409fbb005d7e30c977b7e750",
+        "changed": ".../strangle-hapi/mirror-before-write.json         |  25 ++++\n .architecture-campaigns/strangle-hapi/plan.json    |   8 +-\n .../strangle-hapi/shared-state-split.json          |  17 +++\n architecture.yaml                                  | 153 ++++++++++++++++++++-\n campaigns/strangle-hapi.mjs                        |  90 ++++++++++++\n package.json                                       |   6 +-\n pnpm-lock.yaml                                     |  34 ++---\n 7 files changed, 307 insertions(+), 26 deletions(-)",
+        "clear": "strangle-hapi/no-cross-module-reach: nothing to clear; 6 holdouts left.\nstrangle-hapi/no-role-checks-in-routes: nothing to clear; 2 holdouts left.\nstrangle-hapi/has-nest-module: nothing to clear; 1 holdout left.\nstrangle-hapi/no-hapi-routes: nothing to clear; 0 holdouts left.\nstrangle-hapi/no-hapi-models: nothing to clear; 0 holdouts left.\nstrangle-hapi/no-hapi-files: nothing to clear; 0 holdouts left.\nstrangle-hapi/has-internal-write-api: nothing to clear; 0 holdouts left.\nstrangle-hapi/writes-not-mirrored: nothing to clear; 0 holdouts left.\nstrangle-hapi/has-nest-endpoints: nothing to clear; 0 holdouts left.\nstrangle-hapi/routes-still-local: nothing to clear; 0 holdouts left.\nstrangle-hapi/legacy-writes: nothing to clear; 0 holdouts left.\nstrangle-hapi/mirror-before-write: 2 sectors entered (billing, todo); 0 holdouts left.\nstrangle-hapi/shared-state-split: 1 sector entered (todo); 0 holdouts left.\nstrangle-hapi/legacy-table-dropped: nothing to clear; 0 holdouts left.\nstrangle-hapi/hapi-lines: nothing to clear; held to 3551.\n"
+      },
+      "diffStat": "packages/database/src/row-schemas/legacy-access.ts |  7 +++\n .../src/application/billing/billing-routes.ts      | 14 ++---\n .../src/application/billing/billing-service.ts     |  8 ---\n .../src/lib/backend-client/proxy-to-nest.ts        | 56 +++++++++++++++++\n .../billing/billing-routes.integration.test.ts     | 50 +++++++---------\n .../legacy-api/test/helpers/fake-wallet-server.ts  | 19 +++++-\n .../src/modules/billing/billing.handlers.test.ts   |  5 ++\n .../server/src/modules/billing/billing.module.ts   | 15 +++++\n .../server/src/modules/billing/billing.platform.ts |  3 +\n .../src/modules/billing/billing.query-handlers.ts  | 14 +++++\n .../domain/ports/acl/organization-access.acl.ts    | 19 ++++++\n .../billing/domain/ports/acl/platform-roles.acl.ts |  8 +++\n .../acl/organization-access.acl-fake.ts            | 36 +++++++++++\n ...rganization-access.acl-live.integration.test.ts | 63 +++++++++++++++++++\n .../acl/organization-access.acl-live.ts            | 51 ++++++++++++++++\n .../infrastructure/acl/platform-roles.acl-fake.ts  | 15 +++++\n .../platform-roles.acl-live.integration.test.ts    | 39 ++++++++++++\n .../infrastructure/acl/platform-roles.acl-live.ts  | 30 ++++++++++\n ...rrent-subscription.endpoint.integration.test.ts | 70 ++++++++++++++++++++++\n .../http/get-current-subscription.endpoint.ts      | 57 ++++++++++++++++++\n .../src/modules/billing/interface/http/index.ts    |  2 +\n .../billing/policies/billing.policies.test.ts      | 51 ++++++++++++++++\n .../modules/billing/policies/billing.policies.ts   | 41 +++++++++++++\n .../billing/policies/billing.resource-resolver.ts  | 21 +++++++\n .../policies/is-billing-org-admin.policy.test.ts   | 41 +++++++++++++\n .../policies/is-billing-org-admin.policy.ts        | 11 ++++\n .../policies/is-billing-org-member.policy.test.ts  | 35 +++++++++++\n .../policies/is-billing-org-member.policy.ts       |  9 +++\n .../policies/is-billing-super-admin.policy.ts      | 11 ++++\n ...ion-by-organization.handler.integration.test.ts | 67 +++++++++++++++++++++\n .../find-subscription-by-organization.handler.ts   | 37 ++++++++++++\n .../find-subscription-by-organization.query.ts     | 28 +++++++++\n packages/server/src/platform/cqrs/cqrs-runtime.ts  | 12 +++-\n .../server/src/platform/modules/authz.module.ts    | 21 +++++--\n packages/server/src/test-utils/test-legacy-rows.ts | 12 ++++\n 35 files changed, 926 insertions(+), 52 deletions(-)",
+      "finished": "2026-10-06T18:31:29.366Z"
+    },
+    {
+      "id": "F5",
+      "kind": "fault",
+      "branch": "billing-serve-writes-nest",
+      "head": "41fc2e8",
+      "started": "2026-10-06T18:31:29.594Z",
+      "steps": [
+        {
+          "step": "contracts build",
+          "cmd": "pnpm -s -F @org/contracts build",
+          "exit": 0,
+          "ms": 599
+        }
+      ],
+      "gates": {
+        "G1": {
+          "exit": 1,
+          "ms": 1631
+        },
+        "G2": {
+          "exit": 1,
+          "ms": 991
+        },
+        "G3": {
+          "exit": 1,
+          "ms": 1001
+        },
+        "G4": {
+          "exit": 1,
+          "ms": 2957
+        },
+        "G5": {
+          "exit": 0,
+          "ms": 6456
+        },
+        "G6": {
+          "exit": 0,
+          "ms": 18625
+        },
+        "G7": {
+          "exit": 0,
+          "ms": 31560,
+          "parts": [
+            {
+              "cmd": "pnpm -s -F @org/legacy-api db:reset:test",
+              "exit": 0
+            },
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/server",
+              "exit": 0
+            },
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/legacy-api",
+              "exit": 0
+            },
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/database",
+              "exit": 0
+            }
+          ]
+        }
+      },
+      "pins": {
+        "core": "0.1.0-beta.15",
+        "typescript": "0.1.0-beta.15",
+        "cli": "0.1.0-beta.16",
+        "oxlint": "0.1.0-beta.16",
+        "campaigns": "0.1.1-beta.5"
+      },
+      "overlay": {
+        "from": "ece6748",
+        "fromSha": "ece6748",
+        "overlayBase": "00f59e7",
+        "base": "dd3383991f0fddbcbcbaac1dfd7cd8aa8fe3cad1",
+        "changed": ".../strangle-hapi/mirror-before-write.json         |  25 ++++\n .architecture-campaigns/strangle-hapi/plan.json    |   8 +-\n .../strangle-hapi/shared-state-split.json          |  25 ++++\n architecture.yaml                                  | 153 ++++++++++++++++++++-\n campaigns/strangle-hapi.mjs                        |  90 ++++++++++++\n package.json                                       |   6 +-\n pnpm-lock.yaml                                     |  34 ++---\n 7 files changed, 315 insertions(+), 26 deletions(-)",
+        "clear": "strangle-hapi/no-cross-module-reach: nothing to clear; 6 holdouts left.\nstrangle-hapi/no-role-checks-in-routes: nothing to clear; 2 holdouts left.\nstrangle-hapi/has-nest-module: nothing to clear; 1 holdout left.\nstrangle-hapi/no-hapi-routes: nothing to clear; 0 holdouts left.\nstrangle-hapi/no-hapi-models: nothing to clear; 0 holdouts left.\nstrangle-hapi/no-hapi-files: nothing to clear; 0 holdouts left.\nstrangle-hapi/has-internal-write-api: nothing to clear; 0 holdouts left.\nstrangle-hapi/writes-not-mirrored: nothing to clear; 0 holdouts left.\nstrangle-hapi/has-nest-endpoints: nothing to clear; 0 holdouts left.\nstrangle-hapi/routes-still-local: nothing to clear; 3 holdouts left.\nstrangle-hapi/legacy-writes: nothing to clear; 4 holdouts left.\nstrangle-hapi/mirror-before-write: 2 sectors entered (billing, todo); 0 holdouts left.\nstrangle-hapi/shared-state-split: 2 sectors entered (billing, todo); 0 holdouts left.\nstrangle-hapi/legacy-table-dropped: nothing to clear; 0 holdouts left.\nstrangle-hapi/hapi-lines: nothing to clear; held to 3611.\n"
+      },
+      "diffStat": ".../src/application/billing/billing-routes.ts      |  11 +-\n .../application/billing/billing-service.spec.ts    |  62 -----------\n .../src/application/billing/billing-service.ts     |  42 -------\n .../billing/billing-routes.integration.test.ts     | 123 +++++++--------------\n 4 files changed, 43 insertions(+), 195 deletions(-)",
+      "finished": "2026-10-06T18:32:38.630Z"
+    },
+    {
+      "id": "F6",
+      "kind": "fault",
+      "branch": "billing-mirror-start",
+      "head": "77a9d70",
+      "started": "2026-10-06T18:32:38.860Z",
+      "steps": [
+        {
+          "step": "contracts build",
+          "cmd": "pnpm -s -F @org/contracts build",
+          "exit": 0,
+          "ms": 1448
+        }
+      ],
+      "gates": {
+        "G1": {
+          "exit": 0,
+          "ms": 1535
+        },
+        "G2": {
+          "exit": 0,
+          "ms": 1024
+        },
+        "G3": {
+          "exit": 1,
+          "ms": 955
+        },
+        "G4": {
+          "exit": 1,
+          "ms": 2875
+        },
+        "G5": {
+          "exit": 0,
+          "ms": 7762
+        },
+        "G6": {
+          "exit": 0,
+          "ms": 15624
+        },
+        "G7": {
+          "exit": 0,
+          "ms": 23335,
+          "parts": [
+            {
+              "cmd": "pnpm -s -F @org/legacy-api db:reset:test",
+              "exit": 0
+            },
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/server",
+              "exit": 0
+            },
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/legacy-api",
+              "exit": 0
+            },
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/database",
+              "exit": 0
+            }
+          ]
+        }
+      },
+      "pins": {
+        "core": "0.1.0-beta.15",
+        "typescript": "0.1.0-beta.15",
+        "cli": "0.1.0-beta.16",
+        "oxlint": "0.1.0-beta.16",
+        "campaigns": "0.1.1-beta.5"
+      },
+      "overlay": {
+        "from": "ece6748",
+        "fromSha": "ece6748",
+        "overlayBase": "00f59e7",
+        "base": "291c418edaf4b41c80f05e6af63e6be91508461e",
+        "changed": ".../strangle-hapi/mirror-before-write.json         |  25 ++++\n .architecture-campaigns/strangle-hapi/plan.json    |   8 +-\n .../strangle-hapi/shared-state-split.json          |  17 +++\n architecture.yaml                                  | 153 ++++++++++++++++++++-\n campaigns/strangle-hapi.mjs                        |  90 ++++++++++++\n package.json                                       |   6 +-\n pnpm-lock.yaml                                     |  34 ++---\n 7 files changed, 307 insertions(+), 26 deletions(-)",
+        "clear": "strangle-hapi/no-cross-module-reach: nothing to clear; 6 holdouts left.\nstrangle-hapi/no-role-checks-in-routes: nothing to clear; 2 holdouts left.\nstrangle-hapi/has-nest-module: nothing to clear; 1 holdout left.\nstrangle-hapi/no-hapi-routes: nothing to clear; 0 holdouts left.\nstrangle-hapi/no-hapi-models: nothing to clear; 0 holdouts left.\nstrangle-hapi/no-hapi-files: nothing to clear; 0 holdouts left.\nstrangle-hapi/has-internal-write-api: nothing to clear; 0 holdouts left.\nstrangle-hapi/writes-not-mirrored: nothing to clear; 3 holdouts left.\nstrangle-hapi/has-nest-endpoints: nothing to clear; 0 holdouts left.\nstrangle-hapi/routes-still-local: nothing to clear; 0 holdouts left.\nstrangle-hapi/legacy-writes: nothing to clear; 0 holdouts left.\nstrangle-hapi/mirror-before-write: 2 sectors entered (billing, todo); 0 holdouts left.\nstrangle-hapi/shared-state-split: 1 sector entered (todo); 0 holdouts left.\nstrangle-hapi/legacy-table-dropped: nothing to clear; 0 holdouts left.\nstrangle-hapi/hapi-lines: nothing to clear; held to 3478.\n"
+      },
+      "diffStat": "packages/legacy-api/src/application/billing/billing-service.ts | 2 +-\n 1 file changed, 1 insertion(+), 1 deletion(-)",
+      "finished": "2026-10-06T18:33:38.334Z"
+    },
+    {
+      "id": "F7",
+      "kind": "fault",
+      "branch": "billing-serve-read",
+      "head": "0fa988d",
+      "started": "2026-10-06T18:33:38.584Z",
+      "steps": [
+        {
+          "step": "contracts build",
+          "cmd": "pnpm -s -F @org/contracts build",
+          "exit": 0,
+          "ms": 1458
+        },
+        {
+          "step": "clear",
+          "cmd": "pnpm -s campaigns:clear",
+          "exit": 0,
+          "ms": 937,
+          "stdout": "strangle-hapi/no-cross-module-reach: nothing to clear; 6 holdouts left.\nstrangle-hapi/no-role-checks-in-routes: nothing to clear; 2 holdouts left.\nstrangle-hapi/has-nest-module: nothing to clear; 1 holdout left.\nstrangle-hapi/no-hapi-routes: nothing to clear; 0 holdouts left.\nstrangle-hapi/no-hapi-models: nothing to clear; 0 holdouts left.\nstrangle-hapi/no-hapi-files: nothing to clear; 0 holdouts left.\nstrangle-hapi/has-internal-write-api: nothing to clear; 0 holdouts left.\nstrangle-hapi/writes-not-mirrored: nothing to clear; 0 holdouts left.\nstrangle-hapi/has-nest-endpoints: nothing to clear; 0 holdouts left.\nstrangle-hapi/routes-still-local: nothing to clear; 3 holdouts left.\nstrangle-hapi/legacy-writes: nothing to clear; 4 holdouts left.\nstrangle-hapi/mirror-before-write: nothing to clear; 0 holdouts left.\nstrangle-hapi/shared-state-split: nothing to clear; 0 holdouts left.\nstrangle-hapi/legacy-table-dropped: nothing to clear; 0 holdouts left.\nstrangle-hapi/hapi-lines: nothing to clear; held to 3611.\nstrangle-hapi: billing went back served \u2192 fenced.\n"
+        },
+        {
+          "step": "ledger diff after clear",
+          "cmd": "git diff HEAD -- .architecture-campaigns",
+          "exit": 0,
+          "ms": 193,
+          "stdout": ""
+        }
+      ],
+      "gates": {
+        "G1": {
+          "exit": 1,
+          "ms": 1559
+        },
+        "G2": {
+          "exit": 1,
+          "ms": 993
+        },
+        "G3": {
+          "exit": 1,
+          "ms": 994
+        },
+        "G4": {
+          "exit": 1,
+          "ms": 2959
+        },
+        "G5": {
+          "exit": 0,
+          "ms": 7931
+        },
+        "G6": {
+          "exit": 0,
+          "ms": 16835
+        },
+        "G7": {
+          "exit": 0,
+          "ms": 28002,
+          "parts": [
+            {
+              "cmd": "pnpm -s -F @org/legacy-api db:reset:test",
+              "exit": 0
+            },
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/server",
+              "exit": 0
+            },
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/legacy-api",
+              "exit": 0
+            },
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/database",
+              "exit": 0
+            }
+          ]
+        }
+      },
+      "pins": {
+        "core": "0.1.0-beta.15",
+        "typescript": "0.1.0-beta.15",
+        "cli": "0.1.0-beta.16",
+        "oxlint": "0.1.0-beta.16",
+        "campaigns": "0.1.1-beta.5"
+      },
+      "overlay": {
+        "from": "ece6748",
+        "fromSha": "ece6748",
+        "overlayBase": "00f59e7",
+        "base": "836eb2a4cc70f0545b105307e8c8a5642bf859a4",
+        "changed": ".../strangle-hapi/mirror-before-write.json         |  25 ++++\n .architecture-campaigns/strangle-hapi/plan.json    |   8 +-\n .../strangle-hapi/shared-state-split.json          |  25 ++++\n architecture.yaml                                  | 153 ++++++++++++++++++++-\n campaigns/strangle-hapi.mjs                        |  90 ++++++++++++\n package.json                                       |   6 +-\n pnpm-lock.yaml                                     |  34 ++---\n 7 files changed, 315 insertions(+), 26 deletions(-)",
+        "clear": "strangle-hapi/no-cross-module-reach: nothing to clear; 6 holdouts left.\nstrangle-hapi/no-role-checks-in-routes: nothing to clear; 2 holdouts left.\nstrangle-hapi/has-nest-module: nothing to clear; 1 holdout left.\nstrangle-hapi/no-hapi-routes: nothing to clear; 0 holdouts left.\nstrangle-hapi/no-hapi-models: nothing to clear; 0 holdouts left.\nstrangle-hapi/no-hapi-files: nothing to clear; 0 holdouts left.\nstrangle-hapi/has-internal-write-api: nothing to clear; 0 holdouts left.\nstrangle-hapi/writes-not-mirrored: nothing to clear; 0 holdouts left.\nstrangle-hapi/has-nest-endpoints: nothing to clear; 0 holdouts left.\nstrangle-hapi/routes-still-local: nothing to clear; 3 holdouts left.\nstrangle-hapi/legacy-writes: nothing to clear; 4 holdouts left.\nstrangle-hapi/mirror-before-write: 2 sectors entered (billing, todo); 0 holdouts left.\nstrangle-hapi/shared-state-split: 2 sectors entered (billing, todo); 0 holdouts left.\nstrangle-hapi/legacy-table-dropped: nothing to clear; 0 holdouts left.\nstrangle-hapi/hapi-lines: nothing to clear; held to 3611.\n"
+      },
+      "diffStat": ".../src/application/billing/billing-service.ts       | 20 ++++++++++++++++++--\n 1 file changed, 18 insertions(+), 2 deletions(-)",
+      "finished": "2026-10-06T18:34:45.389Z"
+    },
+    {
+      "id": "F8",
+      "kind": "fault",
+      "branch": "billing-retire-internal",
+      "head": "cf4b2fd",
+      "started": "2026-10-06T18:34:45.609Z",
+      "steps": [
+        {
+          "step": "contracts build",
+          "cmd": "pnpm -s -F @org/contracts build",
+          "exit": 0,
+          "ms": 1433
+        }
+      ],
+      "gates": {
+        "G1": {
+          "exit": 1,
+          "ms": 1591
+        },
+        "G2": {
+          "exit": 1,
+          "ms": 970
+        },
+        "G3": {
+          "exit": 1,
+          "ms": 976
+        },
+        "G4": {
+          "exit": 1,
+          "ms": 2838
+        },
+        "G5": {
+          "exit": 0,
+          "ms": 7857
+        },
+        "G6": {
+          "exit": 0,
+          "ms": 17599
+        },
+        "G7": {
+          "exit": 0,
+          "ms": 28234,
+          "parts": [
+            {
+              "cmd": "pnpm -s -F @org/legacy-api db:reset:test",
+              "exit": 0
+            },
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/server",
+              "exit": 0
+            },
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/legacy-api",
+              "exit": 0
+            },
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/database",
+              "exit": 0
+            }
+          ]
+        }
+      },
+      "pins": {
+        "core": "0.1.0-beta.15",
+        "typescript": "0.1.0-beta.15",
+        "cli": "0.1.0-beta.16",
+        "oxlint": "0.1.0-beta.16",
+        "campaigns": "0.1.1-beta.5"
+      },
+      "overlay": {
+        "from": "ece6748",
+        "fromSha": "ece6748",
+        "overlayBase": "00f59e7",
+        "base": "40e343373cded093b446b5b519a64c42070c8d32",
+        "changed": ".../strangle-hapi/mirror-before-write.json         |  25 ++++\n .architecture-campaigns/strangle-hapi/plan.json    |   8 +-\n .../strangle-hapi/shared-state-split.json          |  25 ++++\n architecture.yaml                                  | 153 ++++++++++++++++++++-\n campaigns/strangle-hapi.mjs                        |  90 ++++++++++++\n package.json                                       |   6 +-\n pnpm-lock.yaml                                     |  34 ++---\n 7 files changed, 315 insertions(+), 26 deletions(-)",
+        "clear": "strangle-hapi/no-cross-module-reach: nothing to clear; 6 holdouts left.\nstrangle-hapi/no-role-checks-in-routes: nothing to clear; 2 holdouts left.\nstrangle-hapi/has-nest-module: nothing to clear; 1 holdout left.\nstrangle-hapi/no-hapi-routes: nothing to clear; 1 holdout left.\nstrangle-hapi/no-hapi-models: nothing to clear; 0 holdouts left.\nstrangle-hapi/no-hapi-files: nothing to clear; 0 holdouts left.\nstrangle-hapi/has-internal-write-api: nothing to clear; 0 holdouts left.\nstrangle-hapi/writes-not-mirrored: nothing to clear; 0 holdouts left.\nstrangle-hapi/has-nest-endpoints: nothing to clear; 0 holdouts left.\nstrangle-hapi/routes-still-local: nothing to clear; 0 holdouts left.\nstrangle-hapi/legacy-writes: nothing to clear; 0 holdouts left.\nstrangle-hapi/mirror-before-write: 2 sectors entered (billing, todo); 0 holdouts left.\nstrangle-hapi/shared-state-split: 2 sectors entered (billing, todo); 0 holdouts left.\nstrangle-hapi/legacy-table-dropped: nothing to clear; 0 holdouts left.\nstrangle-hapi/hapi-lines: nothing to clear; held to 2970.\n"
+      },
+      "diffStat": ".../src/application/billing/billing-service.ts     | 37 ++++++++++++++++++++++\n 1 file changed, 37 insertions(+)",
+      "finished": "2026-10-06T18:35:52.188Z"
+    },
+    {
+      "id": "F9",
+      "kind": "fault",
+      "branch": "billing-serve-writes-nest",
+      "head": "41fc2e8",
+      "started": "2026-10-06T18:35:52.399Z",
+      "steps": [
+        {
+          "step": "contracts build",
+          "cmd": "pnpm -s -F @org/contracts build",
+          "exit": 0,
+          "ms": 1384
+        }
+      ],
+      "gates": {
+        "G1": {
+          "exit": 0,
+          "ms": 1650
+        },
+        "G2": {
+          "exit": 0,
+          "ms": 1004
+        },
+        "G3": {
+          "exit": 1,
+          "ms": 1006
+        },
+        "G4": {
+          "exit": 1,
+          "ms": 2924
+        },
+        "G5": {
+          "exit": 1,
+          "ms": 3870
+        },
+        "G6": {
+          "exit": 0,
+          "ms": 17794
+        },
+        "G7": {
+          "exit": 0,
+          "ms": 29199,
+          "parts": [
+            {
+              "cmd": "pnpm -s -F @org/legacy-api db:reset:test",
+              "exit": 0
+            },
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/server",
+              "exit": 0
+            },
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/legacy-api",
+              "exit": 0
+            },
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/database",
+              "exit": 0
+            }
+          ]
+        }
+      },
+      "pins": {
+        "core": "0.1.0-beta.15",
+        "typescript": "0.1.0-beta.15",
+        "cli": "0.1.0-beta.16",
+        "oxlint": "0.1.0-beta.16",
+        "campaigns": "0.1.1-beta.5"
+      },
+      "overlay": {
+        "from": "ece6748",
+        "fromSha": "ece6748",
+        "overlayBase": "00f59e7",
+        "base": "f50002e9fcc794262b37cbd24a728b00d59211dc",
+        "changed": ".../strangle-hapi/mirror-before-write.json         |  25 ++++\n .architecture-campaigns/strangle-hapi/plan.json    |   8 +-\n .../strangle-hapi/shared-state-split.json          |  25 ++++\n architecture.yaml                                  | 153 ++++++++++++++++++++-\n campaigns/strangle-hapi.mjs                        |  90 ++++++++++++\n package.json                                       |   6 +-\n pnpm-lock.yaml                                     |  34 ++---\n 7 files changed, 315 insertions(+), 26 deletions(-)",
+        "clear": "strangle-hapi/no-cross-module-reach: nothing to clear; 6 holdouts left.\nstrangle-hapi/no-role-checks-in-routes: nothing to clear; 2 holdouts left.\nstrangle-hapi/has-nest-module: nothing to clear; 1 holdout left.\nstrangle-hapi/no-hapi-routes: nothing to clear; 0 holdouts left.\nstrangle-hapi/no-hapi-models: nothing to clear; 0 holdouts left.\nstrangle-hapi/no-hapi-files: nothing to clear; 0 holdouts left.\nstrangle-hapi/has-internal-write-api: nothing to clear; 0 holdouts left.\nstrangle-hapi/writes-not-mirrored: nothing to clear; 0 holdouts left.\nstrangle-hapi/has-nest-endpoints: nothing to clear; 0 holdouts left.\nstrangle-hapi/routes-still-local: nothing to clear; 3 holdouts left.\nstrangle-hapi/legacy-writes: nothing to clear; 4 holdouts left.\nstrangle-hapi/mirror-before-write: 2 sectors entered (billing, todo); 0 holdouts left.\nstrangle-hapi/shared-state-split: 2 sectors entered (billing, todo); 0 holdouts left.\nstrangle-hapi/legacy-table-dropped: nothing to clear; 0 holdouts left.\nstrangle-hapi/hapi-lines: nothing to clear; held to 3611.\n"
+      },
+      "diffStat": ".../server/src/modules/billing/commands/start-subscription.handler.ts  | 3 ++-\n 1 file changed, 2 insertions(+), 1 deletion(-)",
+      "finished": "2026-10-06T18:36:56.034Z"
+    },
+    {
+      "id": "F10",
+      "kind": "fault",
+      "branch": "billing-serve-writes-nest",
+      "head": "41fc2e8",
+      "started": "2026-10-06T18:36:56.247Z",
+      "steps": [
+        {
+          "step": "contracts build",
+          "cmd": "pnpm -s -F @org/contracts build",
+          "exit": 0,
+          "ms": 574
+        }
+      ],
+      "gates": {
+        "G1": {
+          "exit": 0,
+          "ms": 1607
+        },
+        "G2": {
+          "exit": 0,
+          "ms": 1007
+        },
+        "G3": {
+          "exit": 0,
+          "ms": 1010
+        },
+        "G4": {
+          "exit": 0,
+          "ms": 2923
+        },
+        "G5": {
+          "exit": 0,
+          "ms": 6219
+        },
+        "G6": {
+          "exit": 0,
+          "ms": 18931
+        },
+        "G7": {
+          "exit": 0,
+          "ms": 31585,
+          "parts": [
+            {
+              "cmd": "pnpm -s -F @org/legacy-api db:reset:test",
+              "exit": 0
+            },
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/server",
+              "exit": 0
+            },
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/legacy-api",
+              "exit": 0
+            },
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/database",
+              "exit": 0
+            }
+          ]
+        }
+      },
+      "pins": {
+        "core": "0.1.0-beta.15",
+        "typescript": "0.1.0-beta.15",
+        "cli": "0.1.0-beta.16",
+        "oxlint": "0.1.0-beta.16",
+        "campaigns": "0.1.1-beta.5"
+      },
+      "overlay": {
+        "from": "ece6748",
+        "fromSha": "ece6748",
+        "overlayBase": "00f59e7",
+        "base": "484288776281cbdb4f17a9f4bd26c72cf3528df9",
+        "changed": ".../strangle-hapi/mirror-before-write.json         |  25 ++++\n .architecture-campaigns/strangle-hapi/plan.json    |   8 +-\n .../strangle-hapi/shared-state-split.json          |  25 ++++\n architecture.yaml                                  | 153 ++++++++++++++++++++-\n campaigns/strangle-hapi.mjs                        |  90 ++++++++++++\n package.json                                       |   6 +-\n pnpm-lock.yaml                                     |  34 ++---\n 7 files changed, 315 insertions(+), 26 deletions(-)",
+        "clear": "strangle-hapi/no-cross-module-reach: nothing to clear; 6 holdouts left.\nstrangle-hapi/no-role-checks-in-routes: nothing to clear; 2 holdouts left.\nstrangle-hapi/has-nest-module: nothing to clear; 1 holdout left.\nstrangle-hapi/no-hapi-routes: nothing to clear; 0 holdouts left.\nstrangle-hapi/no-hapi-models: nothing to clear; 0 holdouts left.\nstrangle-hapi/no-hapi-files: nothing to clear; 0 holdouts left.\nstrangle-hapi/has-internal-write-api: nothing to clear; 0 holdouts left.\nstrangle-hapi/writes-not-mirrored: nothing to clear; 0 holdouts left.\nstrangle-hapi/has-nest-endpoints: nothing to clear; 0 holdouts left.\nstrangle-hapi/routes-still-local: nothing to clear; 3 holdouts left.\nstrangle-hapi/legacy-writes: nothing to clear; 4 holdouts left.\nstrangle-hapi/mirror-before-write: 2 sectors entered (billing, todo); 0 holdouts left.\nstrangle-hapi/shared-state-split: 2 sectors entered (billing, todo); 0 holdouts left.\nstrangle-hapi/legacy-table-dropped: nothing to clear; 0 holdouts left.\nstrangle-hapi/hapi-lines: nothing to clear; held to 3611.\n"
+      },
+      "diffStat": ".../modules/billing/commands/record-subscription.handler.test.ts  | 8 +++++++-\n .../src/modules/billing/commands/record-subscription.handler.ts   | 4 ++++\n 2 files changed, 11 insertions(+), 1 deletion(-)",
+      "finished": "2026-10-06T18:38:04.944Z"
+    },
+    {
+      "id": "F11",
+      "kind": "fault",
+      "branch": "billing-backfill",
+      "head": "90c2a22",
+      "started": "2026-10-06T18:38:05.176Z",
+      "steps": [
+        {
+          "step": "clear",
+          "cmd": "pnpm -s campaigns:clear",
+          "exit": 0,
+          "ms": 979,
+          "stdout": "strangle-hapi/no-cross-module-reach: nothing to clear; 6 holdouts left.\nstrangle-hapi/no-role-checks-in-routes: nothing to clear; 2 holdouts left.\nstrangle-hapi/has-nest-module: nothing to clear; 1 holdout left.\nstrangle-hapi/no-hapi-routes: nothing to clear; 0 holdouts left.\nstrangle-hapi/no-hapi-models: nothing to clear; 0 holdouts left.\nstrangle-hapi/no-hapi-files: nothing to clear; 0 holdouts left.\nstrangle-hapi/has-internal-write-api: nothing to clear; 0 holdouts left.\nstrangle-hapi/writes-not-mirrored: nothing to clear; 0 holdouts left.\nstrangle-hapi/has-nest-endpoints: nothing to clear; 0 holdouts left.\nstrangle-hapi/routes-still-local: nothing to clear; 0 holdouts left.\nstrangle-hapi/legacy-writes: nothing to clear; 0 holdouts left.\nstrangle-hapi/mirror-before-write: nothing to clear; 0 holdouts left.\nstrangle-hapi/shared-state-split: nothing to clear; 0 holdouts left.\nstrangle-hapi/legacy-table-dropped: nothing to clear; 0 holdouts left.\nstrangle-hapi/hapi-lines: nothing to clear; held to 3551.\nstrangle-hapi: billing went back backfilled \u2192 mirrored.\n",
+          "stderr": ""
+        },
+        {
+          "step": "concede",
+          "cmd": "pnpm -s exec architecture objectives concede strangle-hapi/writes-not-mirrored --reason \"temporary\"",
+          "exit": 0,
+          "ms": 998,
+          "stdout": "strangle-hapi/writes-not-mirrored: 1 holdout conceded, recorded by zweidenbach@gmail.com.\n  billing \u00b7 billing-service.ts#touchSubscription#72849c2e\n\nthis concession moves billing back backfilled \u2192 mirrored.\n",
+          "stderr": ""
+        },
+        {
+          "step": "contracts build",
+          "cmd": "pnpm -s -F @org/contracts build",
+          "exit": 0,
+          "ms": 650
+        },
+        {
+          "step": "sector record",
+          "cmd": "cat .architecture-campaigns/strangle-hapi/sectors/billing.json",
+          "exit": 0,
+          "ms": 198,
+          "stdout": "{\n  \"version\": 1,\n  \"campaign\": \"strangle-hapi\",\n  \"sector\": \"billing\",\n  \"reached\": \"backfilled\",\n  \"since\": \"2026-10-05T13:57:38.568Z\",\n  \"attested\": [],\n  \"notes\": []\n}\n"
+        },
+        {
+          "step": "status --sector",
+          "cmd": "pnpm -s exec architecture campaigns status --sector billing packages",
+          "exit": 0,
+          "ms": 1001,
+          "stdout": "strangle-hapi \u00b7 billing \u2014 phase mirrored (3 of 9), reached backfilled since 2026-10-05\n  intent: Every write the legacy module takes is forwarded to the Nest module's internal API, so the Nest table fills as a replica while hapi stays the source of truth.\n  toward the next phase: writes-not-mirrored 1\n  writes-not-mirrored \u2014 1 holdout in window: Emit the module's mirror event from the same service method once the row is written; the mirror plugin forwards it to the Nest module's internal API, so the Nest table receives what hapi wrote.\n    packages/legacy-api/src/application/billing/billing-service.ts:109  touchSubscription\n  hapi-lines: 717 (held to 712, tolerance 20)\n"
+        }
+      ],
+      "gates": {
+        "G1": {
+          "exit": 0,
+          "ms": 1625
+        },
+        "G2": {
+          "exit": 0,
+          "ms": 1006
+        },
+        "G3": {
+          "exit": 0,
+          "ms": 1013
+        },
+        "G4": {
+          "exit": 0,
+          "ms": 2944
+        },
+        "G5": {
+          "exit": 0,
+          "ms": 6356
+        },
+        "G6": {
+          "exit": 0,
+          "ms": 16728
+        },
+        "G7": {
+          "exit": 0,
+          "ms": 26322,
+          "parts": [
+            {
+              "cmd": "pnpm -s -F @org/legacy-api db:reset:test",
+              "exit": 0
+            },
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/server",
+              "exit": 0
+            },
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/legacy-api",
+              "exit": 0
+            },
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/database",
+              "exit": 0
+            }
+          ]
+        }
+      },
+      "pins": {
+        "core": "0.1.0-beta.15",
+        "typescript": "0.1.0-beta.15",
+        "cli": "0.1.0-beta.16",
+        "oxlint": "0.1.0-beta.16",
+        "campaigns": "0.1.1-beta.5"
+      },
+      "overlay": {
+        "from": "ece6748",
+        "fromSha": "ece6748",
+        "overlayBase": "00f59e7",
+        "base": "a1cd4249eaa85834b854ce4c98bd1849038224c3",
+        "changed": ".../strangle-hapi/mirror-before-write.json         |  25 ++++\n .architecture-campaigns/strangle-hapi/plan.json    |   8 +-\n .../strangle-hapi/shared-state-split.json          |  17 +++\n architecture.yaml                                  | 153 ++++++++++++++++++++-\n campaigns/strangle-hapi.mjs                        |  90 ++++++++++++\n package.json                                       |   6 +-\n pnpm-lock.yaml                                     |  34 ++---\n 7 files changed, 307 insertions(+), 26 deletions(-)",
+        "clear": "strangle-hapi/no-cross-module-reach: nothing to clear; 6 holdouts left.\nstrangle-hapi/no-role-checks-in-routes: nothing to clear; 2 holdouts left.\nstrangle-hapi/has-nest-module: nothing to clear; 1 holdout left.\nstrangle-hapi/no-hapi-routes: nothing to clear; 0 holdouts left.\nstrangle-hapi/no-hapi-models: nothing to clear; 0 holdouts left.\nstrangle-hapi/no-hapi-files: nothing to clear; 0 holdouts left.\nstrangle-hapi/has-internal-write-api: nothing to clear; 0 holdouts left.\nstrangle-hapi/writes-not-mirrored: nothing to clear; 0 holdouts left.\nstrangle-hapi/has-nest-endpoints: nothing to clear; 0 holdouts left.\nstrangle-hapi/routes-still-local: nothing to clear; 0 holdouts left.\nstrangle-hapi/legacy-writes: nothing to clear; 0 holdouts left.\nstrangle-hapi/mirror-before-write: 2 sectors entered (billing, todo); 0 holdouts left.\nstrangle-hapi/shared-state-split: 1 sector entered (todo); 0 holdouts left.\nstrangle-hapi/legacy-table-dropped: nothing to clear; 0 holdouts left.\nstrangle-hapi/hapi-lines: nothing to clear; held to 3551.\n"
+      },
+      "diffStat": ".../strangle-hapi/writes-not-mirrored.json                 | 14 +++++++++++++-\n .../legacy-api/src/application/billing/billing-service.ts  |  6 ++++++\n 2 files changed, 19 insertions(+), 1 deletion(-)",
+      "finished": "2026-10-06T18:39:09.990Z"
+    },
+    {
+      "id": "F11b",
+      "kind": "fault",
+      "branch": "billing-attest",
+      "head": "3f48de7",
+      "started": "2026-10-06T18:39:10.207Z",
+      "steps": [
+        {
+          "step": "clear",
+          "cmd": "pnpm -s campaigns:clear",
+          "exit": 0,
+          "ms": 964,
+          "stdout": "strangle-hapi/no-cross-module-reach: nothing to clear; 6 holdouts left.\nstrangle-hapi/no-role-checks-in-routes: nothing to clear; 2 holdouts left.\nstrangle-hapi/has-nest-module: nothing to clear; 1 holdout left.\nstrangle-hapi/no-hapi-routes: nothing to clear; 0 holdouts left.\nstrangle-hapi/no-hapi-models: nothing to clear; 0 holdouts left.\nstrangle-hapi/no-hapi-files: nothing to clear; 0 holdouts left.\nstrangle-hapi/has-internal-write-api: nothing to clear; 0 holdouts left.\nstrangle-hapi/writes-not-mirrored: nothing to clear; 0 holdouts left.\nstrangle-hapi/has-nest-endpoints: nothing to clear; 1 holdout left.\nstrangle-hapi/routes-still-local: nothing to clear; 4 holdouts left.\nstrangle-hapi/legacy-writes: nothing to clear; 4 holdouts left.\nstrangle-hapi/mirror-before-write: nothing to clear; 0 holdouts left.\nstrangle-hapi/shared-state-split: nothing to clear; 0 holdouts left.\nstrangle-hapi/legacy-table-dropped: nothing to clear; 0 holdouts left.\nstrangle-hapi/hapi-lines: nothing to clear; held to 3551.\nstrangle-hapi: billing went back served \u2192 mirrored.\n",
+          "stderr": ""
+        },
+        {
+          "step": "concede",
+          "cmd": "pnpm -s exec architecture objectives concede strangle-hapi/mirror-before-write --reason \"temporary\"",
+          "exit": 0,
+          "ms": 923,
+          "stdout": "strangle-hapi/mirror-before-write: 1 holdout conceded, recorded by zweidenbach@gmail.com.\n  billing \u00b7 billing-service.ts#startSubscription#16aee292\n\nthis concession moves billing back served \u2192 mirrored.\nIt revokes billing's attestation of backfilled: what was attested no longer holds. Once it does again, attest it anew:\n  architecture campaigns attest billing backfilled --reason \"\u2026\" --campaign strangle-hapi\n",
+          "stderr": ""
+        },
+        {
+          "step": "contracts build",
+          "cmd": "pnpm -s -F @org/contracts build",
+          "exit": 0,
+          "ms": 595
+        },
+        {
+          "step": "sector record",
+          "cmd": "cat .architecture-campaigns/strangle-hapi/sectors/billing.json",
+          "exit": 0,
+          "ms": 172,
+          "stdout": "{\n  \"version\": 1,\n  \"campaign\": \"strangle-hapi\",\n  \"sector\": \"billing\",\n  \"reached\": \"served\",\n  \"since\": \"2026-10-05T13:59:40.628Z\",\n  \"attested\": [\n    {\n      \"phase\": \"backfilled\",\n      \"reason\": \"db:backfill:billing (commit 90c2a22) run against hapi-strangler-dev, migrated by both migrators, after every billing write was mirrored: the legacy side held 2 subscriptions and 3 claimed webhook events the replica had never received; the run upserted 2 and 3 and deleted 0, and a second run upserted the same and deleted 0.\",\n      \"at\": \"2026-10-05T13:59:39.644Z\",\n      \"by\": \"zweidenbach@gmail.com\",\n      \"revoked\": {\n        \"at\": \"2026-10-06T18:39:16.172Z\",\n        \"by\": \"zweidenbach@gmail.com\",\n        \"reason\": \"conceded mirror-before-write: temporary\"\n      }\n    }\n  ],\n  \"notes\": []\n}\n"
+        },
+        {
+          "step": "status --sector",
+          "cmd": "pnpm -s exec architecture campaigns status --sector billing packages",
+          "exit": 0,
+          "ms": 955,
+          "stdout": "strangle-hapi \u00b7 billing \u2014 phase mirrored (3 of 9), reached served since 2026-10-05\n  intent: Every write the legacy module takes is forwarded to the Nest module's internal API, so the Nest table fills as a replica while hapi stays the source of truth.\n  attested backfilled: 2026-10-05 by zweidenbach@gmail.com \u2014 db:backfill:billing (commit 90c2a22) run against hapi-strangler-dev, migrated by both migrators, after every billing write was mirrored: the legacy side held 2 subscriptions and 3 claimed webhook events the replica had never received; the run upserted 2 and 3 and deleted 0, and a second run upserted the same and deleted 0. (revoked 2026-10-06 by zweidenbach@gmail.com: conceded mirror-before-write: temporary)\n  toward the next phase: mirror-before-write 1\n  mirror-before-write \u2014 1 holdout in window: Move the mirror emit below the write it announces (after the transaction, when the write is inside one), so a failed write sends nothing to the replica.\n    packages/legacy-api/src/application/billing/billing-service.ts:95  startSubscription\n  hapi-lines: 712 (held to 712, tolerance 20)\n"
+        }
+      ],
+      "gates": {
+        "G1": {
+          "exit": 0,
+          "ms": 1560
+        },
+        "G2": {
+          "exit": 0,
+          "ms": 970
+        },
+        "G3": {
+          "exit": 0,
+          "ms": 965
+        },
+        "G4": {
+          "exit": 0,
+          "ms": 3079
+        },
+        "G5": {
+          "exit": 0,
+          "ms": 4815
+        },
+        "G6": {
+          "exit": 0,
+          "ms": 16464
+        },
+        "G7": {
+          "exit": 0,
+          "ms": 25787,
+          "parts": [
+            {
+              "cmd": "pnpm -s -F @org/legacy-api db:reset:test",
+              "exit": 0
+            },
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/server",
+              "exit": 0
+            },
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/legacy-api",
+              "exit": 0
+            },
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/database",
+              "exit": 0
+            }
+          ]
+        }
+      },
+      "pins": {
+        "core": "0.1.0-beta.15",
+        "typescript": "0.1.0-beta.15",
+        "cli": "0.1.0-beta.16",
+        "oxlint": "0.1.0-beta.16",
+        "campaigns": "0.1.1-beta.5"
+      },
+      "overlay": {
+        "from": "ece6748",
+        "fromSha": "ece6748",
+        "overlayBase": "00f59e7",
+        "base": "18c034f884b4b66f25fcfa9d04741568c76a3fa1",
+        "changed": ".../strangle-hapi/mirror-before-write.json         |  25 ++++\n .architecture-campaigns/strangle-hapi/plan.json    |   8 +-\n .../strangle-hapi/shared-state-split.json          |  25 ++++\n architecture.yaml                                  | 153 ++++++++++++++++++++-\n campaigns/strangle-hapi.mjs                        |  90 ++++++++++++\n package.json                                       |   6 +-\n pnpm-lock.yaml                                     |  34 ++---\n 7 files changed, 315 insertions(+), 26 deletions(-)",
+        "clear": "strangle-hapi/no-cross-module-reach: nothing to clear; 6 holdouts left.\nstrangle-hapi/no-role-checks-in-routes: nothing to clear; 2 holdouts left.\nstrangle-hapi/has-nest-module: nothing to clear; 1 holdout left.\nstrangle-hapi/no-hapi-routes: nothing to clear; 0 holdouts left.\nstrangle-hapi/no-hapi-models: nothing to clear; 0 holdouts left.\nstrangle-hapi/no-hapi-files: nothing to clear; 0 holdouts left.\nstrangle-hapi/has-internal-write-api: nothing to clear; 0 holdouts left.\nstrangle-hapi/writes-not-mirrored: nothing to clear; 0 holdouts left.\nstrangle-hapi/has-nest-endpoints: nothing to clear; 1 holdout left.\nstrangle-hapi/routes-still-local: nothing to clear; 4 holdouts left.\nstrangle-hapi/legacy-writes: nothing to clear; 4 holdouts left.\nstrangle-hapi/mirror-before-write: 2 sectors entered (billing, todo); 0 holdouts left.\nstrangle-hapi/shared-state-split: 2 sectors entered (billing, todo); 0 holdouts left.\nstrangle-hapi/legacy-table-dropped: nothing to clear; 0 holdouts left.\nstrangle-hapi/hapi-lines: nothing to clear; held to 3551.\n"
+      },
+      "diffStat": ".../strangle-hapi/mirror-before-write.json              | 17 +++++++++++++++--\n .../strangle-hapi/sectors/billing.json                  |  7 ++++++-\n .../src/application/billing/billing-service.ts          |  2 +-\n 3 files changed, 22 insertions(+), 4 deletions(-)",
+      "finished": "2026-10-06T18:40:12.361Z"
+    },
+    {
+      "id": "P1",
+      "kind": "probe",
+      "branch": "billing-retire-internal",
+      "head": "cf4b2fd",
+      "started": "2026-10-06T18:40:12.625Z",
+      "steps": [
+        {
+          "step": "contracts build",
+          "cmd": "pnpm -s -F @org/contracts build",
+          "exit": 0,
+          "ms": 1461
+        }
+      ],
+      "gates": {
+        "G1": {
+          "exit": 1,
+          "ms": 1580
+        },
+        "G2": {
+          "exit": 1,
+          "ms": 1000
+        }
+      },
+      "pins": {
+        "core": "0.1.0-beta.15",
+        "typescript": "0.1.0-beta.15",
+        "cli": "0.1.0-beta.16",
+        "oxlint": "0.1.0-beta.16",
+        "campaigns": "0.1.1-beta.5"
+      },
+      "overlay": {
+        "from": "ece6748",
+        "fromSha": "ece6748",
+        "overlayBase": "00f59e7",
+        "base": "d5e3eca8c9d6f6b04dc3b1b5f4e711d160b02ecc",
+        "changed": ".../strangle-hapi/mirror-before-write.json         |  25 ++++\n .architecture-campaigns/strangle-hapi/plan.json    |   8 +-\n .../strangle-hapi/shared-state-split.json          |  25 ++++\n architecture.yaml                                  | 153 ++++++++++++++++++++-\n campaigns/strangle-hapi.mjs                        |  90 ++++++++++++\n package.json                                       |   6 +-\n pnpm-lock.yaml                                     |  34 ++---\n 7 files changed, 315 insertions(+), 26 deletions(-)",
+        "clear": "strangle-hapi/no-cross-module-reach: nothing to clear; 6 holdouts left.\nstrangle-hapi/no-role-checks-in-routes: nothing to clear; 2 holdouts left.\nstrangle-hapi/has-nest-module: nothing to clear; 1 holdout left.\nstrangle-hapi/no-hapi-routes: nothing to clear; 1 holdout left.\nstrangle-hapi/no-hapi-models: nothing to clear; 0 holdouts left.\nstrangle-hapi/no-hapi-files: nothing to clear; 0 holdouts left.\nstrangle-hapi/has-internal-write-api: nothing to clear; 0 holdouts left.\nstrangle-hapi/writes-not-mirrored: nothing to clear; 0 holdouts left.\nstrangle-hapi/has-nest-endpoints: nothing to clear; 0 holdouts left.\nstrangle-hapi/routes-still-local: nothing to clear; 0 holdouts left.\nstrangle-hapi/legacy-writes: nothing to clear; 0 holdouts left.\nstrangle-hapi/mirror-before-write: 2 sectors entered (billing, todo); 0 holdouts left.\nstrangle-hapi/shared-state-split: 2 sectors entered (billing, todo); 0 holdouts left.\nstrangle-hapi/legacy-table-dropped: nothing to clear; 0 holdouts left.\nstrangle-hapi/hapi-lines: nothing to clear; held to 2970.\n"
+      },
+      "diffStat": "packages/legacy-api/bootstrap.ts                   |   1 -\n .../src/application/billing/billing-routes.ts      |  44 --------\n .../src/lib/backend-client/proxy-to-nest.ts        |  63 ------------\n .../billing/billing-routes.integration.test.ts     | 113 ---------------------\n .../legacy-api/test/helpers/fake-wallet-server.ts  |  28 +----\n packages/legacy-api/test/route-parity.test.ts      |   2 +-\n packages/web/next.config.ts                        |   6 ++\n packages/web/services/api/upstreams.shared.test.ts |  13 +++\n packages/web/services/api/upstreams.shared.ts      |   6 +-\n 9 files changed, 27 insertions(+), 249 deletions(-)",
+      "finished": "2026-10-06T18:40:21.927Z"
+    },
+    {
+      "id": "P2",
+      "kind": "probe",
+      "branch": "billing-backfill",
+      "head": "90c2a22",
+      "started": "2026-10-06T18:40:22.143Z",
+      "steps": [
+        {
+          "step": "attest",
+          "cmd": "pnpm -s exec architecture campaigns attest billing backfilled --reason x",
+          "exit": 0,
+          "ms": 953,
+          "stdout": "strangle-hapi: sector billing attested at backfilled by zweidenbach@gmail.com, in .architecture-campaigns/strangle-hapi/sectors/billing.json.\nRun `objectives clear` to move it on.\n",
+          "stderr": ""
+        },
+        {
+          "step": "clear",
+          "cmd": "pnpm -s campaigns:clear",
+          "exit": 0,
+          "ms": 965,
+          "stdout": "strangle-hapi/no-cross-module-reach: nothing to clear; 6 holdouts left.\nstrangle-hapi/no-role-checks-in-routes: nothing to clear; 2 holdouts left.\nstrangle-hapi/has-nest-module: nothing to clear; 1 holdout left.\nstrangle-hapi/no-hapi-routes: nothing to clear; 0 holdouts left.\nstrangle-hapi/no-hapi-models: nothing to clear; 0 holdouts left.\nstrangle-hapi/no-hapi-files: nothing to clear; 0 holdouts left.\nstrangle-hapi/has-internal-write-api: nothing to clear; 0 holdouts left.\nstrangle-hapi/writes-not-mirrored: nothing to clear; 0 holdouts left.\nstrangle-hapi/has-nest-endpoints: 1 sector entered (billing); 1 holdout left.\nstrangle-hapi/routes-still-local: 1 sector entered (billing); 4 holdouts left.\nstrangle-hapi/legacy-writes: 1 sector entered (billing); 4 holdouts left.\nstrangle-hapi/mirror-before-write: nothing to clear; 0 holdouts left.\nstrangle-hapi/shared-state-split: 1 sector entered (billing); 0 holdouts left.\nstrangle-hapi/legacy-table-dropped: nothing to clear; 0 holdouts left.\nstrangle-hapi/hapi-lines: nothing to clear; held to 3551.\nstrangle-hapi: billing moved backfilled \u2192 served.\n",
+          "stderr": ""
+        },
+        {
+          "step": "contracts build",
+          "cmd": "pnpm -s -F @org/contracts build",
+          "exit": 0,
+          "ms": 1494
+        }
+      ],
+      "gates": {},
+      "pins": {
+        "core": "0.1.0-beta.15",
+        "typescript": "0.1.0-beta.15",
+        "cli": "0.1.0-beta.16",
+        "oxlint": "0.1.0-beta.16",
+        "campaigns": "0.1.1-beta.5"
+      },
+      "overlay": {
+        "from": "ece6748",
+        "fromSha": "ece6748",
+        "overlayBase": "00f59e7",
+        "base": "852deb193468e508cb058d4d909993592b4f7fee",
+        "changed": ".../strangle-hapi/mirror-before-write.json         |  25 ++++\n .architecture-campaigns/strangle-hapi/plan.json    |   8 +-\n .../strangle-hapi/shared-state-split.json          |  17 +++\n architecture.yaml                                  | 153 ++++++++++++++++++++-\n campaigns/strangle-hapi.mjs                        |  90 ++++++++++++\n package.json                                       |   6 +-\n pnpm-lock.yaml                                     |  34 ++---\n 7 files changed, 307 insertions(+), 26 deletions(-)",
+        "clear": "strangle-hapi/no-cross-module-reach: nothing to clear; 6 holdouts left.\nstrangle-hapi/no-role-checks-in-routes: nothing to clear; 2 holdouts left.\nstrangle-hapi/has-nest-module: nothing to clear; 1 holdout left.\nstrangle-hapi/no-hapi-routes: nothing to clear; 0 holdouts left.\nstrangle-hapi/no-hapi-models: nothing to clear; 0 holdouts left.\nstrangle-hapi/no-hapi-files: nothing to clear; 0 holdouts left.\nstrangle-hapi/has-internal-write-api: nothing to clear; 0 holdouts left.\nstrangle-hapi/writes-not-mirrored: nothing to clear; 0 holdouts left.\nstrangle-hapi/has-nest-endpoints: nothing to clear; 0 holdouts left.\nstrangle-hapi/routes-still-local: nothing to clear; 0 holdouts left.\nstrangle-hapi/legacy-writes: nothing to clear; 0 holdouts left.\nstrangle-hapi/mirror-before-write: 2 sectors entered (billing, todo); 0 holdouts left.\nstrangle-hapi/shared-state-split: 1 sector entered (todo); 0 holdouts left.\nstrangle-hapi/legacy-table-dropped: nothing to clear; 0 holdouts left.\nstrangle-hapi/hapi-lines: nothing to clear; held to 3551.\n"
+      },
+      "diffStat": ".../strangle-hapi/has-nest-endpoints.json                   | 10 ++++++++++\n .architecture-campaigns/strangle-hapi/legacy-writes.json    | 13 +++++++++++++\n .../strangle-hapi/routes-still-local.json                   | 13 +++++++++++++\n .architecture-campaigns/strangle-hapi/sectors/billing.json  | 13 ++++++++++---\n .../strangle-hapi/shared-state-split.json                   |  8 ++++++++\n 5 files changed, 54 insertions(+), 3 deletions(-)",
+      "finished": "2026-10-06T18:40:30.095Z"
+    },
+    {
+      "id": "P3",
+      "kind": "probe",
+      "branch": "billing-serve-read",
+      "head": "0fa988d",
+      "started": "2026-10-06T18:40:30.357Z",
+      "steps": [
+        {
+          "step": "note",
+          "cmd": "pnpm -s exec architecture campaigns note billing \"01234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789END-OF-600\"",
+          "exit": 1,
+          "ms": 921,
+          "stdout": "",
+          "stderr": "\na note is at most 500 characters, and this one is 600: split it, or say less. Nothing was recorded.\n"
+        },
+        {
+          "step": "contracts build",
+          "cmd": "pnpm -s -F @org/contracts build",
+          "exit": 0,
+          "ms": 601
+        }
+      ],
+      "gates": {},
+      "pins": {
+        "core": "0.1.0-beta.15",
+        "typescript": "0.1.0-beta.15",
+        "cli": "0.1.0-beta.16",
+        "oxlint": "0.1.0-beta.16",
+        "campaigns": "0.1.1-beta.5"
+      },
+      "overlay": {
+        "from": "ece6748",
+        "fromSha": "ece6748",
+        "overlayBase": "00f59e7",
+        "base": "183bcd1bd499dc4b790a01056e0c38c94bb6ad0a",
+        "changed": ".../strangle-hapi/mirror-before-write.json         |  25 ++++\n .architecture-campaigns/strangle-hapi/plan.json    |   8 +-\n .../strangle-hapi/shared-state-split.json          |  25 ++++\n architecture.yaml                                  | 153 ++++++++++++++++++++-\n campaigns/strangle-hapi.mjs                        |  90 ++++++++++++\n package.json                                       |   6 +-\n pnpm-lock.yaml                                     |  34 ++---\n 7 files changed, 315 insertions(+), 26 deletions(-)",
+        "clear": "strangle-hapi/no-cross-module-reach: nothing to clear; 6 holdouts left.\nstrangle-hapi/no-role-checks-in-routes: nothing to clear; 2 holdouts left.\nstrangle-hapi/has-nest-module: nothing to clear; 1 holdout left.\nstrangle-hapi/no-hapi-routes: nothing to clear; 0 holdouts left.\nstrangle-hapi/no-hapi-models: nothing to clear; 0 holdouts left.\nstrangle-hapi/no-hapi-files: nothing to clear; 0 holdouts left.\nstrangle-hapi/has-internal-write-api: nothing to clear; 0 holdouts left.\nstrangle-hapi/writes-not-mirrored: nothing to clear; 0 holdouts left.\nstrangle-hapi/has-nest-endpoints: nothing to clear; 0 holdouts left.\nstrangle-hapi/routes-still-local: nothing to clear; 3 holdouts left.\nstrangle-hapi/legacy-writes: nothing to clear; 4 holdouts left.\nstrangle-hapi/mirror-before-write: 2 sectors entered (billing, todo); 0 holdouts left.\nstrangle-hapi/shared-state-split: 2 sectors entered (billing, todo); 0 holdouts left.\nstrangle-hapi/legacy-table-dropped: nothing to clear; 0 holdouts left.\nstrangle-hapi/hapi-lines: nothing to clear; held to 3611.\n"
+      },
+      "observation": {
+        "written": 600,
+        "stored": [],
+        "endsWithMarker": []
+      },
+      "diffStat": "",
+      "finished": "2026-10-06T18:40:36.837Z"
+    },
+    {
+      "id": "P4",
+      "kind": "probe",
+      "branch": "billing-serve-read",
+      "head": "0fa988d",
+      "started": "2026-10-06T18:40:37.054Z",
+      "steps": [
+        {
+          "step": "campaigns",
+          "cmd": "pnpm -s campaigns",
+          "exit": 0,
+          "ms": 993,
+          "stdout": "1 campaign under packages\n\n  strangle-hapi   34%     16 left  @dataquail\n    phases: fenced 2 \u2192 rebuilt 1 \u2192 mirrored 0 \u2192 backfilled (attested) 0 \u2192 served 1 \u2192 routes-moved 0 \u2192 data-moved 0 \u2192 gone 0 \u2192 settled (open) 1  \u00b7 legacy 53 files  \u00b7 shared 6 files\n    no-cross-module-reach      14%      6 left  1 cleared  0 conceded\n    no-role-checks-in-routes   50%      2 left  2 cleared  0 conceded\n    has-nest-module            67%      1 left  2 cleared  0 conceded\n    no-hapi-routes            100%      0 left  2 cleared  0 conceded\n    no-hapi-models            100%      0 left  1 cleared  0 conceded\n    no-hapi-files             100%      0 left  0 cleared  0 conceded\n    has-internal-write-api    100%      0 left  2 cleared  0 conceded\n    writes-not-mirrored       100%      0 left  7 cleared  0 conceded\n    has-nest-endpoints        100%      0 left  2 cleared  0 conceded\n    routes-still-local         75%      3 left  9 cleared  0 conceded\n    legacy-writes              50%      4 left  4 cleared  0 conceded\n    mirror-before-write       100%      0 left  0 cleared  0 conceded\n    shared-state-split        100%      0 left  0 cleared  0 conceded\n    legacy-table-dropped      100%      0 left  1 cleared  0 conceded\n    hapi-lines                 39%  measures 3589, held to 3611\n\n  architecture campaigns status --changed [--base <ref>] [--json]   # what a diff touches, and what to do\n  architecture campaigns status --sector <sector> [--json]          # where one sector stands, and what holds it\n  architecture objectives clear [<campaign>[/<objective>]]        # reconcile the ledgers with the code\n  architecture objectives concede <campaign>[/<objective>] --reason \"<why>\"   # record why a count may rise\n  architecture campaigns attest <sector> <phase> --reason \"<why>\" [--evidence <url>]\n  architecture campaigns note <sector> \"<text>\"\n  architecture campaigns history [<campaign>] [--since <ref>]\n",
+          "stderr": ""
+        },
+        {
+          "step": "status --json",
+          "cmd": "pnpm -s exec architecture campaigns status --json packages",
+          "exit": 0,
+          "ms": 1016,
+          "stdout": "{\n  \"version\": 1,\n  \"campaigns\": [\n    {\n      \"id\": \"strangle-hapi\",\n      \"title\": \"Strangle the hapi API into the Nest server\",\n      \"owner\": \"@dataquail\",\n      \"count\": 16,\n      \"progress\": 0.3390625,\n      \"steps\": 8,\n      \"objectives\": [\n        {\n          \"id\": \"no-cross-module-reach\",\n          \"phase\": \"fenced\",\n          \"initial\": 7,\n          \"allowed\": 0,\n          \"count\": 6,\n          \"cleared\": 1,\n          \"closed\": 0,\n          \"entered\": 6,\n          \"progress\": 0.1428571428571429,\n          \"lastCleared\": \"2026-10-05T13:46:56.865Z\",\n          \"concessions\": 0,\n          \"complete\": false,\n          \"ledgered\": true\n        },\n        {\n          \"id\": \"no-role-checks-in-routes\",\n          \"phase\": \"fenced\",\n          \"initial\": 4,\n          \"allowed\": 0,\n          \"count\": 2,\n          \"cleared\": 2,\n          \"closed\": 0,\n          \"entered\": 6,\n          \"progress\": 0.5,\n          \"lastCleared\": \"2026-09-30T16:00:10.172Z\",\n          \"concessions\": 0,\n          \"complete\": false,\n          \"ledgered\": true\n        },\n        {\n          \"id\": \"has-nest-module\",\n          \"phase\": \"rebuilt\",\n          \"initial\": 3,\n          \"allowed\": 0,\n          \"count\": 1,\n          \"cleared\": 2,\n          \"closed\": 0,\n          \"entered\": 3,\n          \"progress\": 0.6666666666666667,\n          \"lastCleared\": \"2026-10-05T13:49:20.691Z\",\n          \"concessions\": 0,\n          \"complete\": false,\n          \"ledgered\": true\n        },\n        {\n          \"id\": \"no-hapi-routes\",\n          \"phase\": \"routes-moved\",\n          \"initial\": 2,\n          \"allowed\": 0,\n          \"count\": 0,\n          \"cleared\": 2,\n          \"closed\": 0,\n          \"entered\": 1,\n          \"progress\": 1,\n          \"lastCleared\": \"2026-10-01T16:30:10.397Z\",\n          \"concessions\": 0,\n          \"complete\": true,\n          \"ledgered\": true\n        },\n        {\n          \"id\": \"no-hapi-models\",\n          \"phase\": \"data-moved\",\n          \"initial\": 1,\n          \"allowed\": 0,\n          \"count\": 0,\n          \"cleared\": 1,\n          \"closed\": 0,\n          \"entered\": 1,\n          \"progress\": 1,\n          \"lastCleared\": \"2026-10-01T16:36:32.062Z\",\n          \"concessions\": 0,\n          \"complete\": true,\n          \"ledgered\": true\n        },\n        {\n          \"id\": \"no-hapi-files\",\n          \"phase\": \"gone\",\n          \"initial\": 0,\n          \"allowed\": 0,\n          \"count\": 0,\n          \"cleared\": 0,\n          \"closed\": 0,\n          \"entered\": 1,\n          \"progress\": 1,\n          \"lastCleared\": \"2026-10-01T16:36:32.062Z\",\n          \"concessions\": 0,\n          \"complete\": true,\n          \"ledgered\": true\n        },\n        {\n          \"id\": \"has-internal-write-api\",\n          \"phase\": \"mirrored\",\n          \"initial\": 2,\n          \"allowed\": 0,\n          \"count\": 0,\n          \"cleared\": 2,\n          \"closed\": 0,\n          \"entered\": 2,\n          \"progress\": 1,\n          \"lastCleared\": \"2026-10-05T13:53:05.903Z\",\n          \"concessions\": 0,\n          \"complete\": true,\n          \"ledgered\": true\n        },\n        {\n          \"id\": \"writes-not-mirrored\",\n          \"phase\": \"mirrored\",\n          \"initial\": 8,\n          \"allowed\": 0,\n          \"count\": 0,\n          \"cleared\": 7,\n          \"closed\": 0,\n          \"entered\": 2,\n          \"progress\": 1,\n          \"lastCleared\": \"2026-10-05T13:57:38.568Z\",\n          \"concessions\": 1,\n          \"complete\": true,\n          \"ledgered\": true\n        },\n        {\n          \"id\": \"has-nest-endpoints\",\n          \"phase\": \"served\",\n          \"initial\": 2,\n          \"allowed\": 0,\n          \"count\": 0,\n          \"cleared\": 2,\n          \"closed\": 0,\n          \"entered\": 2,\n          \"progress\": 1,\n          \"lastCleared\": \"2026-10-05T14:03:52.629Z\",\n          \"concessions\": 0,\n          \"complete\": true,\n          \"ledgered\": true\n        },\n        {\n          \"id\": \"routes-still-local\",\n          \"phase\": \"served\",\n          \"initial\": 12,\n          \"allowed\": 0,\n          \"count\": 3,\n          \"cleared\": 9,\n          \"closed\": ",
+          "stderr": ""
+        },
+        {
+          "step": "campaigns billing",
+          "cmd": "pnpm -s exec architecture campaigns billing packages",
+          "exit": 1,
+          "ms": 934,
+          "stdout": "",
+          "stderr": "\ncampaigns: billing is not a path in the repository, so there is nothing to walk there. It names a sector: `campaigns status --sector billing`.\n"
+        },
+        {
+          "step": "campaigns --json",
+          "cmd": "pnpm -s exec architecture campaigns --json packages",
+          "exit": 0,
+          "ms": 1011,
+          "stdout": "{\n  \"version\": 1,\n  \"campaigns\": [\n    {\n      \"id\": \"strangle-hapi\",\n      \"title\": \"Strangle the hapi API into the Nest server\",\n      \"owner\": \"@dataquail\",\n      \"count\": 16,\n      \"progress\": 0.3390625,\n      \"steps\": 8,\n      \"objectives\": [\n        {\n          \"id\": \"no-cross-module-reach\",\n          \"phase\": \"fenced\",\n          \"initial\": 7,\n          \"allowed\": 0,\n          \"count\": 6,\n          \"cleared\": 1,\n          \"closed\": 0,\n          \"entered\": 6,\n          \"progress\": 0.1428571428571429,\n          \"lastCleared\": \"2026-10-05T13:46:56.865Z\",\n          \"concessions\": 0,\n          \"complete\": false,\n          \"ledgered\": true\n        },\n        {\n          \"id\": \"no-role-checks-in-routes\",\n          \"phase\": \"fenced\",\n          \"initial\": 4,\n          \"allowed\": 0,\n          \"count\": 2,\n          \"cleared\": 2,\n          \"closed\": 0,\n          \"entered\": 6,\n          \"progress\": 0.5,\n          \"lastCleared\": \"2026-09-30T16:00:10.172Z\",\n          \"concessions\": 0,\n          \"complete\": false,\n          \"ledgered\": true\n        },\n        {\n          \"id\": \"has-nest-module\",\n          \"phase\": \"rebuilt\",\n          \"initial\": 3,\n          \"allowed\": 0,\n          \"count\": 1,\n          \"cleared\": 2,\n          \"closed\": 0,\n          \"entered\": 3,\n          \"progress\": 0.6666666666666667,\n          \"lastCleared\": \"2026-10-05T13:49:20.691Z\",\n          \"concessions\": 0,\n          \"complete\": false,\n          \"ledgered\": true\n        },\n        {\n          \"id\": \"no-hapi-routes\",\n          \"phase\": \"routes-moved\",\n          \"initial\": 2,\n          \"allowed\": 0,\n          \"count\": 0,\n          \"cleared\": 2,\n          \"closed\": 0,\n          \"entered\": 1,\n          \"progress\": 1,\n          \"lastCleared\": \"2026-10-01T16:30:10.397Z\",\n          \"concessions\": 0,\n          \"complete\": true,\n          \"ledgered\": true\n        },\n        {\n          \"id\": \"no-hapi-models\",\n          \"phase\": \"data-moved\",\n          \"initial\": 1,\n          \"allowed\": 0,\n          \"count\": 0,\n          \"cleared\": 1,\n          \"closed\": 0,\n          \"entered\": 1,\n          \"progress\": 1,\n          \"lastCleared\": \"2026-10-01T16:36:32.062Z\",\n          \"concessions\": 0,\n          \"complete\": true,\n          \"ledgered\": true\n        },\n        {\n          \"id\": \"no-hapi-files\",\n          \"phase\": \"gone\",\n          \"initial\": 0,\n          \"allowed\": 0,\n          \"count\": 0,\n          \"cleared\": 0,\n          \"closed\": 0,\n          \"entered\": 1,\n          \"progress\": 1,\n          \"lastCleared\": \"2026-10-01T16:36:32.062Z\",\n          \"concessions\": 0,\n          \"complete\": true,\n          \"ledgered\": true\n        },\n        {\n          \"id\": \"has-internal-write-api\",\n          \"phase\": \"mirrored\",\n          \"initial\": 2,\n          \"allowed\": 0,\n          \"count\": 0,\n          \"cleared\": 2,\n          \"closed\": 0,\n          \"entered\": 2,\n          \"progress\": 1,\n          \"lastCleared\": \"2026-10-05T13:53:05.903Z\",\n          \"concessions\": 0,\n          \"complete\": true,\n          \"ledgered\": true\n        },\n        {\n          \"id\": \"writes-not-mirrored\",\n          \"phase\": \"mirrored\",\n          \"initial\": 8,\n          \"allowed\": 0,\n          \"count\": 0,\n          \"cleared\": 7,\n          \"closed\": 0,\n          \"entered\": 2,\n          \"progress\": 1,\n          \"lastCleared\": \"2026-10-05T13:57:38.568Z\",\n          \"concessions\": 1,\n          \"complete\": true,\n          \"ledgered\": true\n        },\n        {\n          \"id\": \"has-nest-endpoints\",\n          \"phase\": \"served\",\n          \"initial\": 2,\n          \"allowed\": 0,\n          \"count\": 0,\n          \"cleared\": 2,\n          \"closed\": 0,\n          \"entered\": 2,\n          \"progress\": 1,\n          \"lastCleared\": \"2026-10-05T14:03:52.629Z\",\n          \"concessions\": 0,\n          \"complete\": true,\n          \"ledgered\": true\n        },\n        {\n          \"id\": \"routes-still-local\",\n          \"phase\": \"served\",\n          \"initial\": 12,\n          \"allowed\": 0,\n          \"count\": 3,\n          \"cleared\": 9,\n          \"closed\": ",
+          "stderr": ""
+        },
+        {
+          "step": "status --sector",
+          "cmd": "pnpm -s exec architecture campaigns status --sector billing packages",
+          "exit": 0,
+          "ms": 913,
+          "stdout": "strangle-hapi \u00b7 billing \u2014 phase served (5 of 9), reached served since 2026-10-05\n  intent: The Nest module answers: hapi's routes forward to it operation by operation, and the legacy service writes nothing itself any more.\n  attested backfilled: 2026-10-05 by zweidenbach@gmail.com \u2014 db:backfill:billing (commit 90c2a22) run against hapi-strangler-dev, migrated by both migrators, after every billing write was mirrored: the legacy side held 2 subscriptions and 3 claimed webhook events the replica had never received; the run upserted 2 and 3 and deleted 0, and a second run upserted the same and deleted 0.\n  toward the next phase: routes-still-local 3 \u00b7 legacy-writes 4\n  routes-still-local \u2014 3 holdouts in window: Replace this route's handler with `proxyToNest(...)`, so hapi forwards the operation to the Nest module instead of serving it.\n    packages/legacy-api/src/application/billing/billing-routes.ts:28  billingRoutes\n    packages/legacy-api/src/application/billing/billing-routes.ts:50  billingRoutes\n    packages/legacy-api/src/application/billing/billing-routes.ts:62  billingRoutes\n  legacy-writes \u2014 4 holdouts in window: The Nest module is the source of truth now: delete this write and the forward beside it; the route that reached it is a proxy.\n    packages/legacy-api/src/application/billing/billing-service.ts:87  startSubscription\n    packages/legacy-api/src/application/billing/billing-service.ts:111  cancelSubscription\n    packages/legacy-api/src/application/billing/billing-service.ts:133  applied\n    packages/legacy-api/src/application/billing/billing-service.ts:154  applied\n  hapi-lines: 703 (held to 712, tolerance 20)\n",
+          "stderr": ""
+        },
+        {
+          "step": "status --sector --json",
+          "cmd": "pnpm -s exec architecture campaigns status --sector billing --json packages",
+          "exit": 0,
+          "ms": 929,
+          "stdout": "{\n  \"version\": 1,\n  \"sectors\": [\n    {\n      \"campaign\": \"strangle-hapi\",\n      \"sector\": \"billing\",\n      \"phase\": {\n        \"id\": \"served\",\n        \"index\": 4,\n        \"of\": 9,\n        \"open\": false,\n        \"attested\": false,\n        \"intent\": \"The Nest module answers: hapi's routes forward to it operation by operation, and the legacy service writes nothing itself any more.\"\n      },\n      \"reached\": \"served\",\n      \"since\": \"2026-10-05T13:59:40.628Z\",\n      \"attestations\": [\n        {\n          \"phase\": \"backfilled\",\n          \"at\": \"2026-10-05T13:59:39.644Z\",\n          \"by\": \"zweidenbach@gmail.com\",\n          \"reason\": \"db:backfill:billing (commit 90c2a22) run against hapi-strangler-dev, migrated by both migrators, after every billing write was mirrored: the legacy side held 2 subscriptions and 3 claimed webhook events the replica had never received; the run upserted 2 and 3 and deleted 0, and a second run upserted the same and deleted 0.\",\n          \"revoked\": null\n        }\n      ],\n      \"toward\": {\n        \"routes-still-local\": 3,\n        \"legacy-writes\": 4\n      },\n      \"objectives\": [\n        {\n          \"id\": \"no-cross-module-reach\",\n          \"how\": \"Reach the peer through the substrate \u2014 a port under src/lib the container wires \u2014 not by importing its folder or naming its factory id.\",\n          \"count\": 0,\n          \"holdouts\": []\n        },\n        {\n          \"id\": \"no-role-checks-in-routes\",\n          \"how\": \"A route asks the ACL with `can(action, resource)`; the membership or role assertion belongs in the module's access file.\",\n          \"count\": 0,\n          \"holdouts\": []\n        },\n        {\n          \"id\": \"has-nest-module\",\n          \"how\": \"Rebuild the module under packages/server/src/modules/ with its taxonomy and tests.\",\n          \"count\": 0,\n          \"holdouts\": []\n        },\n        {\n          \"id\": \"has-nest-endpoints\",\n          \"how\": \"Give the Nest module its user-facing endpoints behind the user guard, with the policies that authorize them.\",\n          \"count\": 0,\n          \"holdouts\": []\n        },\n        {\n          \"id\": \"routes-still-local\",\n          \"how\": \"Replace this route's handler with `proxyToNest(...)`, so hapi forwards the operation to the Nest module instead of serving it.\",\n          \"count\": 3,\n          \"holdouts\": [\n            {\n              \"file\": \"packages/legacy-api/src/application/billing/billing-routes.ts\",\n              \"line\": 28,\n              \"subject\": \"billingRoutes#ad2a056c\"\n            },\n            {\n              \"file\": \"packages/legacy-api/src/application/billing/billing-routes.ts\",\n              \"line\": 50,\n              \"subject\": \"billingRoutes#c52c2599\"\n            },\n            {\n              \"file\": \"packages/legacy-api/src/application/billing/billing-routes.ts\",\n              \"line\": 62,\n              \"subject\": \"billingRoutes#9c1acaf5\"\n            }\n          ]\n        },\n        {\n          \"id\": \"legacy-writes\",\n          \"how\": \"The Nest module is the source of truth now: delete this write and the forward beside it; the route that reached it is a proxy.\",\n          \"count\": 4,\n          \"holdouts\": [\n            {\n              \"file\": \"packages/legacy-api/src/application/billing/billing-service.ts\",\n              \"line\": 87,\n              \"subject\": \"startSubscription#cff14458\"\n            },\n            {\n              \"file\": \"packages/legacy-api/src/application/billing/billing-service.ts\",\n              \"line\": 111,\n              \"subject\": \"cancelSubscription#ac56a836\"\n            },\n            {\n              \"file\": \"packages/legacy-api/src/application/billing/billing-service.ts\",\n              \"line\": 133,\n              \"subject\": \"applied#03ade66f\"\n            },\n            {\n              \"file\": \"packages/legacy-api/src/application/billing/billing-service.ts\",\n              \"line\": 154,\n              \"subject\": \"applied#5a2b4f97\"\n            }\n          ]\n        },\n        {\n          \"id\": \"mirror-before-write\",\n         ",
+          "stderr": ""
+        },
+        {
+          "step": "contracts build",
+          "cmd": "pnpm -s -F @org/contracts build",
+          "exit": 0,
+          "ms": 594
+        }
+      ],
+      "gates": {},
+      "pins": {
+        "core": "0.1.0-beta.15",
+        "typescript": "0.1.0-beta.15",
+        "cli": "0.1.0-beta.16",
+        "oxlint": "0.1.0-beta.16",
+        "campaigns": "0.1.1-beta.5"
+      },
+      "overlay": {
+        "from": "ece6748",
+        "fromSha": "ece6748",
+        "overlayBase": "00f59e7",
+        "base": "d82158456fab8f822d3695d7f709d2c81f9a3798",
+        "changed": ".../strangle-hapi/mirror-before-write.json         |  25 ++++\n .architecture-campaigns/strangle-hapi/plan.json    |   8 +-\n .../strangle-hapi/shared-state-split.json          |  25 ++++\n architecture.yaml                                  | 153 ++++++++++++++++++++-\n campaigns/strangle-hapi.mjs                        |  90 ++++++++++++\n package.json                                       |   6 +-\n pnpm-lock.yaml                                     |  34 ++---\n 7 files changed, 315 insertions(+), 26 deletions(-)",
+        "clear": "strangle-hapi/no-cross-module-reach: nothing to clear; 6 holdouts left.\nstrangle-hapi/no-role-checks-in-routes: nothing to clear; 2 holdouts left.\nstrangle-hapi/has-nest-module: nothing to clear; 1 holdout left.\nstrangle-hapi/no-hapi-routes: nothing to clear; 0 holdouts left.\nstrangle-hapi/no-hapi-models: nothing to clear; 0 holdouts left.\nstrangle-hapi/no-hapi-files: nothing to clear; 0 holdouts left.\nstrangle-hapi/has-internal-write-api: nothing to clear; 0 holdouts left.\nstrangle-hapi/writes-not-mirrored: nothing to clear; 0 holdouts left.\nstrangle-hapi/has-nest-endpoints: nothing to clear; 0 holdouts left.\nstrangle-hapi/routes-still-local: nothing to clear; 3 holdouts left.\nstrangle-hapi/legacy-writes: nothing to clear; 4 holdouts left.\nstrangle-hapi/mirror-before-write: 2 sectors entered (billing, todo); 0 holdouts left.\nstrangle-hapi/shared-state-split: 2 sectors entered (billing, todo); 0 holdouts left.\nstrangle-hapi/legacy-table-dropped: nothing to clear; 0 holdouts left.\nstrangle-hapi/hapi-lines: nothing to clear; held to 3611.\n"
+      },
+      "diffStat": "",
+      "finished": "2026-10-06T18:40:47.839Z"
+    },
+    {
+      "id": "P5",
+      "kind": "probe",
+      "branch": "billing-attest",
+      "head": "3f48de7",
+      "started": "2026-10-06T18:40:48.053Z",
+      "steps": [
+        {
+          "step": "contracts build",
+          "cmd": "pnpm -s -F @org/contracts build",
+          "exit": 0,
+          "ms": 599
+        }
+      ],
+      "gates": {
+        "G1": {
+          "exit": 0,
+          "ms": 1552
+        },
+        "G2": {
+          "exit": 0,
+          "ms": 990
+        },
+        "G3": {
+          "exit": 0,
+          "ms": 1008
+        }
+      },
+      "pins": {
+        "core": "0.1.0-beta.15",
+        "typescript": "0.1.0-beta.15",
+        "cli": "0.1.0-beta.16",
+        "oxlint": "0.1.0-beta.16",
+        "campaigns": "0.1.1-beta.5"
+      },
+      "overlay": {
+        "from": "ece6748",
+        "fromSha": "ece6748",
+        "overlayBase": "00f59e7",
+        "base": "bb1051ca7ec45dec78216fecae84b6881fd04734",
+        "changed": ".../strangle-hapi/mirror-before-write.json         |  25 ++++\n .architecture-campaigns/strangle-hapi/plan.json    |   8 +-\n .../strangle-hapi/shared-state-split.json          |  25 ++++\n architecture.yaml                                  | 153 ++++++++++++++++++++-\n campaigns/strangle-hapi.mjs                        |  90 ++++++++++++\n package.json                                       |   6 +-\n pnpm-lock.yaml                                     |  34 ++---\n 7 files changed, 315 insertions(+), 26 deletions(-)",
+        "clear": "strangle-hapi/no-cross-module-reach: nothing to clear; 6 holdouts left.\nstrangle-hapi/no-role-checks-in-routes: nothing to clear; 2 holdouts left.\nstrangle-hapi/has-nest-module: nothing to clear; 1 holdout left.\nstrangle-hapi/no-hapi-routes: nothing to clear; 0 holdouts left.\nstrangle-hapi/no-hapi-models: nothing to clear; 0 holdouts left.\nstrangle-hapi/no-hapi-files: nothing to clear; 0 holdouts left.\nstrangle-hapi/has-internal-write-api: nothing to clear; 0 holdouts left.\nstrangle-hapi/writes-not-mirrored: nothing to clear; 0 holdouts left.\nstrangle-hapi/has-nest-endpoints: nothing to clear; 1 holdout left.\nstrangle-hapi/routes-still-local: nothing to clear; 4 holdouts left.\nstrangle-hapi/legacy-writes: nothing to clear; 4 holdouts left.\nstrangle-hapi/mirror-before-write: 2 sectors entered (billing, todo); 0 holdouts left.\nstrangle-hapi/shared-state-split: 2 sectors entered (billing, todo); 0 holdouts left.\nstrangle-hapi/legacy-table-dropped: nothing to clear; 0 holdouts left.\nstrangle-hapi/hapi-lines: nothing to clear; held to 3551.\n"
+      },
+      "diffStat": ".../legacy-api/src/application/billing/billing-service.ts    | 12 ++++++------\n 1 file changed, 6 insertions(+), 6 deletions(-)",
+      "finished": "2026-10-06T18:40:57.093Z"
+    }
+  ]
+}

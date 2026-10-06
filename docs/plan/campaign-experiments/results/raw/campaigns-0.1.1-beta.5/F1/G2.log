@@ -1,0 +1,20 @@
+$ pnpm -s exec architecture campaigns status --changed --base 639189586aacb763875d693c6e32985c484d5bdd packages
+exit 0
+
+--- stdout
+strangle-hapi
+  billing — phase mirrored (3 of 9), 1 day here
+    intent: Every write the legacy module takes is forwarded to the Nest module's internal API, so the Nest table fills as a replica while hapi stays the source of truth.
+    toward the next phase: writes-not-mirrored 3
+    in the files you touched, nearest your change (3 of 3; 3 in the sector):
+      packages/legacy-api/src/application/billing/billing-service.ts#touchSubscription:103  writes-not-mirrored
+      packages/legacy-api/src/application/billing/billing-service.ts#ingestStripeWebhook:138  writes-not-mirrored
+      packages/legacy-api/src/application/billing/billing-service.ts#ingestStripeWebhook:151  writes-not-mirrored
+    this diff: +writes-not-mirrored: billing-service.ts#touchSubscription#72849c2e  back
+    hapi-lines: 656 → 661 (recorded 639, tolerance 20)
+    onTouch: advise — ok
+    ask: none — the holdouts above are context; paydown is welcome in its own commit, not asked for
+
+ok
+
+--- stderr

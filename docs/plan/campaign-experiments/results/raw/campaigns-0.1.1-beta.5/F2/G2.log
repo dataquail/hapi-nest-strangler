@@ -1,0 +1,23 @@
+$ pnpm -s exec architecture campaigns status --changed --base db9402d763088a66865115be48d15bad7ad4b9b0 packages
+exit 1
+
+--- stdout
+strangle-hapi
+  billing — phase served (5 of 9), 1 day here
+    intent: The Nest module answers: hapi's routes forward to it operation by operation, and the legacy service writes nothing itself any more.
+    toward the next phase: routes-still-local 4 · legacy-writes 4
+    in the files you touched, nearest your change (4 of 4; 8 in the sector):
+      packages/legacy-api/src/application/billing/billing-routes.ts#billingRoutes:50  routes-still-local
+      packages/legacy-api/src/application/billing/billing-routes.ts#billingRoutes:62  routes-still-local
+      packages/legacy-api/src/application/billing/billing-routes.ts#billingRoutes:74  routes-still-local
+      packages/legacy-api/src/application/billing/billing-routes.ts#billingRoutes:28  routes-still-local
+    this diff: +routes-still-local: billing-routes.ts#billingRoutes#e3de09f7  back
+    hapi-lines: 703 → 715 (recorded 712, tolerance 20)
+    onTouch: ratchet — back
+    ask: hold — leave the sector no worse; paydown is welcome in its own commit, not asked for
+
+not ok
+
+--- stderr
+
+the diff sends a sector back under its onTouch

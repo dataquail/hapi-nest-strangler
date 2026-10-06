@@ -1,0 +1,29 @@
+$ pnpm -s exec architecture campaigns status --changed --base d5e3eca8c9d6f6b04dc3b1b5f4e711d160b02ecc packages
+exit 1
+
+--- stdout
+strangle-hapi
+  billing — phase data-moved (7 of 9), 1 day here
+    this diff moves it from routes-moved: it is judged by the phase it was found at
+    intent: The module's tables belong to its Nest schema, the legacy table is dropped by a legacy migration, and the bookshelf models are gone.
+    toward the next phase: no-hapi-models 2 · legacy-table-dropped 1
+    of the sector as a whole:
+      legacy-table-dropped: Write a legacy migration that drops the module's table, now that nothing on hapi reads or writes it; the Nest table is the only copy.
+      (its marker owns `packages/legacy-api/test/application/billing/**`, which no file matches)
+    this diff: −no-hapi-routes: billing-routes.ts  forward
+    now counted: no-hapi-models 2 · legacy-table-dropped 1 — in window from data-moved, not growth
+    hapi-lines: 71 → 31 (recorded 71, tolerance 20)
+    ahead of plan: no-hapi-files −2 belongs to gone; billing is at data-moved — onAhead: ratchet
+    onTouch: ratchet (of routes-moved) — ahead
+    ask: hold — leave the sector no worse; paydown is welcome in its own commit, not asked for
+  legacy at phase fenced (1 of 9) · nothing in your files, diff neutral
+  shared — held by every sector, on no phase
+    hapi-lines: 155 → 97 (recorded 157, tolerance 20)
+    onTouch: advise — ok
+    ask: none — the holdouts above are context; paydown is welcome in its own commit, not asked for
+
+not ok
+
+--- stderr
+
+the diff works ahead of a sector's phase under its onAhead

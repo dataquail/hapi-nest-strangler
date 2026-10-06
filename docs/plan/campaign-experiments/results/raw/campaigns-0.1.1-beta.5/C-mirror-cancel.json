@@ -1,0 +1,80 @@
+{
+  "id": "C-mirror-cancel",
+  "kind": "control",
+  "branch": "billing-mirror-cancel",
+  "head": "f2090e9",
+  "started": "2026-10-06T18:17:16.781Z",
+  "steps": [
+    {
+      "step": "contracts build",
+      "cmd": "pnpm -s -F @org/contracts build",
+      "exit": 0,
+      "ms": 1484
+    }
+  ],
+  "gates": {
+    "G1": {
+      "exit": 0,
+      "ms": 1357
+    },
+    "G2": {
+      "exit": 0,
+      "ms": 1003
+    },
+    "G3": {
+      "exit": 0,
+      "ms": 1024
+    },
+    "G4": {
+      "exit": 0,
+      "ms": 3847
+    },
+    "G5": {
+      "exit": 0,
+      "ms": 10745
+    },
+    "G6": {
+      "exit": 0,
+      "ms": 18982
+    },
+    "G7": {
+      "exit": 0,
+      "ms": 25707,
+      "parts": [
+        {
+          "cmd": "pnpm -s -F @org/legacy-api db:reset:test",
+          "exit": 0
+        },
+        {
+          "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/server",
+          "exit": 0
+        },
+        {
+          "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/legacy-api",
+          "exit": 0
+        },
+        {
+          "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/database",
+          "exit": 0
+        }
+      ]
+    }
+  },
+  "pins": {
+    "core": "0.1.0-beta.15",
+    "typescript": "0.1.0-beta.15",
+    "cli": "0.1.0-beta.16",
+    "oxlint": "0.1.0-beta.16",
+    "campaigns": "0.1.1-beta.5"
+  },
+  "overlay": {
+    "from": "ece6748",
+    "fromSha": "ece6748",
+    "overlayBase": "00f59e7",
+    "base": "3c811d9adc34364f13bbb8ffde76fba24b7706ff",
+    "changed": ".../strangle-hapi/mirror-before-write.json         |  25 ++++\n .architecture-campaigns/strangle-hapi/plan.json    |   8 +-\n .../strangle-hapi/shared-state-split.json          |  17 +++\n architecture.yaml                                  | 153 ++++++++++++++++++++-\n campaigns/strangle-hapi.mjs                        |  90 ++++++++++++\n package.json                                       |   6 +-\n pnpm-lock.yaml                                     |  34 ++---\n 7 files changed, 307 insertions(+), 26 deletions(-)",
+    "clear": "strangle-hapi/no-cross-module-reach: nothing to clear; 6 holdouts left.\nstrangle-hapi/no-role-checks-in-routes: nothing to clear; 2 holdouts left.\nstrangle-hapi/has-nest-module: nothing to clear; 1 holdout left.\nstrangle-hapi/no-hapi-routes: nothing to clear; 0 holdouts left.\nstrangle-hapi/no-hapi-models: nothing to clear; 0 holdouts left.\nstrangle-hapi/no-hapi-files: nothing to clear; 0 holdouts left.\nstrangle-hapi/has-internal-write-api: nothing to clear; 0 holdouts left.\nstrangle-hapi/writes-not-mirrored: nothing to clear; 2 holdouts left.\nstrangle-hapi/has-nest-endpoints: nothing to clear; 0 holdouts left.\nstrangle-hapi/routes-still-local: nothing to clear; 0 holdouts left.\nstrangle-hapi/legacy-writes: nothing to clear; 0 holdouts left.\nstrangle-hapi/mirror-before-write: 2 sectors entered (billing, todo); 0 holdouts left.\nstrangle-hapi/shared-state-split: 1 sector entered (todo); 0 holdouts left.\nstrangle-hapi/legacy-table-dropped: nothing to clear; 0 holdouts left.\nstrangle-hapi/hapi-lines: nothing to clear; held to 3478.\n"
+  },
+  "diffStat": "",
+  "finished": "2026-10-06T18:18:25.785Z"
+}

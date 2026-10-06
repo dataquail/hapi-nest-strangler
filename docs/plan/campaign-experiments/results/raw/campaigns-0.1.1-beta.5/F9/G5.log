@@ -1,0 +1,8 @@
+$ pnpm -s check
+exit 1
+
+--- stdout
+packages/server/src/modules/billing/commands/start-subscription.handler.test.ts(24,5): error TS2345: Argument of type 'BillingGatewayFake' is not assignable to parameter of type 'BillingGatewayLive'.
+  Type 'BillingGatewayFake' is missing the following properties from type 'BillingGatewayLive': stripe, webhookSecret, priceId
+
+--- stderr

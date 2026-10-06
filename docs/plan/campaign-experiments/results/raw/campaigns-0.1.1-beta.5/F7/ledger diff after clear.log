@@ -1,0 +1,6 @@
+$ git diff HEAD -- .architecture-campaigns
+exit 0
+
+--- stdout
+
+--- stderr

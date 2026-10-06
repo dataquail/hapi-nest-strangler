@@ -1,0 +1,15 @@
+$ pnpm -s lint:architecture
+exit 1
+
+--- stdout
+
+662 files, 0 violations
+
+campaign strangle-hapi: 1 ledger entry no longer fire, or fire past their window. The code was fixed, or the sector moved on; clear them:
+  hapi-lines · shared · measured 157, recorded 97 — measured, not held
+
+  architecture objectives clear strangle-hapi
+
+--- stderr
+
+stale ledger entries

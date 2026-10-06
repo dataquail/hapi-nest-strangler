@@ -299,8 +299,32 @@ The reads, which flip before the group and may flip in any order among themselve
   in one file, so it is checked whole; the reads-first ordering, which would span
   `organization-cli-routes.ts`, is not checked by the campaign (see `02-engine-fixes.md`).
 
-## Appendix B — operator answer sheet (to be written before the pilot)
+## Appendix B — operator answer sheet
 
-Fixed answers to questions an agent is likely to ask (push or not, which database, whether to run
-the backfill for real, what to do about acceptance tests without Zitadel). Anything not on the
-sheet is answered "use your judgement".
+Written 2026-10-06, before the pilot. The operator answers a question with the matching entry
+**verbatim**, and anything else with "Use your judgement." The wording is the same in both arms. No
+answer names the campaign, the plan's status checklist, or anything only one arm has.
+
+**Before each run (setup, not an answer).** Each run gets its own databases, `ab-<run>-dev` and
+`ab-<run>-test`, created empty and named in the arm branch's `.env` as `DATABASE_URL` and
+`DATABASE_URL_TEST`. The operator runs `pnpm bootstrap` against them once, so the run starts migrated
+and seeded. Two runs never share a database: integration suites truncate, and a backfill run against
+another run's data would be meaningless.
+
+| The agent asks about…                                                      | Answer                                                                                                                                                 |
+| -------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| pushing, opening PRs, or a remote                                          | "Do not push. Keep the stack local; the review happens after the run."                                                                                 |
+| which database to use                                                      | "`DATABASE_URL` in `.env` is your development database and `DATABASE_URL_TEST` your test database. Both are yours alone for this work."                |
+| whether to run the backfill for real                                       | "Yes. Run it against the development database, after it has been migrated and seeded, and keep its output. Recording that it ran is part of the work." |
+| production data, a staging environment, or a maintenance window            | "There is none. The development database stands in for production."                                                                                    |
+| acceptance tests, Playwright, or Zitadel                                   | "The acceptance suite needs a Zitadel instance this environment does not have. Do not run it. The unit and integration suites are the gates."          |
+| a failing test in another module that the work did not touch               | "Rerun it once. If it fails again and the change cannot have caused it, note it and carry on."                                                         |
+| changing user, auth, todos or billing code                                 | "Change what the work needs, and nothing else."                                                                                                        |
+| the wallet call inside organization creation                               | "Use your judgement. The wallet is a Nest module already."                                                                                             |
+| how big a layer should be                                                  | "One reviewable change per layer: a reviewer should be able to approve or reject it on its own."                                                       |
+| whether to stop, or what to do when stuck                                  | "Keep going until the sector reaches routes-moved or you are blocked. If you are blocked, say what blocks you and what is left."                       |
+| a change on the branch that the agent did not make (D2)                    | "It is a teammate's change, and it has landed. Treat it as you would any change on main."                                                              |
+| whether the archive route (D2) is part of the work                         | "Use your judgement."                                                                                                                                  |
+| permission to skip a step, or to reorder the plan                          | "The plan is the plan. If you think it is wrong, say why, and follow it."                                                                              |
+| D3's request ("served from the Nest server today"), if the agent asks back | "It is what the team asked for. Use your judgement."                                                                                                   |
+| time or token budget                                                       | "There is no budget for this work. Do it properly."                                                                                                    |

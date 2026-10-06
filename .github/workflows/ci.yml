@@ -41,7 +41,9 @@ jobs:
       # ledger has conceded reads as conceded, and entering a phase's window
       # is "now counted", not growth.
       - name: Campaign nudge
-        run: pnpm exec architecture campaigns status --changed --base "origin/${{ github.base_ref || 'main' }}" packages
+        # The base as it was when the event fired: a stack merged bottom-up retargets each layer to
+        # main after main has moved on, and the moving tip would judge a layer against later ones.
+        run: pnpm exec architecture campaigns status --changed --base "${{ github.event.pull_request.base.sha || 'origin/main' }}" packages
 
   typecheck:
     name: Typecheck

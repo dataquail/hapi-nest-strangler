@@ -3,8 +3,13 @@
 Part of the programme in `README.md` (step 4). Run it only after gate 3: experiment 1 rerun on the
 fixed engine, and the engine version frozen.
 
-**Frozen engine for this experiment:** core `…`, campaigns `…` — fill in at gate 3, then do not
-change until every run is scored.
+**Frozen for this experiment (2026-10-06):** `@goodbones/{core,typescript}` `0.1.0-beta.15`,
+`@goodbones/{cli,oxlint}` `0.1.0-beta.17`, `@goodbones/campaigns` `0.1.1-beta.6`. The campaign definition
+(`architecture.yaml` `campaigns.strangle-hapi`, `campaigns/strangle-hapi.mjs`) is the one at `effc50b`,
+`main` after the billing stack merged. That commit is `S`, the starting point for both arms. Experiment 1's
+verdict on this engine and definition is `results/seeded-faults-campaigns-0.1.1-beta.6.md`. Neither changes
+until every run is scored. The campaign was extended after experiment 1, by `shared-state-split` and
+`mirror-before-write` (step 3b) and `onAhead` (O1, then per objective).
 
 ## The claim under test
 

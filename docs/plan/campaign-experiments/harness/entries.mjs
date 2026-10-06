@@ -30,6 +30,36 @@ ${CANCEL_ANCHOR}`,
 const applyLayerCode = (ctx, commit) =>
   ctx.sh(`git diff ${commit}^ ${commit} -- . ':!${LEDGERS}' | git apply --index`);
 
+// F6: the start mirror moved above the insert it announces.
+const emitMirrorBeforeInsert = (ctx) => {
+  const insert = `    await this.knex("subscriptions").insert(row);\n`;
+  const emit = `    this.server.events.emit(mirrorEvents.SUBSCRIPTION_STARTED, {
+      id: row.id,
+      organizationId: row.organization_id,
+      stripeCustomerId: row.stripe_customer_id,
+      stripeSubscriptionId: row.stripe_subscription_id,
+      status: row.status,
+      currentPeriodEnd: row.current_period_end?.toISOString() ?? null,
+      createdAt: row.created_at.toISOString(),
+    });\n`;
+  ctx.replace(SERVICE, insert + emit, emit + insert);
+};
+
+const concedeNewHoldout = (plant, objective) => (ctx, record) => {
+  plant(ctx);
+  ctx.run(record, "clear", "pnpm -s campaigns:clear");
+  ctx.run(
+    record,
+    "concede",
+    `pnpm -s exec architecture objectives concede strangle-hapi/${objective} --reason "temporary"`,
+  );
+};
+
+const concessionReadback = [
+  ["sector record", `cat ${LEDGERS}/strangle-hapi/sectors/billing.json`],
+  ["status --sector", "pnpm -s exec architecture campaigns status --sector billing packages"],
+];
+
 const faults = [
   {
     id: "F1",
@@ -141,24 +171,17 @@ const OrgParams = z.object({ orgId: OrganizationId });`,
     id: "F6",
     kind: "fault",
     branch: "billing-mirror-start",
-    apply: (ctx) => {
-      const insert = `    await this.knex("subscriptions").insert(row);\n`;
-      const emit = `    this.server.events.emit(mirrorEvents.SUBSCRIPTION_STARTED, {
-      id: row.id,
-      organizationId: row.organization_id,
-      stripeCustomerId: row.stripe_customer_id,
-      stripeSubscriptionId: row.stripe_subscription_id,
-      status: row.status,
-      currentPeriodEnd: row.current_period_end?.toISOString() ?? null,
-      createdAt: row.created_at.toISOString(),
-    });\n`;
-      ctx.replace(SERVICE, insert + emit, emit + insert);
-    },
+    apply: emitMirrorBeforeInsert,
   },
   {
     id: "F7",
     kind: "fault",
     branch: "billing-serve-read",
+    // R3: a clear on the regressed tree must leave the served-phase entries held.
+    after: [
+      ["clear", "pnpm -s campaigns:clear"],
+      ["ledger diff after clear", `git diff HEAD -- ${LEDGERS}`],
+    ],
     apply: (ctx) => {
       ctx.replace(
         SERVICE,
@@ -336,15 +359,18 @@ export = BillingService;
     id: "F11",
     kind: "fault",
     branch: "billing-backfill",
-    apply: (ctx, record) => {
-      addUnmirroredWrite(ctx);
-      ctx.run(record, "clear", "pnpm -s campaigns:clear");
-      ctx.run(
-        record,
-        "concede",
-        `pnpm -s exec architecture objectives concede strangle-hapi/writes-not-mirrored --reason "temporary"`,
-      );
-    },
+    apply: concedeNewHoldout(addUnmirroredWrite, "writes-not-mirrored"),
+    after: concessionReadback,
+  },
+  // F11 across an attested phase: billing is served with backfilled attested, and a
+  // mirrored-phase concession falls below the attestation, which revokes it. F6's edit, because
+  // writes-not-mirrored closes at served and mirror-before-write does not.
+  {
+    id: "F11b",
+    kind: "fault",
+    branch: "billing-attest",
+    apply: concedeNewHoldout(emitMirrorBeforeInsert, "mirror-before-write"),
+    after: concessionReadback,
   },
 ];
 
@@ -403,6 +429,16 @@ const probes = [
       );
       ctx.run(record, "campaigns billing", "pnpm -s exec architecture campaigns billing packages");
       ctx.run(record, "campaigns --json", "pnpm -s exec architecture campaigns --json packages");
+      ctx.run(
+        record,
+        "status --sector",
+        "pnpm -s exec architecture campaigns status --sector billing packages",
+      );
+      ctx.run(
+        record,
+        "status --sector --json",
+        "pnpm -s exec architecture campaigns status --sector billing --json packages",
+      );
     },
   },
   {

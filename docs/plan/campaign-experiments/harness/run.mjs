@@ -2,7 +2,7 @@
 // Experiment 1 harness (see ../01-seeded-faults.md). Run from the main checkout:
 //
 //   node docs/plan/campaign-experiments/harness/run.mjs --worktree <path> [--only F1,F2] [--skip-controls]
-//     [--campaign-from <ref>] [--label <suffix>]
+//     [--campaign-from <ref> [--overlay-base <ref>] [--carry-pins]] [--label <suffix>]
 //
 // For each entry: reset the scratch worktree to the entry's branch, apply the
 // fault, stage it, run the gates, record exit codes and full logs, reset.
@@ -12,6 +12,8 @@
 // on <ref> (architecture.yaml and campaigns/, from its merge base with main) onto
 // the entry's branch, seed the ledgers with `campaigns:clear`, and commit that as
 // the fault's base; G2 diffs against it. The branch's own campaign edits stay.
+// --overlay-base <ref>: diff from <ref> instead of the merge base with main.
+// --carry-pins: also set <ref>'s @goodbones/* pins and reinstall before seeding.
 
 import { execFileSync, spawnSync } from "node:child_process";
 import { createHash } from "node:crypto";
@@ -37,6 +39,8 @@ const skipControls = args.includes("--skip-controls");
 const dry = args.includes("--dry");
 const campaignFrom = flag("--campaign-from");
 const label = flag("--label");
+const overlayBase = flag("--overlay-base");
+const carryPins = args.includes("--carry-pins");
 const DATABASE_URL_TEST =
   process.env.DATABASE_URL_TEST ??
   "postgresql://postgres:postgres@localhost:5432/hapi-strangler-test";
@@ -164,28 +168,53 @@ const lockHash = () =>
 const reset = (branch) => {
   must(`git checkout -q --detach campaign/${branch} && git reset -q --hard && git clean -fdq`);
   const hash = lockHash();
-  if (hash !== lastLockHash) {
+  // Carried pins reinstall in overlay(), against the branch's lockfile.
+  if (!carryPins && hash !== lastLockHash) {
     must("pnpm install --frozen-lockfile --silent", { timeout: 15 * 60 * 1000 });
     lastLockHash = hash;
   }
 };
 
-// The campaign definition's change on --campaign-from, as a patch over its merge base with main.
+// The campaign definition's change on --campaign-from, as a patch over its merge base with main
+// (or over --overlay-base).
 const overlayPatch = () => {
   if (campaignFrom === undefined) return null;
   const repo = path.join(HERE, "..", "..", "..", "..");
   const run = (...a) => execFileSync("git", a, { cwd: repo, encoding: "utf8" });
-  const base = run("merge-base", "main", campaignFrom).trim();
+  const base = overlayBase ?? run("merge-base", "main", campaignFrom).trim();
   const patch = run("diff", base, campaignFrom, "--", "architecture.yaml", "campaigns");
   if (patch.trim() === "") throw new Error(`--campaign-from ${campaignFrom}: no campaign change`);
   const file = path.join(path.dirname(path.resolve(worktree)), "overlay.patch");
   writeFileSync(file, patch);
-  return { file, from: campaignFrom, sha: run("rev-parse", "--short", campaignFrom).trim() };
+  const manifest = JSON.parse(run("show", `${campaignFrom}:package.json`));
+  const carried = carryPins
+    ? Object.fromEntries(
+        Object.entries(manifest.devDependencies).filter(([name]) => name.startsWith("@goodbones/")),
+      )
+    : null;
+  return {
+    file,
+    from: campaignFrom,
+    sha: run("rev-parse", "--short", campaignFrom).trim(),
+    base: run("rev-parse", "--short", base).trim(),
+    pins: carried,
+  };
 };
 
 const overlay = (record) => {
   if (OVERLAY === null) return `campaign/${record.branch}`;
   must(`git apply --3way ${JSON.stringify(OVERLAY.file)}`);
+  if (OVERLAY.pins !== null) {
+    let manifest = ctx.read("package.json");
+    for (const [name, version] of Object.entries(OVERLAY.pins)) {
+      const pin = new RegExp(`("${name.replace("/", "\\/")}": )"[^"]+"`);
+      if (!pin.test(manifest)) throw new Error(`package.json: no pin for ${name}`);
+      manifest = manifest.replace(pin, `$1"${version}"`);
+    }
+    ctx.write("package.json", manifest);
+    must("pnpm install --no-frozen-lockfile --silent", { timeout: 15 * 60 * 1000 });
+    record.pins = pins();
+  }
   const clear = must("pnpm -s campaigns:clear");
   must("git add -A");
   const changed = git("diff", "--cached", "--stat");
@@ -196,6 +225,7 @@ const overlay = (record) => {
   record.overlay = {
     from: OVERLAY.from,
     fromSha: OVERLAY.sha,
+    overlayBase: OVERLAY.base,
     base,
     changed,
     clear: clear.stdout.slice(0, 4000),
@@ -272,7 +302,11 @@ const selected = entries.filter(
   (e) => (only ? only.includes(e.id) : true) && !(skipControls && e.kind === "control"),
 );
 reset(selected[0].branch);
-const versions = pins();
+const versions = OVERLAY?.pins
+  ? Object.fromEntries(
+      Object.entries(OVERLAY.pins).map(([n, v]) => [n.replace("@goodbones/", ""), v]),
+    )
+  : pins();
 const outDir = path.join(
   RESULTS,
   dry ? "dry" : "raw",
@@ -284,7 +318,13 @@ writeFileSync(
   JSON.stringify(
     OVERLAY === null
       ? versions
-      : { ...versions, campaignFrom: OVERLAY.from, campaignSha: OVERLAY.sha },
+      : {
+          ...versions,
+          campaignFrom: OVERLAY.from,
+          campaignSha: OVERLAY.sha,
+          overlayBase: OVERLAY.base,
+          pinsCarried: OVERLAY.pins !== null,
+        },
     null,
     2,
   ),

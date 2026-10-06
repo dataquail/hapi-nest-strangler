@@ -48,10 +48,10 @@
     "campaigns:clear": "architecture objectives clear packages"
   },
   "devDependencies": {
-    "@goodbones/campaigns": "0.1.1-beta.4",
-    "@goodbones/cli": "0.1.0-beta.15",
+    "@goodbones/campaigns": "0.1.1-beta.5",
+    "@goodbones/cli": "0.1.0-beta.16",
     "@goodbones/core": "0.1.0-beta.15",
-    "@goodbones/oxlint": "0.1.0-beta.15",
+    "@goodbones/oxlint": "0.1.0-beta.16",
     "@goodbones/typescript": "0.1.0-beta.15",
     "@types/node": "^22.19.0",
     "@vitest/coverage-v8": "^4.1.11",

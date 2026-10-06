@@ -2,10 +2,16 @@
 // Experiment 1 harness (see ../01-seeded-faults.md). Run from the main checkout:
 //
 //   node docs/plan/campaign-experiments/harness/run.mjs --worktree <path> [--only F1,F2] [--skip-controls]
+//     [--campaign-from <ref>] [--label <suffix>]
 //
 // For each entry: reset the scratch worktree to the entry's branch, apply the
 // fault, stage it, run the gates, record exit codes and full logs, reset.
-// Results land in ../results/raw/<campaigns-version>/ (one JSON + logs per entry).
+// Results land in ../results/raw/<campaigns-version>[-<label>]/ (one JSON + logs per entry).
+//
+// --campaign-from <ref>: before each fault, carry the campaign definition's change
+// on <ref> (architecture.yaml and campaigns/, from its merge base with main) onto
+// the entry's branch, seed the ledgers with `campaigns:clear`, and commit that as
+// the fault's base; G2 diffs against it. The branch's own campaign edits stay.
 
 import { execFileSync, spawnSync } from "node:child_process";
 import { createHash } from "node:crypto";
@@ -29,6 +35,8 @@ const only = flag("--only")?.split(",");
 const skipControls = args.includes("--skip-controls");
 // Apply each entry and record its diff, run no gate: proves every fault still applies.
 const dry = args.includes("--dry");
+const campaignFrom = flag("--campaign-from");
+const label = flag("--label");
 const DATABASE_URL_TEST =
   process.env.DATABASE_URL_TEST ??
   "postgresql://postgres:postgres@localhost:5432/hapi-strangler-test";
@@ -114,9 +122,9 @@ const ctx = {
 // --- the gates ---------------------------------------------------------------
 
 const G7_PROJECTS = ["@org/server", "@org/legacy-api", "@org/database"];
-const gateCommands = (branch) => ({
+const gateCommands = (base) => ({
   G1: "pnpm -s campaigns:nudge",
-  G2: `pnpm -s exec architecture campaigns status --changed --base campaign/${branch} packages`,
+  G2: `pnpm -s exec architecture campaigns status --changed --base ${base} packages`,
   G3: "pnpm -s lint:architecture",
   G4: "pnpm -s lint",
   G5: "pnpm -s check",
@@ -162,6 +170,39 @@ const reset = (branch) => {
   }
 };
 
+// The campaign definition's change on --campaign-from, as a patch over its merge base with main.
+const overlayPatch = () => {
+  if (campaignFrom === undefined) return null;
+  const repo = path.join(HERE, "..", "..", "..", "..");
+  const run = (...a) => execFileSync("git", a, { cwd: repo, encoding: "utf8" });
+  const base = run("merge-base", "main", campaignFrom).trim();
+  const patch = run("diff", base, campaignFrom, "--", "architecture.yaml", "campaigns");
+  if (patch.trim() === "") throw new Error(`--campaign-from ${campaignFrom}: no campaign change`);
+  const file = path.join(path.dirname(path.resolve(worktree)), "overlay.patch");
+  writeFileSync(file, patch);
+  return { file, from: campaignFrom, sha: run("rev-parse", "--short", campaignFrom).trim() };
+};
+
+const overlay = (record) => {
+  if (OVERLAY === null) return `campaign/${record.branch}`;
+  must(`git apply --3way ${JSON.stringify(OVERLAY.file)}`);
+  const clear = must("pnpm -s campaigns:clear");
+  must("git add -A");
+  const changed = git("diff", "--cached", "--stat");
+  must(
+    `git -c user.name=harness -c user.email=harness@local commit -q --no-verify -m "overlay: campaign definition from ${OVERLAY.from}"`,
+  );
+  const base = git("rev-parse", "HEAD");
+  record.overlay = {
+    from: OVERLAY.from,
+    fromSha: OVERLAY.sha,
+    base,
+    changed,
+    clear: clear.stdout.slice(0, 4000),
+  };
+  return base;
+};
+
 const runEntry = (entry, outDir) => {
   const started = new Date().toISOString();
   process.stdout.write(`\n=== ${entry.id} on ${entry.branch}\n`);
@@ -176,6 +217,7 @@ const runEntry = (entry, outDir) => {
     steps: [],
     gates: {},
   };
+  const base = overlay(record);
 
   entry.apply?.(ctx, record);
   must("git add -A");
@@ -184,7 +226,7 @@ const runEntry = (entry, outDir) => {
   // sees this branch's (and this fault's) contracts.
   record.steps.push({ step: "contracts build", ...pick(sh("pnpm -s -F @org/contracts build")) });
 
-  const commands = gateCommands(entry.branch);
+  const commands = gateCommands(base);
   const gates = dry ? [] : (entry.gates ?? ["G1", "G2", "G3", "G4", "G5", "G6", "G7"]);
   const logDir = path.join(outDir, entry.id);
   mkdirSync(logDir, { recursive: true });
@@ -225,14 +267,28 @@ const pick = ({ cmd, exit, ms }) => ({ cmd, exit, ms });
 
 // --- main --------------------------------------------------------------------
 
+const OVERLAY = overlayPatch();
 const selected = entries.filter(
   (e) => (only ? only.includes(e.id) : true) && !(skipControls && e.kind === "control"),
 );
 reset(selected[0].branch);
 const versions = pins();
-const outDir = path.join(RESULTS, dry ? "dry" : "raw", `campaigns-${versions.campaigns}`);
+const outDir = path.join(
+  RESULTS,
+  dry ? "dry" : "raw",
+  `campaigns-${versions.campaigns}${label ? `-${label}` : ""}`,
+);
 mkdirSync(outDir, { recursive: true });
-writeFileSync(path.join(outDir, "pins.json"), JSON.stringify(versions, null, 2));
+writeFileSync(
+  path.join(outDir, "pins.json"),
+  JSON.stringify(
+    OVERLAY === null
+      ? versions
+      : { ...versions, campaignFrom: OVERLAY.from, campaignSha: OVERLAY.sha },
+    null,
+    2,
+  ),
+);
 process.stdout.write(`engine pins: ${JSON.stringify(versions)}\n`);
 
 const failures = [];

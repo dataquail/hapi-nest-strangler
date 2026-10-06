@@ -40,6 +40,8 @@ campaign is not worth its authoring cost (about 300 lines of YAML and detector c
            │  gate 2: new beta published, pins bumped here, repo checks green
  Step 3  Experiment 1, rerun ............... 01-seeded-faults.md      (new pins)
            │  gate 3: nothing regressed; fixed items behave
+ Step 2b onAhead per objective ............. 02b-objective-onahead.md (goodbones; R9 from step 3)
+           │  gate 3 again: the stack replays clean; F4 still caught
  Step 3b Campaign objectives for F5/F6 ..... 03b-campaign-objectives.md (this repo)
            │  gate 3b: F5/F6 caught; no other verdict moved; FREEZE engine + campaign
  Step 4  Experiment 2, A/B ................. 03-ab-plan-vs-campaign.md (frozen pins + campaign)

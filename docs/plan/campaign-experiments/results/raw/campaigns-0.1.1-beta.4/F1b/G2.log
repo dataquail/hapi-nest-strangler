@@ -1,0 +1,21 @@
+$ pnpm -s exec architecture campaigns status --changed --base campaign/billing-backfill packages
+exit 1
+
+--- stdout
+strangle-hapi
+  billing — phase mirrored (3 of 9), 1 day here
+    this diff moves it from backfilled: it is judged by the phase it was found at
+    intent: Every write the legacy module takes is forwarded to the Nest module's internal API, so the Nest table fills as a replica while hapi stays the source of truth.
+    toward the next phase: writes-not-mirrored 1
+    in the files you touched, nearest your change (1 of 1; 1 in the sector):
+      packages/legacy-api/src/application/billing/billing-service.ts#touchSubscription:109  writes-not-mirrored
+    this diff: +writes-not-mirrored: billing-service.ts#touchSubscription#72849c2e  back
+    hapi-lines: 712 → 717 (recorded 712, tolerance 20)
+    onTouch: ratchet (of backfilled) — back
+    ask: hold — leave the sector no worse; paydown is welcome in its own commit, not asked for
+
+not ok
+
+--- stderr
+
+the diff sends a sector back under its onTouch

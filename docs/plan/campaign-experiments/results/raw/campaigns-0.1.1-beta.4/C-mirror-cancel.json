@@ -1,0 +1,61 @@
+{
+  "id": "C-mirror-cancel",
+  "kind": "control",
+  "branch": "billing-mirror-cancel",
+  "head": "f2090e9",
+  "started": "2026-10-06T14:02:19.585Z",
+  "steps": [
+    {
+      "step": "contracts build",
+      "cmd": "pnpm -s -F @org/contracts build",
+      "exit": 0,
+      "ms": 1380
+    }
+  ],
+  "gates": {
+    "G1": {
+      "exit": 0,
+      "ms": 1053
+    },
+    "G2": {
+      "exit": 0,
+      "ms": 1252
+    },
+    "G3": {
+      "exit": 0,
+      "ms": 908
+    },
+    "G4": {
+      "exit": 0,
+      "ms": 2821
+    },
+    "G5": {
+      "exit": 0,
+      "ms": 9398
+    },
+    "G6": {
+      "exit": 0,
+      "ms": 15577
+    },
+    "G7": {
+      "exit": 0,
+      "ms": 22047,
+      "parts": [
+        {
+          "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/server",
+          "exit": 0
+        },
+        {
+          "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/legacy-api",
+          "exit": 0
+        },
+        {
+          "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/database",
+          "exit": 0
+        }
+      ]
+    }
+  },
+  "diffStat": "",
+  "finished": "2026-10-06T14:03:14.961Z"
+}

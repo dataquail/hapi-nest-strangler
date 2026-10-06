@@ -1,0 +1,17 @@
+$ pnpm -s lint:architecture
+exit 1
+
+--- stdout
+
+690 files, 0 violations
+
+campaign strangle-hapi: 3 ledger entries no longer fire, or fire past their window. The code was fixed, or the sector moved on; clear them:
+  routes-still-local · billing · billing-routes.ts#billingRoutes#ad2a056c
+  legacy-writes · billing · billing-service.ts#startSubscription#cff14458
+  hapi-lines · billing · measured 603, recorded 712
+
+  architecture objectives clear strangle-hapi
+
+--- stderr
+
+stale ledger entries

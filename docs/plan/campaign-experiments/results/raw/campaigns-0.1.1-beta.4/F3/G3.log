@@ -1,0 +1,16 @@
+$ pnpm -s lint:architecture
+exit 1
+
+--- stdout
+
+659 files, 0 violations
+
+campaign strangle-hapi: 1 new hit the ledger does not carry. Fix them, or record why the count may rise:
+  no-hapi-models · billing · subscription-model.ts
+      packages/legacy-api/src/application/billing/subscription-model.ts: Move the table into the module's Nest schema and delete the bookshelf model.
+
+  architecture objectives concede strangle-hapi --reason "<why>"
+
+--- stderr
+
+unrecorded campaign growth

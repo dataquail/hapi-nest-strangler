@@ -1,0 +1,61 @@
+{
+  "id": "C-backfill",
+  "kind": "control",
+  "branch": "billing-backfill",
+  "head": "90c2a22",
+  "started": "2026-10-06T14:03:15.167Z",
+  "steps": [
+    {
+      "step": "contracts build",
+      "cmd": "pnpm -s -F @org/contracts build",
+      "exit": 0,
+      "ms": 1248
+    }
+  ],
+  "gates": {
+    "G1": {
+      "exit": 0,
+      "ms": 927
+    },
+    "G2": {
+      "exit": 0,
+      "ms": 1293
+    },
+    "G3": {
+      "exit": 0,
+      "ms": 943
+    },
+    "G4": {
+      "exit": 0,
+      "ms": 2399
+    },
+    "G5": {
+      "exit": 0,
+      "ms": 7062
+    },
+    "G6": {
+      "exit": 0,
+      "ms": 15640
+    },
+    "G7": {
+      "exit": 0,
+      "ms": 24397,
+      "parts": [
+        {
+          "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/server",
+          "exit": 0
+        },
+        {
+          "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/legacy-api",
+          "exit": 0
+        },
+        {
+          "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/database",
+          "exit": 0
+        }
+      ]
+    }
+  },
+  "diffStat": "",
+  "finished": "2026-10-06T14:04:09.782Z"
+}

@@ -1,0 +1,31 @@
+{
+  "id": "P5",
+  "kind": "probe",
+  "branch": "billing-attest",
+  "head": "3f48de7",
+  "started": "2026-10-06T14:25:16.710Z",
+  "steps": [
+    {
+      "step": "contracts build",
+      "cmd": "pnpm -s -F @org/contracts build",
+      "exit": 0,
+      "ms": 555
+    }
+  ],
+  "gates": {
+    "G1": {
+      "exit": 0,
+      "ms": 1153
+    },
+    "G2": {
+      "exit": 0,
+      "ms": 914
+    },
+    "G3": {
+      "exit": 1,
+      "ms": 919
+    }
+  },
+  "diffStat": ".../legacy-api/src/application/billing/billing-service.ts    | 12 ++++++------\n 1 file changed, 6 insertions(+), 6 deletions(-)",
+  "finished": "2026-10-06T14:25:21.963Z"
+}

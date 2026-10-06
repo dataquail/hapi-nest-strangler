@@ -1,0 +1,22 @@
+$ pnpm -s exec architecture campaigns status --changed --base campaign/billing-serve-writes-nest packages
+exit 0
+
+--- stdout
+strangle-hapi
+  billing — phase served (5 of 9), 1 day here
+    intent: The Nest module answers: hapi's routes forward to it operation by operation, and the legacy service writes nothing itself any more.
+    toward the next phase: routes-still-local 2 · legacy-writes 3
+    in the files you touched, nearest your change (5 of 5; 5 in the sector):
+      packages/legacy-api/src/application/billing/billing-service.ts#cancelSubscription:69  legacy-writes
+      packages/legacy-api/src/application/billing/billing-routes.ts#billingRoutes:43  routes-still-local
+      packages/legacy-api/src/application/billing/billing-routes.ts#billingRoutes:55  routes-still-local
+      packages/legacy-api/src/application/billing/billing-service.ts#applied:91  legacy-writes
+      packages/legacy-api/src/application/billing/billing-service.ts#applied:112  legacy-writes
+    this diff: −legacy-writes: billing-service.ts#startSubscription#cff14458 · −routes-still-local: billing-routes.ts#billingRoutes#ad2a056c  forward
+    hapi-lines: 703 → 603 (recorded 712, tolerance 20)
+    onTouch: ratchet — ok
+    ask: hold — leave the sector no worse; paydown is welcome in its own commit, not asked for
+
+ok
+
+--- stderr

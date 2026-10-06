@@ -39,8 +39,10 @@ campaign is not worth its authoring cost (about 300 lines of YAML and detector c
  Step 2  Engine fixes ...................... 02-engine-fixes.md       (goodbones repo, separate session)
            │  gate 2: new beta published, pins bumped here, repo checks green
  Step 3  Experiment 1, rerun ............... 01-seeded-faults.md      (new pins)
-           │  gate 3: nothing regressed; fixed items behave; FREEZE the engine version
- Step 4  Experiment 2, A/B ................. 03-ab-plan-vs-campaign.md (frozen pins)
+           │  gate 3: nothing regressed; fixed items behave
+ Step 3b Campaign objectives for F5/F6 ..... 03b-campaign-objectives.md (this repo)
+           │  gate 3b: F5/F6 caught; no other verdict moved; FREEZE engine + campaign
+ Step 4  Experiment 2, A/B ................. 03-ab-plan-vs-campaign.md (frozen pins + campaign)
            │
  Step 5  Write-up for the decision ......... template at the end of this file
 ```
@@ -57,7 +59,11 @@ change), so the same harness becomes the regression suite for step 2.
 Run it first, on the current pins, before anything is fixed: it is the baseline, and it is what
 tells you which fix matters most.
 
-**Gate 1 — decide the fix list.** Read the results table:
+**Gate 1 — decided 2026-10-06.** The baseline is
+`results/seeded-faults-campaigns-0.1.1-beta.4.md`. F4 was missed by every gate, so O1 is in. The run also
+found three engine bugs (R1, R2, R3), and C6 turned out cheap. The fix list, with corrected causes, is
+`02-engine-fixes.md`. F5 and F6 can be written as campaign objectives with existing terms, so they move to
+step 3b instead of the engine. The rule below is how the list was decided, kept for the record:
 
 - Always in the list: C1 (deleted files invisible), C2 (`clear` says "went back" on a forward
   move), C3 (notes cut at 500 characters), C4 (no per-sector view). Each distorts what an agent
@@ -83,13 +89,34 @@ with no ledger edits beyond what the brief predicts.
 
 ### Step 3 — Experiment 1, rerun
 
-Rerun the identical harness on the new pins. Compare row by row with the baseline.
+Rerun the identical harness (`harness/run.mjs`) on the new pins. Compare row by row with the baseline.
 
-**Gate 3.** Every fault that was _caught_ is still caught (no regressions); every probe the fixes
-target now shows the intended output; F4/F5 are caught if O1 was built. Then **freeze**: record
-the exact engine versions at the top of `03-ab-plan-vs-campaign.md` and do not change them until
-step 4 is finished. The A/B must test the version you would hand to the team, not one tuned
-between runs.
+**Gate 3.** Every fault that was _caught_ is still caught (no regressions). Every probe the fixes target
+now shows the intended output. F4 is caught (O1), and F3, F7 and F11 behave as `02-engine-fixes.md`'s
+R1, R3 and R2 say.
+
+### Step 3b — Campaign objectives for F5 and F6 (this repo)
+
+The campaign covers every hapi sector, not only billing, so the objectives experiment 1 showed missing are
+worth having whatever the A/B finds. They are written in `architecture.yaml` (`campaigns.strangle-hapi`)
+and `campaigns/strangle-hapi.mjs`, each with its probe:
+
+- **F5, shared state flips together.** The operations of a shared-state group are all local or all
+  proxied, never split. The groups are named per sector: write `03-ab-plan-vs-campaign.md`'s Appendix A
+  (organization's groups) first, and declare billing's (start, cancel, webhook) so the harness can test
+  the objective.
+- **F6, the mirror follows the write.** An ast-grep `syntax` rule (`precedes`/`follows`): a method's
+  mirror emit comes after the write it announces.
+
+Write them by shape, not by billing's names. Arm A's plan document must state the same groups and the same
+ordering rule, so the arms differ only in whether the rules are checked. A plan change goes in its own
+commit with its receipt, as any change to the campaign does.
+
+**Gate 3b.** Rerun the harness: F5 and F6 are now caught, and no other fault or control changes its
+verdict. Then **freeze**: record the exact engine versions and the campaign definition's commit at the
+top of `03-ab-plan-vs-campaign.md`, and do not change either until step 4 is finished. The A/B must test
+the version you would hand to the team, not one tuned between runs. The write-up says the campaign was
+extended after experiment 1.
 
 ### Step 4 — Experiment 2, A/B (`03-ab-plan-vs-campaign.md`)
 
@@ -125,6 +152,7 @@ Written before any result exists, so the result cannot move them.
 | Step | Who                                                     | Produces                                          | Lands in                                     |
 | ---- | ------------------------------------------------------- | ------------------------------------------------- | -------------------------------------------- |
 | 1, 3 | a session in this repo                                  | `results/seeded-faults-<pins>.md` + raw JSON      | `docs/plan/campaign-experiments/results/`    |
+| 3b   | a session in this repo                                  | the F5/F6 objectives; Appendix A; a harness rerun | `main` via its own PR; `results/`            |
 | 2    | a session in the goodbones repo                         | a beta release; a pin-bump commit here            | goodbones; this repo's `main` via its own PR |
 | 4    | an orchestrating session + fresh agent sessions per run | one stack per run, audit reports, a scoring sheet | `results/ab/`                                |
 | 5    | the owner                                               | the write-up                                      | wherever the decision is made                |

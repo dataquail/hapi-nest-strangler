@@ -1,0 +1,7 @@
+$ pnpm -s lint
+exit 1
+
+--- stdout
+packages/server/src/modules/billing/commands/start-subscription.handler.ts:14:1: error architecture(imports): [server-src/modules/{module}/commands/imports] Module commands (write-side use cases) may only import: their own module's domain and sibling commands, Nest's CQRS (the Command base class and the handler decorator — ADR-0006) and DI, oxide, the DDD tokens under platform/ddd/ (UnitOfWork, the event bus, the contracts tier) and platform/ids/. Mail goes through a client port in the module's own domain/ports/clients/, never the platform Mailer directly. No platform Live (adapters are bound in a @Module()), no infrastructure, no interface, no queries, no event-handlers, no @org/contracts (a command's failure channel names domain errors; the endpoint maps them to wire errors — ADR-0004), no @org/database, and no other module's surface — a cross-module call goes through a domain/ports/acl/ port whose adapter lives in infrastructure/acl/ (ADR-0022).
+
+--- stderr

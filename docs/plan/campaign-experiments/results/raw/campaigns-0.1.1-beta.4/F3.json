@@ -1,0 +1,61 @@
+{
+  "id": "F3",
+  "kind": "fault",
+  "branch": "billing-data-moved",
+  "head": "4a572ee",
+  "started": "2026-10-06T14:12:19.737Z",
+  "steps": [
+    {
+      "step": "contracts build",
+      "cmd": "pnpm -s -F @org/contracts build",
+      "exit": 0,
+      "ms": 1525
+    }
+  ],
+  "gates": {
+    "G1": {
+      "exit": 0,
+      "ms": 1133
+    },
+    "G2": {
+      "exit": 0,
+      "ms": 918
+    },
+    "G3": {
+      "exit": 1,
+      "ms": 919
+    },
+    "G4": {
+      "exit": 1,
+      "ms": 2806
+    },
+    "G5": {
+      "exit": 0,
+      "ms": 7602
+    },
+    "G6": {
+      "exit": 0,
+      "ms": 17187
+    },
+    "G7": {
+      "exit": 0,
+      "ms": 24380,
+      "parts": [
+        {
+          "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/server",
+          "exit": 0
+        },
+        {
+          "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/legacy-api",
+          "exit": 0
+        },
+        {
+          "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/database",
+          "exit": 0
+        }
+      ]
+    }
+  },
+  "diffStat": ".../src/application/billing/subscription-model.ts      | 18 ++++++++++++++++++\n packages/legacy-api/src/application/models.ts          |  2 ++\n 2 files changed, 20 insertions(+)",
+  "finished": "2026-10-06T14:13:18.228Z"
+}

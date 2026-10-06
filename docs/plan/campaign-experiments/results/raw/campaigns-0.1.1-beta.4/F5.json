@@ -1,0 +1,61 @@
+{
+  "id": "F5",
+  "kind": "fault",
+  "branch": "billing-serve-writes-nest",
+  "head": "41fc2e8",
+  "started": "2026-10-06T14:14:02.335Z",
+  "steps": [
+    {
+      "step": "contracts build",
+      "cmd": "pnpm -s -F @org/contracts build",
+      "exit": 0,
+      "ms": 554
+    }
+  ],
+  "gates": {
+    "G1": {
+      "exit": 0,
+      "ms": 1137
+    },
+    "G2": {
+      "exit": 0,
+      "ms": 945
+    },
+    "G3": {
+      "exit": 1,
+      "ms": 948
+    },
+    "G4": {
+      "exit": 0,
+      "ms": 2873
+    },
+    "G5": {
+      "exit": 0,
+      "ms": 6026
+    },
+    "G6": {
+      "exit": 0,
+      "ms": 17537
+    },
+    "G7": {
+      "exit": 0,
+      "ms": 28132,
+      "parts": [
+        {
+          "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/server",
+          "exit": 0
+        },
+        {
+          "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/legacy-api",
+          "exit": 0
+        },
+        {
+          "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/database",
+          "exit": 0
+        }
+      ]
+    }
+  },
+  "diffStat": ".../src/application/billing/billing-routes.ts      |  11 +-\n .../application/billing/billing-service.spec.ts    |  62 -----------\n .../src/application/billing/billing-service.ts     |  42 -------\n .../billing/billing-routes.integration.test.ts     | 123 +++++++--------------\n 4 files changed, 43 insertions(+), 195 deletions(-)",
+  "finished": "2026-10-06T14:15:02.389Z"
+}

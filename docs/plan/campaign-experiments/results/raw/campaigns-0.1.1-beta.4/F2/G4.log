@@ -1,0 +1,7 @@
+$ pnpm -s lint
+exit 1
+
+--- stdout
+packages/legacy-api/src/application/billing/billing-routes.ts:50:7: error architecture(campaigns): [campaign/strangle-hapi/routes-still-local] Replace this route's handler with `proxyToNest(...)`, so hapi forwards the operation to the Nest module instead of serving it.
+
+--- stderr

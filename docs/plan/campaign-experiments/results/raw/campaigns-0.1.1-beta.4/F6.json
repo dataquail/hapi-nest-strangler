@@ -1,0 +1,61 @@
+{
+  "id": "F6",
+  "kind": "fault",
+  "branch": "billing-mirror-start",
+  "head": "77a9d70",
+  "started": "2026-10-06T14:15:02.605Z",
+  "steps": [
+    {
+      "step": "contracts build",
+      "cmd": "pnpm -s -F @org/contracts build",
+      "exit": 0,
+      "ms": 1339
+    }
+  ],
+  "gates": {
+    "G1": {
+      "exit": 0,
+      "ms": 1056
+    },
+    "G2": {
+      "exit": 0,
+      "ms": 915
+    },
+    "G3": {
+      "exit": 0,
+      "ms": 896
+    },
+    "G4": {
+      "exit": 0,
+      "ms": 2699
+    },
+    "G5": {
+      "exit": 0,
+      "ms": 7260
+    },
+    "G6": {
+      "exit": 0,
+      "ms": 15100
+    },
+    "G7": {
+      "exit": 0,
+      "ms": 21437,
+      "parts": [
+        {
+          "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/server",
+          "exit": 0
+        },
+        {
+          "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/legacy-api",
+          "exit": 0
+        },
+        {
+          "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/database",
+          "exit": 0
+        }
+      ]
+    }
+  },
+  "diffStat": "packages/legacy-api/src/application/billing/billing-service.ts | 2 +-\n 1 file changed, 1 insertion(+), 1 deletion(-)",
+  "finished": "2026-10-06T14:15:55.041Z"
+}

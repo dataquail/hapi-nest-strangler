@@ -487,6 +487,12 @@ campaigns:
         objectives: [no-hapi-files]
         concessions:
           - reason: >-
+              Every phase's deletions pay down what is left of a sector, so paying `no-hapi-files`
+              down is never ahead of the plan: it now carries `onAhead: ignore` (2026-10-06,
+              experiment 1's R9).
+            at: "2026-10-06"
+            by: "@dataquail"
+          - reason: >-
               Unchanged in what it asks; it moved later when the mirrored, backfilled and served
               phases were inserted before it (2026-10-01).
             at: "2026-10-01"
@@ -564,6 +570,7 @@ campaigns:
           ignores: [{ path: packages/legacy-api/src/application/todo/todo-service.ts }]
       no-hapi-files:
         holdout: file
+        onAhead: ignore
         how: Delete what is left of the module in the hapi package; the marker and the migrations stay.
         match:
           path:

@@ -1,0 +1,10 @@
+$ pnpm -s exec architecture campaigns status --changed --base campaign/billing-retire-internal packages
+exit 0
+
+--- stdout
+strangle-hapi
+  legacy at phase fenced (1 of 9) · nothing in your files, diff neutral
+
+ok
+
+--- stderr

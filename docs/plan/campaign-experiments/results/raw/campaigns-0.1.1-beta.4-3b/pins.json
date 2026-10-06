@@ -1,0 +1,9 @@
+{
+  "core": "0.1.0-beta.15",
+  "typescript": "0.1.0-beta.15",
+  "cli": "0.1.0-beta.15",
+  "oxlint": "0.1.0-beta.15",
+  "campaigns": "0.1.1-beta.4",
+  "campaignFrom": "campaign/shared-state-objectives",
+  "campaignSha": "680421b"
+}

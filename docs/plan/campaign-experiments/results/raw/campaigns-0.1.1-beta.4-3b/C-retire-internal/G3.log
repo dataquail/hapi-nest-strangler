@@ -1,0 +1,8 @@
+$ pnpm -s lint:architecture
+exit 0
+
+--- stdout
+
+665 files, 0 violations
+
+--- stderr

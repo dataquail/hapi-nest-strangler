@@ -1,0 +1,335 @@
+diff --git a/packages/legacy-api/src/application/billing/billing-routes.ts b/packages/legacy-api/src/application/billing/billing-routes.ts
+index 0787cb0..2d77a01 100644
+--- a/packages/legacy-api/src/application/billing/billing-routes.ts
++++ b/packages/legacy-api/src/application/billing/billing-routes.ts
+@@ -25,15 +25,8 @@ const billingRoutes = (billingService: BillingService, rowExists: any): ServerRo
+     {
+       method: "POST",
+       path: "/orgs/{orgId}/billing/subscriptions",
+-      handler: async (request, h) =>
+-        h.response(await billingService.startSubscription((request.params as any).orgId)).code(201),
+-      options: {
+-        tags: ["api"],
+-        description: "Subscribe the organization",
+-        auth: "session",
+-        ext: { onPreHandler: [{ method: can(actionConstants.MANAGE_BILLING, "params.orgId") }] },
+-        validate: { params: orgParams, payload: Joi.object({}).unknown(false).allow(null) },
+-      },
++      handler: proxyToNest(),
++      options: proxiedRouteOptions("Subscribe the organization, on the Nest server", true),
+     },
+     {
+       method: "GET",
+diff --git a/packages/legacy-api/src/application/billing/billing-service.spec.ts b/packages/legacy-api/src/application/billing/billing-service.spec.ts
+index 293f09c..b05b9e6 100644
+--- a/packages/legacy-api/src/application/billing/billing-service.spec.ts
++++ b/packages/legacy-api/src/application/billing/billing-service.spec.ts
+@@ -51,68 +51,6 @@ const makeServer = () => ({ events: { emit: vi.fn() } });
+ const organization = (id: string) => ({ get: (key: string) => (key === "id" ? id : undefined) });
+ 
+ describe("BillingService", () => {
+-  it("creates the provider customer and subscription before the local row", async () => {
+-    const { inserts, knex } = makeKnex();
+-    const service = new BillingService({ knex } as any, createFakeGateway(), makeServer() as any);
+-
+-    const result = await service.startSubscription(organization("org-1"));
+-
+-    deepStrictEqual(result.status, "active");
+-    deepStrictEqual(result.organizationId, "org-1");
+-    deepStrictEqual(inserts.length, 1);
+-    deepStrictEqual(inserts[0].row.stripe_customer_id, "cus_test_1");
+-    deepStrictEqual(inserts[0].row.stripe_subscription_id, "sub_test_2");
+-  });
+-
+-  it("announces the started subscription for the mirror once the row is in", async () => {
+-    const { inserts, knex } = makeKnex();
+-    const server = makeServer();
+-    const service = new BillingService({ knex } as any, createFakeGateway(), server as any);
+-
+-    await service.startSubscription(organization("org-1"));
+-
+-    const row = inserts[0].row;
+-    deepStrictEqual(server.events.emit.mock.calls, [
+-      [
+-        "mirror-subscription-started",
+-        {
+-          id: row.id,
+-          organizationId: "org-1",
+-          stripeCustomerId: "cus_test_1",
+-          stripeSubscriptionId: "sub_test_2",
+-          status: "active",
+-          currentPeriodEnd: (row.current_period_end as Date).toISOString(),
+-          createdAt: (row.created_at as Date).toISOString(),
+-        },
+-      ],
+-    ]);
+-  });
+-
+-  it("refuses a second subscription for the same organization without calling the provider", async () => {
+-    const { inserts, knex } = makeKnex([{ organization_id: "org-1", id: "s1" }]);
+-    const gateway = createFakeGateway();
+-    gateway.createCustomer = vi.fn();
+-    const service = new BillingService({ knex } as any, gateway, makeServer() as any);
+-
+-    await rejects(service.startSubscription(organization("org-1")), (error: any) => {
+-      deepStrictEqual(error.output.statusCode, 409);
+-      deepStrictEqual(error.output.payload._tag, "SubscriptionAlreadyExistsError");
+-      return true;
+-    });
+-    deepStrictEqual((gateway.createCustomer as any).mock.calls.length, 0);
+-    deepStrictEqual(inserts.length, 0);
+-  });
+-
+-  it("writes nothing locally when the provider refuses the subscription", async () => {
+-    const { inserts, knex } = makeKnex();
+-    const gateway = createFakeGateway();
+-    gateway.createSubscription = vi.fn().mockRejectedValue(new Error("stripe down"));
+-    const service = new BillingService({ knex } as any, gateway, makeServer() as any);
+-
+-    await rejects(service.startSubscription(organization("org-1")), /stripe down/);
+-    deepStrictEqual(inserts.length, 0);
+-  });
+-
+   it("cancels upstream before flipping the local status", async () => {
+     const { knex, updates } = makeKnex([
+       {
+diff --git a/packages/legacy-api/src/application/billing/billing-service.ts b/packages/legacy-api/src/application/billing/billing-service.ts
+index 616d7e8..778deac 100644
+--- a/packages/legacy-api/src/application/billing/billing-service.ts
++++ b/packages/legacy-api/src/application/billing/billing-service.ts
+@@ -1,6 +1,5 @@
+ import type { Server } from "@hapi/hapi";
+ import type Bookshelf from "bookshelf";
+-import { randomUUID } from "crypto";
+ import type { Knex } from "knex";
+ 
+ import { mirrorEvents } from "../../constants/mirror-events";
+@@ -56,47 +55,6 @@ class BillingService {
+     return this.bookshelf.knex as unknown as Knex;
+   }
+ 
+-  // The provider calls happen outside any transaction: a failed insert after
+-  // a successful create leaves an orphaned provider subscription, as it always has.
+-  async startSubscription(organization: any) {
+-    const organizationId = organization.get("id");
+-    const existing = await this.knex("subscriptions")
+-      .where({ organization_id: organizationId })
+-      .first();
+-    if (existing) {
+-      throw problem(409, "SubscriptionAlreadyExistsError", {
+-        organizationId,
+-        message: `An active subscription already exists for organization ${organizationId}`,
+-      });
+-    }
+-    const customer = await this.stripeGateway.createCustomer({ organizationId });
+-    const created = await this.stripeGateway.createSubscription({
+-      stripeCustomerId: customer.stripeCustomerId,
+-    });
+-    const now = new Date();
+-    const row: SubscriptionRow = {
+-      id: randomUUID(),
+-      organization_id: organizationId,
+-      stripe_customer_id: customer.stripeCustomerId,
+-      stripe_subscription_id: created.stripeSubscriptionId,
+-      status: created.status,
+-      current_period_end: created.currentPeriodEnd,
+-      created_at: now,
+-      updated_at: now,
+-    };
+-    await this.knex("subscriptions").insert(row);
+-    this.server.events.emit(mirrorEvents.SUBSCRIPTION_STARTED, {
+-      id: row.id,
+-      organizationId: row.organization_id,
+-      stripeCustomerId: row.stripe_customer_id,
+-      stripeSubscriptionId: row.stripe_subscription_id,
+-      status: row.status,
+-      currentPeriodEnd: row.current_period_end?.toISOString() ?? null,
+-      createdAt: row.created_at.toISOString(),
+-    });
+-    return toJson(row);
+-  }
+-
+   // Cancels upstream first, then flips the local status; a local failure after
+   // the provider cancel is repaired by the webhook the provider sends anyway.
+   async cancelSubscription(organization: any) {
+diff --git a/packages/legacy-api/test/application/billing/billing-routes.integration.test.ts b/packages/legacy-api/test/application/billing/billing-routes.integration.test.ts
+index b70d106..d743055 100644
+--- a/packages/legacy-api/test/application/billing/billing-routes.integration.test.ts
++++ b/packages/legacy-api/test/application/billing/billing-routes.integration.test.ts
+@@ -43,6 +43,20 @@ describe.sequential("billing routes (integration)", () => {
+         payload: { name: "Acme" },
+       }),
+     ).id as string;
++  const seedSubscription = async (orgId: string) => {
++    const now = new Date();
++    await getKnex()("subscriptions").insert({
++      id: "22222222-2222-2222-2222-222222222222",
++      organization_id: orgId,
++      stripe_customer_id: "cus_seeded",
++      stripe_subscription_id: "sub_seeded",
++      status: "active",
++      current_period_end: null,
++      created_at: now,
++      updated_at: now,
++    });
++    return "sub_seeded";
++  };
+   const webhook = (event: unknown, signature = FAKE_WEBHOOK_SIGNATURE) =>
+     server.inject({
+       method: "POST",
+@@ -51,19 +65,10 @@ describe.sequential("billing routes (integration)", () => {
+       payload: JSON.stringify(event),
+     });
+ 
+-  it("starts and cancels a subscription; only admins commit", async () => {
++  it("forwards a start to the Nest server with the caller's cookie and relays its answer", async () => {
+     const owner = await signedInAs("owner@example.com");
+-    const member = await signedInAs("member@example.com");
+     const orgId = await createOrg(owner);
+-    await getKnex()("memberships").insert({ user_id: member.userId, organization_id: orgId });
+-
+-    const memberStarts = await server.inject({
+-      method: "POST",
+-      url: `/orgs/${orgId}/billing/subscriptions`,
+-      headers: member.headers,
+-      payload: {},
+-    });
+-    deepStrictEqual(memberStarts.statusCode, 403);
++    wallets.userApiAnswers(201, { id: "s1", organizationId: orgId, status: "active" });
+ 
+     const started = await server.inject({
+       method: "POST",
+@@ -71,18 +76,30 @@ describe.sequential("billing routes (integration)", () => {
+       headers: owner.headers,
+       payload: {},
+     });
++
+     deepStrictEqual(started.statusCode, 201);
+     deepStrictEqual(body(started).status, "active");
+-    deepStrictEqual(body(started).organizationId, orgId);
++    const call = await wallets.waitForCall(
++      (one) => one.path === `/orgs/${orgId}/billing/subscriptions` && one.method === "POST",
++    );
++    deepStrictEqual(call.cookie, owner.headers.cookie);
++    deepStrictEqual(call.tokenValid, false);
++    deepStrictEqual(await getKnex()("subscriptions"), []);
++  });
+ 
+-    const again = await server.inject({
+-      method: "POST",
+-      url: `/orgs/${orgId}/billing/subscriptions`,
+-      headers: owner.headers,
+-      payload: {},
++  it("cancels a subscription; only admins commit", async () => {
++    const owner = await signedInAs("owner@example.com");
++    const member = await signedInAs("member@example.com");
++    const orgId = await createOrg(owner);
++    await getKnex()("memberships").insert({ user_id: member.userId, organization_id: orgId });
++    await seedSubscription(orgId);
++
++    const memberCancels = await server.inject({
++      method: "DELETE",
++      url: `/orgs/${orgId}/billing/subscriptions/current`,
++      headers: member.headers,
+     });
+-    deepStrictEqual(again.statusCode, 409);
+-    deepStrictEqual(body(again)._tag, "SubscriptionAlreadyExistsError");
++    deepStrictEqual(memberCancels.statusCode, 403);
+ 
+     const canceled = await server.inject({
+       method: "DELETE",
+@@ -114,41 +131,10 @@ describe.sequential("billing routes (integration)", () => {
+     deepStrictEqual(call.cookie, owner.headers.cookie);
+   });
+ 
+-  it("mirrors a started subscription to the Nest server under the same ids", async () => {
+-    const owner = await signedInAs("owner@example.com");
+-    const orgId = await createOrg(owner);
+-    const started = await server.inject({
+-      method: "POST",
+-      url: `/orgs/${orgId}/billing/subscriptions`,
+-      headers: owner.headers,
+-      payload: {},
+-    });
+-    const row = await getKnex()("subscriptions").first();
+-
+-    const call = await wallets.waitForCall(
+-      (one) => one.path === `/internal/orgs/${orgId}/billing/subscriptions`,
+-    );
+-    deepStrictEqual(call.method, "POST");
+-    deepStrictEqual(call.tokenValid, true);
+-    deepStrictEqual(call.payload, {
+-      id: body(started).id,
+-      stripeCustomerId: row.stripe_customer_id,
+-      stripeSubscriptionId: row.stripe_subscription_id,
+-      status: "active",
+-      currentPeriodEnd: body(started).currentPeriodEnd,
+-      createdAt: new Date(row.created_at).toISOString(),
+-    });
+-  });
+-
+   it("mirrors a cancellation to the Nest server at the time it was made", async () => {
+     const owner = await signedInAs("owner@example.com");
+     const orgId = await createOrg(owner);
+-    await server.inject({
+-      method: "POST",
+-      url: `/orgs/${orgId}/billing/subscriptions`,
+-      headers: owner.headers,
+-      payload: {},
+-    });
++    await seedSubscription(orgId);
+     await server.inject({
+       method: "DELETE",
+       url: `/orgs/${orgId}/billing/subscriptions/current`,
+@@ -167,13 +153,8 @@ describe.sequential("billing routes (integration)", () => {
+   it("mirrors each webhook event it claims, once, with the state it applied", async () => {
+     const owner = await signedInAs("owner@example.com");
+     const orgId = await createOrg(owner);
+-    await server.inject({
+-      method: "POST",
+-      url: `/orgs/${orgId}/billing/subscriptions`,
+-      headers: owner.headers,
+-      payload: {},
+-    });
+-    const stripeSubscriptionId = (await getKnex()("subscriptions").first()).stripe_subscription_id;
++    await seedSubscription(orgId);
++    const stripeSubscriptionId = "sub_seeded";
+     const event = {
+       eventId: "evt_1",
+       type: "customer.subscription.updated",
+@@ -211,33 +192,11 @@ describe.sequential("billing routes (integration)", () => {
+     );
+   });
+ 
+-  it("answers a start the Nest server refuses to mirror, since hapi is the source of truth", async () => {
+-    wallets.refuseMirrors(true);
+-    const owner = await signedInAs("owner@example.com");
+-    const orgId = await createOrg(owner);
+-    const started = await server.inject({
+-      method: "POST",
+-      url: `/orgs/${orgId}/billing/subscriptions`,
+-      headers: owner.headers,
+-      payload: {},
+-    });
+-    deepStrictEqual(started.statusCode, 201);
+-    await wallets.waitForCall((one) => one.path.endsWith("/billing/subscriptions"));
+-    deepStrictEqual((await getKnex()("subscriptions")).length, 1);
+-  });
+-
+   it("ingests Stripe webhooks once each, syncing the subscription status", async () => {
+     const owner = await signedInAs("owner@example.com");
+     const orgId = await createOrg(owner);
+-    const started = body(
+-      await server.inject({
+-        method: "POST",
+-        url: `/orgs/${orgId}/billing/subscriptions`,
+-        headers: owner.headers,
+-        payload: {},
+-      }),
+-    );
+-    const stripeSubscriptionId = (await getKnex()("subscriptions").first()).stripe_subscription_id;
++    const stripeSubscriptionId = await seedSubscription(orgId);
++    const started = await getKnex()("subscriptions").first();
+ 
+     const updated = await webhook({
+       eventId: "evt_1",

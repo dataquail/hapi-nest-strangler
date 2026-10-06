@@ -1,0 +1,23 @@
+$ pnpm -s lint:architecture
+exit 1
+
+--- stdout
+
+690 files, 0 violations
+
+campaign strangle-hapi: 1 new hit the ledger does not carry. Fix them, or record why the count may rise:
+  shared-state-split · billing · billing-routes.ts#subscription-lifecycle
+      packages/legacy-api/src/application/billing/billing-routes.ts: Proxy every operation of this group in the same change, or none: a group part served by hapi and part forwarded to the Nest server loses writes between the two tables. The groups are declared per sector in campaigns/strangle-hapi.mjs (SHARED_STATE_GROUPS); an `undeclared` holdout means the group names an operation its route file no longer has.
+
+  architecture objectives concede strangle-hapi --reason "<why>"
+
+campaign strangle-hapi: 3 ledger entries no longer fire, or fire past their window. The code was fixed, or the sector moved on; clear them:
+  routes-still-local · billing · billing-routes.ts#billingRoutes#ad2a056c
+  legacy-writes · billing · billing-service.ts#startSubscription#cff14458
+  hapi-lines · billing · measured 603, recorded 712
+
+  architecture objectives clear strangle-hapi
+
+--- stderr
+
+stale ledger entries

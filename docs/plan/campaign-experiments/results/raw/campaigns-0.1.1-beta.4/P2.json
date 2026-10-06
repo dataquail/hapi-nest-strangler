@@ -1,0 +1,34 @@
+{
+  "id": "P2",
+  "kind": "probe",
+  "branch": "billing-backfill",
+  "head": "90c2a22",
+  "started": "2026-10-06T14:20:47.995Z",
+  "steps": [
+    {
+      "step": "attest",
+      "cmd": "pnpm -s exec architecture campaigns attest billing backfilled --reason x",
+      "exit": 0,
+      "ms": 1037,
+      "stdout": "strangle-hapi: sector billing attested at backfilled by zweidenbach@gmail.com, in .architecture-campaigns/strangle-hapi/sectors/billing.json.\nRun `objectives clear` to move it on.\n",
+      "stderr": ""
+    },
+    {
+      "step": "clear",
+      "cmd": "pnpm -s campaigns:clear",
+      "exit": 0,
+      "ms": 876,
+      "stdout": "strangle-hapi/no-cross-module-reach: nothing to clear; 6 holdouts left.\nstrangle-hapi/no-role-checks-in-routes: nothing to clear; 2 holdouts left.\nstrangle-hapi/has-nest-module: nothing to clear; 1 holdout left.\nstrangle-hapi/no-hapi-routes: nothing to clear; 0 holdouts left.\nstrangle-hapi/no-hapi-models: nothing to clear; 0 holdouts left.\nstrangle-hapi/no-hapi-files: nothing to clear; 0 holdouts left.\nstrangle-hapi/has-internal-write-api: nothing to clear; 0 holdouts left.\nstrangle-hapi/writes-not-mirrored: nothing to clear; 0 holdouts left.\nstrangle-hapi/has-nest-endpoints: 1 sector entered (billing); 1 holdout left.\nstrangle-hapi/routes-still-local: 1 sector entered (billing); 4 holdouts left.\nstrangle-hapi/legacy-writes: 1 sector entered (billing); 4 holdouts left.\nstrangle-hapi/legacy-table-dropped: nothing to clear; 0 holdouts left.\nstrangle-hapi/hapi-lines: nothing to clear; held to 3551.\nstrangle-hapi: billing went back settled → served.\n",
+      "stderr": ""
+    },
+    {
+      "step": "contracts build",
+      "cmd": "pnpm -s -F @org/contracts build",
+      "exit": 0,
+      "ms": 1387
+    }
+  ],
+  "gates": {},
+  "diffStat": ".../strangle-hapi/has-nest-endpoints.json                   | 10 ++++++++++\n .architecture-campaigns/strangle-hapi/legacy-writes.json    | 13 +++++++++++++\n .../strangle-hapi/routes-still-local.json                   | 13 +++++++++++++\n .architecture-campaigns/strangle-hapi/sectors/billing.json  | 13 ++++++++++---\n 4 files changed, 46 insertions(+), 3 deletions(-)",
+  "finished": "2026-10-06T14:20:52.777Z"
+}

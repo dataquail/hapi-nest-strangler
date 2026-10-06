@@ -1,0 +1,7 @@
+$ pnpm -s exec architecture campaigns status --changed --base campaign/billing-serve-read packages
+exit 0
+
+--- stdout
+nothing you touched is under a campaign (0 files in the diff).
+
+--- stderr

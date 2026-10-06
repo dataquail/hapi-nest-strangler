@@ -1,0 +1,14 @@
+$ pnpm -s campaigns:nudge
+exit 0
+
+--- stdout
+strangle-hapi
+  legacy — phase fenced (1 of 9)
+    intent: The module names no sibling module: what it needs from a peer arrives through the substrate, and its role checks live in its access file, not its routes.
+    hapi-lines: recorded 819 → now 817 (tolerance 20)
+    onTouch: ratchet — ok
+    ask: hold — leave the sector no worse; paydown is welcome in its own commit, not asked for
+
+ok
+
+--- stderr

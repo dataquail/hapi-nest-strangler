@@ -1,0 +1,61 @@
+{
+  "id": "C-data-moved",
+  "kind": "control",
+  "branch": "billing-data-moved",
+  "head": "4a572ee",
+  "started": "2026-10-06T14:05:03.598Z",
+  "steps": [
+    {
+      "step": "contracts build",
+      "cmd": "pnpm -s -F @org/contracts build",
+      "exit": 0,
+      "ms": 1308
+    }
+  ],
+  "gates": {
+    "G1": {
+      "exit": 0,
+      "ms": 1145
+    },
+    "G2": {
+      "exit": 0,
+      "ms": 1244
+    },
+    "G3": {
+      "exit": 0,
+      "ms": 923
+    },
+    "G4": {
+      "exit": 0,
+      "ms": 2659
+    },
+    "G5": {
+      "exit": 0,
+      "ms": 7467
+    },
+    "G6": {
+      "exit": 0,
+      "ms": 16375
+    },
+    "G7": {
+      "exit": 0,
+      "ms": 24263,
+      "parts": [
+        {
+          "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/server",
+          "exit": 0
+        },
+        {
+          "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/legacy-api",
+          "exit": 0
+        },
+        {
+          "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/database",
+          "exit": 0
+        }
+      ]
+    }
+  },
+  "diffStat": "",
+  "finished": "2026-10-06T14:06:00.797Z"
+}

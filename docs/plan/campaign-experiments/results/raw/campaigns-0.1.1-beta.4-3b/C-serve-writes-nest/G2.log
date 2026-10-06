@@ -1,0 +1,7 @@
+$ pnpm -s exec architecture campaigns status --changed --base 6df31fc9b2658ba87720e16c694b44d349aef15a packages
+exit 0
+
+--- stdout
+nothing you touched is under a campaign (0 files in the diff).
+
+--- stderr

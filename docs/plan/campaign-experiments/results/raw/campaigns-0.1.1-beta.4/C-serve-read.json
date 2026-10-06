@@ -1,0 +1,61 @@
+{
+  "id": "C-serve-read",
+  "kind": "control",
+  "branch": "billing-serve-read",
+  "head": "0fa988d",
+  "started": "2026-10-06T14:04:09.990Z",
+  "steps": [
+    {
+      "step": "contracts build",
+      "cmd": "pnpm -s -F @org/contracts build",
+      "exit": 0,
+      "ms": 416
+    }
+  ],
+  "gates": {
+    "G1": {
+      "exit": 0,
+      "ms": 979
+    },
+    "G2": {
+      "exit": 0,
+      "ms": 1255
+    },
+    "G3": {
+      "exit": 0,
+      "ms": 941
+    },
+    "G4": {
+      "exit": 0,
+      "ms": 2479
+    },
+    "G5": {
+      "exit": 0,
+      "ms": 5568
+    },
+    "G6": {
+      "exit": 0,
+      "ms": 15932
+    },
+    "G7": {
+      "exit": 0,
+      "ms": 25113,
+      "parts": [
+        {
+          "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/server",
+          "exit": 0
+        },
+        {
+          "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/legacy-api",
+          "exit": 0
+        },
+        {
+          "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/database",
+          "exit": 0
+        }
+      ]
+    }
+  },
+  "diffStat": "",
+  "finished": "2026-10-06T14:05:03.388Z"
+}

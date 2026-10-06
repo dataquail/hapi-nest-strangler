@@ -1,0 +1,57 @@
+{
+  "id": "P4",
+  "kind": "probe",
+  "branch": "billing-serve-read",
+  "head": "0fa988d",
+  "started": "2026-10-06T17:10:19.124Z",
+  "steps": [
+    {
+      "step": "campaigns",
+      "cmd": "pnpm -s campaigns",
+      "exit": 0,
+      "ms": 988,
+      "stdout": "1 campaign under packages\n\n  strangle-hapi   34%     16 left  @dataquail\n    phases: fenced 2 → rebuilt 1 → mirrored 0 → backfilled (attested) 0 → served 1 → routes-moved 0 → data-moved 0 → gone 0 → settled (open) 1  · legacy 53 files  · shared 6 files\n    no-cross-module-reach      14%      6 left  1 cleared  0 conceded\n    no-role-checks-in-routes   50%      2 left  2 cleared  0 conceded\n    has-nest-module            67%      1 left  2 cleared  0 conceded\n    no-hapi-routes            100%      0 left  2 cleared  0 conceded\n    no-hapi-models            100%      0 left  1 cleared  0 conceded\n    no-hapi-files             100%      0 left  0 cleared  0 conceded\n    has-internal-write-api    100%      0 left  2 cleared  0 conceded\n    writes-not-mirrored       100%      0 left  7 cleared  0 conceded\n    has-nest-endpoints        100%      0 left  2 cleared  0 conceded\n    routes-still-local         75%      3 left  9 cleared  0 conceded\n    legacy-writes              50%      4 left  4 cleared  0 conceded\n    mirror-before-write       100%      0 left  0 cleared  0 conceded\n    shared-state-split        100%      0 left  0 cleared  0 conceded\n    legacy-table-dropped      100%      0 left  1 cleared  0 conceded\n    hapi-lines                 39%  measures 3589, held to 3611\n\n  architecture campaigns status --changed [--base <ref>] [--json]   # what a diff touches, and what to do\n  architecture objectives clear [<campaign>[/<objective>]]        # reconcile the ledgers with the code\n  architecture objectives concede <campaign>[/<objective>] --reason \"<why>\"   # record why a count may rise\n  architecture campaigns attest <sector> <phase> --reason \"<why>\" [--evidence <url>]\n  architecture campaigns note <sector> \"<text>\"\n  architecture campaigns history [<campaign>] [--since <ref>]\n",
+      "stderr": ""
+    },
+    {
+      "step": "status --json",
+      "cmd": "pnpm -s exec architecture campaigns status --json packages",
+      "exit": 1,
+      "ms": 690,
+      "stdout": "",
+      "stderr": "\ncampaigns status takes --changed: the nudge is scoped to a diff.\n"
+    },
+    {
+      "step": "campaigns billing",
+      "cmd": "pnpm -s exec architecture campaigns billing packages",
+      "exit": 1,
+      "ms": 678,
+      "stdout": "",
+      "stderr": "\nENOENT: no such file or directory, stat '/private/tmp/claude-501/-Users-zacharyweidenbach-orca-workspaces-hapi-nest-strangler-dolphin/124110df-9eca-4fbe-b108-e14b629fa032/scratchpad/wt-faults/billing'\n"
+    },
+    {
+      "step": "campaigns --json",
+      "cmd": "pnpm -s exec architecture campaigns --json packages",
+      "exit": 0,
+      "ms": 1086,
+      "stdout": "1 campaign under packages\n\n  strangle-hapi   34%     16 left  @dataquail\n    phases: fenced 2 → rebuilt 1 → mirrored 0 → backfilled (attested) 0 → served 1 → routes-moved 0 → data-moved 0 → gone 0 → settled (open) 1  · legacy 53 files  · shared 6 files\n    no-cross-module-reach      14%      6 left  1 cleared  0 conceded\n    no-role-checks-in-routes   50%      2 left  2 cleared  0 conceded\n    has-nest-module            67%      1 left  2 cleared  0 conceded\n    no-hapi-routes            100%      0 left  2 cleared  0 conceded\n    no-hapi-models            100%      0 left  1 cleared  0 conceded\n    no-hapi-files             100%      0 left  0 cleared  0 conceded\n    has-internal-write-api    100%      0 left  2 cleared  0 conceded\n    writes-not-mirrored       100%      0 left  7 cleared  0 conceded\n    has-nest-endpoints        100%      0 left  2 cleared  0 conceded\n    routes-still-local         75%      3 left  9 cleared  0 conceded\n    legacy-writes              50%      4 left  4 cleared  0 conceded\n    mirror-before-write       100%      0 left  0 cleared  0 conceded\n    shared-state-split        100%      0 left  0 cleared  0 conceded\n    legacy-table-dropped      100%      0 left  1 cleared  0 conceded\n    hapi-lines                 39%  measures 3589, held to 3611\n\n  architecture campaigns status --changed [--base <ref>] [--json]   # what a diff touches, and what to do\n  architecture objectives clear [<campaign>[/<objective>]]        # reconcile the ledgers with the code\n  architecture objectives concede <campaign>[/<objective>] --reason \"<why>\"   # record why a count may rise\n  architecture campaigns attest <sector> <phase> --reason \"<why>\" [--evidence <url>]\n  architecture campaigns note <sector> \"<text>\"\n  architecture campaigns history [<campaign>] [--since <ref>]\n",
+      "stderr": ""
+    },
+    {
+      "step": "contracts build",
+      "cmd": "pnpm -s -F @org/contracts build",
+      "exit": 0,
+      "ms": 447
+    }
+  ],
+  "gates": {},
+  "overlay": {
+    "from": "campaign/shared-state-objectives",
+    "fromSha": "680421b",
+    "base": "13a92144cceb448e4fc880956165053e3d445507",
+    "changed": ".../strangle-hapi/mirror-before-write.json         |  25 ++++\n .architecture-campaigns/strangle-hapi/plan.json    |   8 +-\n .../strangle-hapi/shared-state-split.json          |  25 ++++\n architecture.yaml                                  | 152 ++++++++++++++++++++-\n campaigns/strangle-hapi.mjs                        |  90 ++++++++++++\n 5 files changed, 294 insertions(+), 6 deletions(-)",
+    "clear": "strangle-hapi/no-cross-module-reach: nothing to clear; 6 holdouts left.\nstrangle-hapi/no-role-checks-in-routes: nothing to clear; 2 holdouts left.\nstrangle-hapi/has-nest-module: nothing to clear; 1 holdout left.\nstrangle-hapi/no-hapi-routes: nothing to clear; 0 holdouts left.\nstrangle-hapi/no-hapi-models: nothing to clear; 0 holdouts left.\nstrangle-hapi/no-hapi-files: nothing to clear; 0 holdouts left.\nstrangle-hapi/has-internal-write-api: nothing to clear; 0 holdouts left.\nstrangle-hapi/writes-not-mirrored: nothing to clear; 0 holdouts left.\nstrangle-hapi/has-nest-endpoints: nothing to clear; 0 holdouts left.\nstrangle-hapi/routes-still-local: nothing to clear; 3 holdouts left.\nstrangle-hapi/legacy-writes: nothing to clear; 4 holdouts left.\nstrangle-hapi/mirror-before-write: 2 sectors entered (billing, todo); 0 holdouts left.\nstrangle-hapi/shared-state-split: 2 sectors entered (billing, todo); 0 holdouts left.\nstrangle-hapi/legacy-table-dropped: nothing to clear; 0 holdouts left.\nstrangle-hapi/hapi-lines: nothing to clear; held to 3611.\n"
+  },
+  "diffStat": "",
+  "finished": "2026-10-06T17:10:25.149Z"
+}

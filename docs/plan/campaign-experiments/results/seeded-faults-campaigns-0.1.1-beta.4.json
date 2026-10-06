@@ -1,0 +1,1433 @@
+{
+  "pins": {
+    "core": "0.1.0-beta.15",
+    "typescript": "0.1.0-beta.15",
+    "cli": "0.1.0-beta.15",
+    "oxlint": "0.1.0-beta.15",
+    "campaigns": "0.1.1-beta.4"
+  },
+  "date": "2026-10-06",
+  "entries": [
+    {
+      "id": "C-attest",
+      "kind": "control",
+      "branch": "billing-attest",
+      "head": "3f48de7",
+      "started": "2026-10-06T14:08:39.909Z",
+      "steps": [
+        {
+          "step": "contracts build",
+          "cmd": "pnpm -s -F @org/contracts build",
+          "exit": 0,
+          "ms": 1433
+        }
+      ],
+      "gates": {
+        "G1": {
+          "exit": 0,
+          "ms": 1105
+        },
+        "G2": {
+          "exit": 0,
+          "ms": 1257
+        },
+        "G3": {
+          "exit": 0,
+          "ms": 913
+        },
+        "G4": {
+          "exit": 0,
+          "ms": 2774
+        },
+        "G5": {
+          "exit": 0,
+          "ms": 7574
+        },
+        "G6": {
+          "exit": 0,
+          "ms": 15731
+        },
+        "G7": {
+          "exit": 0,
+          "ms": 23355,
+          "parts": [
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/server",
+              "exit": 0
+            },
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/legacy-api",
+              "exit": 0
+            },
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/database",
+              "exit": 0
+            }
+          ]
+        }
+      },
+      "diffStat": "",
+      "finished": "2026-10-06T14:09:35.830Z"
+    },
+    {
+      "id": "C-backfill",
+      "kind": "control",
+      "branch": "billing-backfill",
+      "head": "90c2a22",
+      "started": "2026-10-06T14:03:15.167Z",
+      "steps": [
+        {
+          "step": "contracts build",
+          "cmd": "pnpm -s -F @org/contracts build",
+          "exit": 0,
+          "ms": 1248
+        }
+      ],
+      "gates": {
+        "G1": {
+          "exit": 0,
+          "ms": 927
+        },
+        "G2": {
+          "exit": 0,
+          "ms": 1293
+        },
+        "G3": {
+          "exit": 0,
+          "ms": 943
+        },
+        "G4": {
+          "exit": 0,
+          "ms": 2399
+        },
+        "G5": {
+          "exit": 0,
+          "ms": 7062
+        },
+        "G6": {
+          "exit": 0,
+          "ms": 15640
+        },
+        "G7": {
+          "exit": 0,
+          "ms": 24397,
+          "parts": [
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/server",
+              "exit": 0
+            },
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/legacy-api",
+              "exit": 0
+            },
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/database",
+              "exit": 0
+            }
+          ]
+        }
+      },
+      "diffStat": "",
+      "finished": "2026-10-06T14:04:09.782Z"
+    },
+    {
+      "id": "C-data-moved",
+      "kind": "control",
+      "branch": "billing-data-moved",
+      "head": "4a572ee",
+      "started": "2026-10-06T14:05:03.598Z",
+      "steps": [
+        {
+          "step": "contracts build",
+          "cmd": "pnpm -s -F @org/contracts build",
+          "exit": 0,
+          "ms": 1308
+        }
+      ],
+      "gates": {
+        "G1": {
+          "exit": 0,
+          "ms": 1145
+        },
+        "G2": {
+          "exit": 0,
+          "ms": 1244
+        },
+        "G3": {
+          "exit": 0,
+          "ms": 923
+        },
+        "G4": {
+          "exit": 0,
+          "ms": 2659
+        },
+        "G5": {
+          "exit": 0,
+          "ms": 7467
+        },
+        "G6": {
+          "exit": 0,
+          "ms": 16375
+        },
+        "G7": {
+          "exit": 0,
+          "ms": 24263,
+          "parts": [
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/server",
+              "exit": 0
+            },
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/legacy-api",
+              "exit": 0
+            },
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/database",
+              "exit": 0
+            }
+          ]
+        }
+      },
+      "diffStat": "",
+      "finished": "2026-10-06T14:06:00.797Z"
+    },
+    {
+      "id": "C-mirror-cancel",
+      "kind": "control",
+      "branch": "billing-mirror-cancel",
+      "head": "f2090e9",
+      "started": "2026-10-06T14:02:19.585Z",
+      "steps": [
+        {
+          "step": "contracts build",
+          "cmd": "pnpm -s -F @org/contracts build",
+          "exit": 0,
+          "ms": 1380
+        }
+      ],
+      "gates": {
+        "G1": {
+          "exit": 0,
+          "ms": 1053
+        },
+        "G2": {
+          "exit": 0,
+          "ms": 1252
+        },
+        "G3": {
+          "exit": 0,
+          "ms": 908
+        },
+        "G4": {
+          "exit": 0,
+          "ms": 2821
+        },
+        "G5": {
+          "exit": 0,
+          "ms": 9398
+        },
+        "G6": {
+          "exit": 0,
+          "ms": 15577
+        },
+        "G7": {
+          "exit": 0,
+          "ms": 22047,
+          "parts": [
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/server",
+              "exit": 0
+            },
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/legacy-api",
+              "exit": 0
+            },
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/database",
+              "exit": 0
+            }
+          ]
+        }
+      },
+      "diffStat": "",
+      "finished": "2026-10-06T14:03:14.961Z"
+    },
+    {
+      "id": "C-mirror-start",
+      "kind": "control",
+      "branch": "billing-mirror-start",
+      "head": "77a9d70",
+      "started": "2026-10-06T14:06:46.666Z",
+      "steps": [
+        {
+          "step": "contracts build",
+          "cmd": "pnpm -s -F @org/contracts build",
+          "exit": 0,
+          "ms": 1375
+        }
+      ],
+      "gates": {
+        "G1": {
+          "exit": 0,
+          "ms": 1074
+        },
+        "G2": {
+          "exit": 0,
+          "ms": 1227
+        },
+        "G3": {
+          "exit": 0,
+          "ms": 907
+        },
+        "G4": {
+          "exit": 0,
+          "ms": 2674
+        },
+        "G5": {
+          "exit": 0,
+          "ms": 7320
+        },
+        "G6": {
+          "exit": 0,
+          "ms": 14884
+        },
+        "G7": {
+          "exit": 0,
+          "ms": 21283,
+          "parts": [
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/server",
+              "exit": 0
+            },
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/legacy-api",
+              "exit": 0
+            },
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/database",
+              "exit": 0
+            }
+          ]
+        }
+      },
+      "diffStat": "",
+      "finished": "2026-10-06T14:07:39.153Z"
+    },
+    {
+      "id": "C-retire-internal",
+      "kind": "control",
+      "branch": "billing-retire-internal",
+      "head": "cf4b2fd",
+      "started": "2026-10-06T14:07:39.359Z",
+      "steps": [
+        {
+          "step": "contracts build",
+          "cmd": "pnpm -s -F @org/contracts build",
+          "exit": 0,
+          "ms": 1296
+        }
+      ],
+      "gates": {
+        "G1": {
+          "exit": 0,
+          "ms": 1101
+        },
+        "G2": {
+          "exit": 0,
+          "ms": 1317
+        },
+        "G3": {
+          "exit": 0,
+          "ms": 951
+        },
+        "G4": {
+          "exit": 0,
+          "ms": 2959
+        },
+        "G5": {
+          "exit": 0,
+          "ms": 7795
+        },
+        "G6": {
+          "exit": 0,
+          "ms": 17192
+        },
+        "G7": {
+          "exit": 0,
+          "ms": 26019,
+          "parts": [
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/server",
+              "exit": 0
+            },
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/legacy-api",
+              "exit": 0
+            },
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/database",
+              "exit": 0
+            }
+          ]
+        }
+      },
+      "diffStat": "",
+      "finished": "2026-10-06T14:08:39.696Z"
+    },
+    {
+      "id": "C-serve-read",
+      "kind": "control",
+      "branch": "billing-serve-read",
+      "head": "0fa988d",
+      "started": "2026-10-06T14:04:09.990Z",
+      "steps": [
+        {
+          "step": "contracts build",
+          "cmd": "pnpm -s -F @org/contracts build",
+          "exit": 0,
+          "ms": 416
+        }
+      ],
+      "gates": {
+        "G1": {
+          "exit": 0,
+          "ms": 979
+        },
+        "G2": {
+          "exit": 0,
+          "ms": 1255
+        },
+        "G3": {
+          "exit": 0,
+          "ms": 941
+        },
+        "G4": {
+          "exit": 0,
+          "ms": 2479
+        },
+        "G5": {
+          "exit": 0,
+          "ms": 5568
+        },
+        "G6": {
+          "exit": 0,
+          "ms": 15932
+        },
+        "G7": {
+          "exit": 0,
+          "ms": 25113,
+          "parts": [
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/server",
+              "exit": 0
+            },
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/legacy-api",
+              "exit": 0
+            },
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/database",
+              "exit": 0
+            }
+          ]
+        }
+      },
+      "diffStat": "",
+      "finished": "2026-10-06T14:05:03.388Z"
+    },
+    {
+      "id": "C-serve-writes-nest",
+      "kind": "control",
+      "branch": "billing-serve-writes-nest",
+      "head": "41fc2e8",
+      "started": "2026-10-06T14:21:18.423Z",
+      "steps": [
+        {
+          "step": "contracts build",
+          "cmd": "pnpm -s -F @org/contracts build",
+          "exit": 0,
+          "ms": 574
+        }
+      ],
+      "gates": {
+        "G1": {
+          "exit": 0,
+          "ms": 1096
+        },
+        "G2": {
+          "exit": 0,
+          "ms": 921
+        },
+        "G3": {
+          "exit": 0,
+          "ms": 926
+        },
+        "G4": {
+          "exit": 0,
+          "ms": 2852
+        },
+        "G5": {
+          "exit": 0,
+          "ms": 6484
+        },
+        "G6": {
+          "exit": 0,
+          "ms": 17937
+        },
+        "G7": {
+          "exit": 0,
+          "ms": 28991,
+          "parts": [
+            {
+              "cmd": "pnpm -s -F @org/legacy-api db:reset:test",
+              "exit": 0
+            },
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/server",
+              "exit": 0
+            },
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/legacy-api",
+              "exit": 0
+            },
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/database",
+              "exit": 0
+            }
+          ]
+        }
+      },
+      "diffStat": "",
+      "finished": "2026-10-06T14:22:18.887Z"
+    },
+    {
+      "id": "F1",
+      "kind": "fault",
+      "branch": "billing-mirror-cancel",
+      "head": "f2090e9",
+      "started": "2026-10-06T14:09:36.039Z",
+      "steps": [
+        {
+          "step": "contracts build",
+          "cmd": "pnpm -s -F @org/contracts build",
+          "exit": 0,
+          "ms": 1221
+        }
+      ],
+      "gates": {
+        "G1": {
+          "exit": 0,
+          "ms": 946
+        },
+        "G2": {
+          "exit": 0,
+          "ms": 942
+        },
+        "G3": {
+          "exit": 1,
+          "ms": 926
+        },
+        "G4": {
+          "exit": 1,
+          "ms": 2498
+        },
+        "G5": {
+          "exit": 0,
+          "ms": 6870
+        },
+        "G6": {
+          "exit": 0,
+          "ms": 15277
+        },
+        "G7": {
+          "exit": 0,
+          "ms": 22042,
+          "parts": [
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/server",
+              "exit": 0
+            },
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/legacy-api",
+              "exit": 0
+            },
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/database",
+              "exit": 0
+            }
+          ]
+        }
+      },
+      "diffStat": "packages/legacy-api/src/application/billing/billing-service.ts | 6 ++++++\n 1 file changed, 6 insertions(+)",
+      "finished": "2026-10-06T14:10:27.509Z"
+    },
+    {
+      "id": "F1b",
+      "kind": "fault",
+      "branch": "billing-backfill",
+      "head": "90c2a22",
+      "started": "2026-10-06T14:10:27.716Z",
+      "steps": [
+        {
+          "step": "contracts build",
+          "cmd": "pnpm -s -F @org/contracts build",
+          "exit": 0,
+          "ms": 1219
+        }
+      ],
+      "gates": {
+        "G1": {
+          "exit": 1,
+          "ms": 946
+        },
+        "G2": {
+          "exit": 1,
+          "ms": 922
+        },
+        "G3": {
+          "exit": 1,
+          "ms": 915
+        },
+        "G4": {
+          "exit": 1,
+          "ms": 2466
+        },
+        "G5": {
+          "exit": 0,
+          "ms": 6997
+        },
+        "G6": {
+          "exit": 0,
+          "ms": 15405
+        },
+        "G7": {
+          "exit": 0,
+          "ms": 23431,
+          "parts": [
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/server",
+              "exit": 0
+            },
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/legacy-api",
+              "exit": 0
+            },
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/database",
+              "exit": 0
+            }
+          ]
+        }
+      },
+      "diffStat": "packages/legacy-api/src/application/billing/billing-service.ts | 6 ++++++\n 1 file changed, 6 insertions(+)",
+      "finished": "2026-10-06T14:11:20.733Z"
+    },
+    {
+      "id": "F2",
+      "kind": "fault",
+      "branch": "billing-serve-read",
+      "head": "0fa988d",
+      "started": "2026-10-06T14:11:21.005Z",
+      "steps": [
+        {
+          "step": "contracts build",
+          "cmd": "pnpm -s -F @org/contracts build",
+          "exit": 0,
+          "ms": 1314
+        }
+      ],
+      "gates": {
+        "G1": {
+          "exit": 1,
+          "ms": 969
+        },
+        "G2": {
+          "exit": 1,
+          "ms": 939
+        },
+        "G3": {
+          "exit": 1,
+          "ms": 923
+        },
+        "G4": {
+          "exit": 1,
+          "ms": 2503
+        },
+        "G5": {
+          "exit": 0,
+          "ms": 7051
+        },
+        "G6": {
+          "exit": 0,
+          "ms": 15955
+        },
+        "G7": {
+          "exit": 0,
+          "ms": 25037,
+          "parts": [
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/server",
+              "exit": 0
+            },
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/legacy-api",
+              "exit": 0
+            },
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/database",
+              "exit": 0
+            }
+          ]
+        }
+      },
+      "diffStat": "packages/contracts/openapi.json                    | 116 +++++++++++++++++++++\n packages/contracts/src/api/BillingContract.ts      |  14 +++\n packages/contracts/src/generated/api.ts            |  83 +++++++++++++++\n .../src/application/billing/billing-routes.ts      |  12 +++\n 4 files changed, 225 insertions(+)",
+      "finished": "2026-10-06T14:12:19.525Z"
+    },
+    {
+      "id": "F3",
+      "kind": "fault",
+      "branch": "billing-data-moved",
+      "head": "4a572ee",
+      "started": "2026-10-06T14:12:19.737Z",
+      "steps": [
+        {
+          "step": "contracts build",
+          "cmd": "pnpm -s -F @org/contracts build",
+          "exit": 0,
+          "ms": 1525
+        }
+      ],
+      "gates": {
+        "G1": {
+          "exit": 0,
+          "ms": 1133
+        },
+        "G2": {
+          "exit": 0,
+          "ms": 918
+        },
+        "G3": {
+          "exit": 1,
+          "ms": 919
+        },
+        "G4": {
+          "exit": 1,
+          "ms": 2806
+        },
+        "G5": {
+          "exit": 0,
+          "ms": 7602
+        },
+        "G6": {
+          "exit": 0,
+          "ms": 17187
+        },
+        "G7": {
+          "exit": 0,
+          "ms": 24380,
+          "parts": [
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/server",
+              "exit": 0
+            },
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/legacy-api",
+              "exit": 0
+            },
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/database",
+              "exit": 0
+            }
+          ]
+        }
+      },
+      "diffStat": ".../src/application/billing/subscription-model.ts      | 18 ++++++++++++++++++\n packages/legacy-api/src/application/models.ts          |  2 ++\n 2 files changed, 20 insertions(+)",
+      "finished": "2026-10-06T14:13:18.228Z"
+    },
+    {
+      "id": "F4",
+      "kind": "fault",
+      "branch": "billing-backfill",
+      "head": "90c2a22",
+      "started": "2026-10-06T14:22:19.096Z",
+      "steps": [
+        {
+          "step": "contracts build",
+          "cmd": "pnpm -s -F @org/contracts build",
+          "exit": 0,
+          "ms": 639
+        }
+      ],
+      "gates": {
+        "G1": {
+          "exit": 0,
+          "ms": 1218
+        },
+        "G2": {
+          "exit": 0,
+          "ms": 926
+        },
+        "G3": {
+          "exit": 1,
+          "ms": 911
+        },
+        "G4": {
+          "exit": 0,
+          "ms": 2959
+        },
+        "G5": {
+          "exit": 0,
+          "ms": 5162
+        },
+        "G6": {
+          "exit": 0,
+          "ms": 16217
+        },
+        "G7": {
+          "exit": 0,
+          "ms": 26057,
+          "parts": [
+            {
+              "cmd": "pnpm -s -F @org/legacy-api db:reset:test",
+              "exit": 0
+            },
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/server",
+              "exit": 0
+            },
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/legacy-api",
+              "exit": 0
+            },
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/database",
+              "exit": 0
+            }
+          ]
+        }
+      },
+      "diffStat": "packages/database/src/row-schemas/legacy-access.ts |  7 +++\n .../src/application/billing/billing-routes.ts      | 14 ++---\n .../src/application/billing/billing-service.ts     |  8 ---\n .../src/lib/backend-client/proxy-to-nest.ts        | 56 +++++++++++++++++\n .../billing/billing-routes.integration.test.ts     | 50 +++++++---------\n .../legacy-api/test/helpers/fake-wallet-server.ts  | 19 +++++-\n .../src/modules/billing/billing.handlers.test.ts   |  5 ++\n .../server/src/modules/billing/billing.module.ts   | 15 +++++\n .../server/src/modules/billing/billing.platform.ts |  3 +\n .../src/modules/billing/billing.query-handlers.ts  | 14 +++++\n .../domain/ports/acl/organization-access.acl.ts    | 19 ++++++\n .../billing/domain/ports/acl/platform-roles.acl.ts |  8 +++\n .../acl/organization-access.acl-fake.ts            | 36 +++++++++++\n ...rganization-access.acl-live.integration.test.ts | 63 +++++++++++++++++++\n .../acl/organization-access.acl-live.ts            | 51 ++++++++++++++++\n .../infrastructure/acl/platform-roles.acl-fake.ts  | 15 +++++\n .../platform-roles.acl-live.integration.test.ts    | 39 ++++++++++++\n .../infrastructure/acl/platform-roles.acl-live.ts  | 30 ++++++++++\n ...rrent-subscription.endpoint.integration.test.ts | 70 ++++++++++++++++++++++\n .../http/get-current-subscription.endpoint.ts      | 57 ++++++++++++++++++\n .../src/modules/billing/interface/http/index.ts    |  2 +\n .../billing/policies/billing.policies.test.ts      | 51 ++++++++++++++++\n .../modules/billing/policies/billing.policies.ts   | 41 +++++++++++++\n .../billing/policies/billing.resource-resolver.ts  | 21 +++++++\n .../policies/is-billing-org-admin.policy.test.ts   | 41 +++++++++++++\n .../policies/is-billing-org-admin.policy.ts        | 11 ++++\n .../policies/is-billing-org-member.policy.test.ts  | 35 +++++++++++\n .../policies/is-billing-org-member.policy.ts       |  9 +++\n .../policies/is-billing-super-admin.policy.ts      | 11 ++++\n ...ion-by-organization.handler.integration.test.ts | 67 +++++++++++++++++++++\n .../find-subscription-by-organization.handler.ts   | 37 ++++++++++++\n .../find-subscription-by-organization.query.ts     | 28 +++++++++\n packages/server/src/platform/cqrs/cqrs-runtime.ts  | 12 +++-\n .../server/src/platform/modules/authz.module.ts    | 21 +++++--\n packages/server/src/test-utils/test-legacy-rows.ts | 12 ++++\n 35 files changed, 926 insertions(+), 52 deletions(-)",
+      "finished": "2026-10-06T14:23:15.285Z"
+    },
+    {
+      "id": "F5",
+      "kind": "fault",
+      "branch": "billing-serve-writes-nest",
+      "head": "41fc2e8",
+      "started": "2026-10-06T14:14:02.335Z",
+      "steps": [
+        {
+          "step": "contracts build",
+          "cmd": "pnpm -s -F @org/contracts build",
+          "exit": 0,
+          "ms": 554
+        }
+      ],
+      "gates": {
+        "G1": {
+          "exit": 0,
+          "ms": 1137
+        },
+        "G2": {
+          "exit": 0,
+          "ms": 945
+        },
+        "G3": {
+          "exit": 1,
+          "ms": 948
+        },
+        "G4": {
+          "exit": 0,
+          "ms": 2873
+        },
+        "G5": {
+          "exit": 0,
+          "ms": 6026
+        },
+        "G6": {
+          "exit": 0,
+          "ms": 17537
+        },
+        "G7": {
+          "exit": 0,
+          "ms": 28132,
+          "parts": [
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/server",
+              "exit": 0
+            },
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/legacy-api",
+              "exit": 0
+            },
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/database",
+              "exit": 0
+            }
+          ]
+        }
+      },
+      "diffStat": ".../src/application/billing/billing-routes.ts      |  11 +-\n .../application/billing/billing-service.spec.ts    |  62 -----------\n .../src/application/billing/billing-service.ts     |  42 -------\n .../billing/billing-routes.integration.test.ts     | 123 +++++++--------------\n 4 files changed, 43 insertions(+), 195 deletions(-)",
+      "finished": "2026-10-06T14:15:02.389Z"
+    },
+    {
+      "id": "F6",
+      "kind": "fault",
+      "branch": "billing-mirror-start",
+      "head": "77a9d70",
+      "started": "2026-10-06T14:15:02.605Z",
+      "steps": [
+        {
+          "step": "contracts build",
+          "cmd": "pnpm -s -F @org/contracts build",
+          "exit": 0,
+          "ms": 1339
+        }
+      ],
+      "gates": {
+        "G1": {
+          "exit": 0,
+          "ms": 1056
+        },
+        "G2": {
+          "exit": 0,
+          "ms": 915
+        },
+        "G3": {
+          "exit": 0,
+          "ms": 896
+        },
+        "G4": {
+          "exit": 0,
+          "ms": 2699
+        },
+        "G5": {
+          "exit": 0,
+          "ms": 7260
+        },
+        "G6": {
+          "exit": 0,
+          "ms": 15100
+        },
+        "G7": {
+          "exit": 0,
+          "ms": 21437,
+          "parts": [
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/server",
+              "exit": 0
+            },
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/legacy-api",
+              "exit": 0
+            },
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/database",
+              "exit": 0
+            }
+          ]
+        }
+      },
+      "diffStat": "packages/legacy-api/src/application/billing/billing-service.ts | 2 +-\n 1 file changed, 1 insertion(+), 1 deletion(-)",
+      "finished": "2026-10-06T14:15:55.041Z"
+    },
+    {
+      "id": "F7",
+      "kind": "fault",
+      "branch": "billing-serve-read",
+      "head": "0fa988d",
+      "started": "2026-10-06T14:15:55.249Z",
+      "steps": [
+        {
+          "step": "contracts build",
+          "cmd": "pnpm -s -F @org/contracts build",
+          "exit": 0,
+          "ms": 1216
+        }
+      ],
+      "gates": {
+        "G1": {
+          "exit": 1,
+          "ms": 949
+        },
+        "G2": {
+          "exit": 1,
+          "ms": 945
+        },
+        "G3": {
+          "exit": 1,
+          "ms": 936
+        },
+        "G4": {
+          "exit": 1,
+          "ms": 2503
+        },
+        "G5": {
+          "exit": 0,
+          "ms": 7076
+        },
+        "G6": {
+          "exit": 0,
+          "ms": 15650
+        },
+        "G7": {
+          "exit": 0,
+          "ms": 25867,
+          "parts": [
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/server",
+              "exit": 0
+            },
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/legacy-api",
+              "exit": 0
+            },
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/database",
+              "exit": 0
+            }
+          ]
+        }
+      },
+      "diffStat": ".../src/application/billing/billing-service.ts       | 20 ++++++++++++++++++--\n 1 file changed, 18 insertions(+), 2 deletions(-)",
+      "finished": "2026-10-06T14:16:51.111Z"
+    },
+    {
+      "id": "F8",
+      "kind": "fault",
+      "branch": "billing-retire-internal",
+      "head": "cf4b2fd",
+      "started": "2026-10-06T14:16:51.312Z",
+      "steps": [
+        {
+          "step": "contracts build",
+          "cmd": "pnpm -s -F @org/contracts build",
+          "exit": 0,
+          "ms": 1298
+        }
+      ],
+      "gates": {
+        "G1": {
+          "exit": 1,
+          "ms": 1051
+        },
+        "G2": {
+          "exit": 1,
+          "ms": 926
+        },
+        "G3": {
+          "exit": 1,
+          "ms": 933
+        },
+        "G4": {
+          "exit": 1,
+          "ms": 2759
+        },
+        "G5": {
+          "exit": 0,
+          "ms": 7349
+        },
+        "G6": {
+          "exit": 0,
+          "ms": 16401
+        },
+        "G7": {
+          "exit": 0,
+          "ms": 25788,
+          "parts": [
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/server",
+              "exit": 0
+            },
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/legacy-api",
+              "exit": 0
+            },
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/database",
+              "exit": 0
+            }
+          ]
+        }
+      },
+      "diffStat": ".../src/application/billing/billing-service.ts     | 37 ++++++++++++++++++++++\n 1 file changed, 37 insertions(+)",
+      "finished": "2026-10-06T14:17:49.590Z"
+    },
+    {
+      "id": "F9",
+      "kind": "fault",
+      "branch": "billing-serve-writes-nest",
+      "head": "41fc2e8",
+      "started": "2026-10-06T14:17:49.824Z",
+      "steps": [
+        {
+          "step": "contracts build",
+          "cmd": "pnpm -s -F @org/contracts build",
+          "exit": 0,
+          "ms": 1445
+        }
+      ],
+      "gates": {
+        "G1": {
+          "exit": 0,
+          "ms": 1152
+        },
+        "G2": {
+          "exit": 0,
+          "ms": 942
+        },
+        "G3": {
+          "exit": 1,
+          "ms": 954
+        },
+        "G4": {
+          "exit": 1,
+          "ms": 2756
+        },
+        "G5": {
+          "exit": 1,
+          "ms": 3771
+        },
+        "G6": {
+          "exit": 0,
+          "ms": 17891
+        },
+        "G7": {
+          "exit": 0,
+          "ms": 27999,
+          "parts": [
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/server",
+              "exit": 0
+            },
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/legacy-api",
+              "exit": 0
+            },
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/database",
+              "exit": 0
+            }
+          ]
+        }
+      },
+      "diffStat": ".../server/src/modules/billing/commands/start-subscription.handler.ts  | 3 ++-\n 1 file changed, 2 insertions(+), 1 deletion(-)",
+      "finished": "2026-10-06T14:18:48.491Z"
+    },
+    {
+      "id": "F10",
+      "kind": "fault",
+      "branch": "billing-serve-writes-nest",
+      "head": "41fc2e8",
+      "started": "2026-10-06T14:24:16.106Z",
+      "steps": [
+        {
+          "step": "contracts build",
+          "cmd": "pnpm -s -F @org/contracts build",
+          "exit": 0,
+          "ms": 624
+        }
+      ],
+      "gates": {
+        "G1": {
+          "exit": 0,
+          "ms": 1158
+        },
+        "G2": {
+          "exit": 0,
+          "ms": 924
+        },
+        "G3": {
+          "exit": 0,
+          "ms": 920
+        },
+        "G4": {
+          "exit": 0,
+          "ms": 2870
+        },
+        "G5": {
+          "exit": 0,
+          "ms": 5523
+        },
+        "G6": {
+          "exit": 0,
+          "ms": 18037
+        },
+        "G7": {
+          "exit": 0,
+          "ms": 29650,
+          "parts": [
+            {
+              "cmd": "pnpm -s -F @org/legacy-api db:reset:test",
+              "exit": 0
+            },
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/server",
+              "exit": 0
+            },
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/legacy-api",
+              "exit": 0
+            },
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/database",
+              "exit": 0
+            }
+          ]
+        }
+      },
+      "diffStat": ".../modules/billing/commands/record-subscription.handler.test.ts  | 8 +++++++-\n .../src/modules/billing/commands/record-subscription.handler.ts   | 4 ++++\n 2 files changed, 11 insertions(+), 1 deletion(-)",
+      "finished": "2026-10-06T14:25:16.478Z"
+    },
+    {
+      "id": "F11",
+      "kind": "fault",
+      "branch": "billing-backfill",
+      "head": "90c2a22",
+      "started": "2026-10-06T14:19:47.023Z",
+      "steps": [
+        {
+          "step": "clear",
+          "cmd": "pnpm -s campaigns:clear",
+          "exit": 0,
+          "ms": 1131,
+          "stdout": "strangle-hapi/no-cross-module-reach: nothing to clear; 6 holdouts left.\nstrangle-hapi/no-role-checks-in-routes: nothing to clear; 2 holdouts left.\nstrangle-hapi/has-nest-module: nothing to clear; 1 holdout left.\nstrangle-hapi/no-hapi-routes: nothing to clear; 0 holdouts left.\nstrangle-hapi/no-hapi-models: nothing to clear; 0 holdouts left.\nstrangle-hapi/no-hapi-files: nothing to clear; 0 holdouts left.\nstrangle-hapi/has-internal-write-api: nothing to clear; 0 holdouts left.\nstrangle-hapi/writes-not-mirrored: nothing to clear; 0 holdouts left.\nstrangle-hapi/has-nest-endpoints: nothing to clear; 0 holdouts left.\nstrangle-hapi/routes-still-local: nothing to clear; 0 holdouts left.\nstrangle-hapi/legacy-writes: nothing to clear; 0 holdouts left.\nstrangle-hapi/legacy-table-dropped: nothing to clear; 0 holdouts left.\nstrangle-hapi/hapi-lines: nothing to clear; held to 3551.\nstrangle-hapi: billing went back backfilled → mirrored.\n",
+          "stderr": ""
+        },
+        {
+          "step": "concede",
+          "cmd": "pnpm -s exec architecture objectives concede strangle-hapi/writes-not-mirrored --reason \"temporary\"",
+          "exit": 0,
+          "ms": 873,
+          "stdout": "strangle-hapi/writes-not-mirrored: 1 holdout conceded, recorded by zweidenbach@gmail.com.\n  billing · billing-service.ts#touchSubscription#72849c2e\n",
+          "stderr": ""
+        },
+        {
+          "step": "contracts build",
+          "cmd": "pnpm -s -F @org/contracts build",
+          "exit": 0,
+          "ms": 563
+        }
+      ],
+      "gates": {
+        "G1": {
+          "exit": 0,
+          "ms": 896
+        },
+        "G2": {
+          "exit": 0,
+          "ms": 918
+        },
+        "G3": {
+          "exit": 0,
+          "ms": 915
+        },
+        "G4": {
+          "exit": 0,
+          "ms": 2968
+        },
+        "G5": {
+          "exit": 0,
+          "ms": 5812
+        },
+        "G6": {
+          "exit": 0,
+          "ms": 15855
+        },
+        "G7": {
+          "exit": 0,
+          "ms": 23452,
+          "parts": [
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/server",
+              "exit": 0
+            },
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/legacy-api",
+              "exit": 0
+            },
+            {
+              "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/database",
+              "exit": 0
+            }
+          ]
+        }
+      },
+      "diffStat": ".../strangle-hapi/writes-not-mirrored.json                 | 14 +++++++++++++-\n .../legacy-api/src/application/billing/billing-service.ts  |  6 ++++++\n 2 files changed, 19 insertions(+), 1 deletion(-)",
+      "finished": "2026-10-06T14:20:42.251Z"
+    },
+    {
+      "id": "P1",
+      "kind": "probe",
+      "branch": "billing-retire-internal",
+      "head": "cf4b2fd",
+      "started": "2026-10-06T14:20:42.475Z",
+      "steps": [
+        {
+          "step": "contracts build",
+          "cmd": "pnpm -s -F @org/contracts build",
+          "exit": 0,
+          "ms": 1297
+        }
+      ],
+      "gates": {
+        "G1": {
+          "exit": 0,
+          "ms": 1128
+        },
+        "G2": {
+          "exit": 0,
+          "ms": 963
+        }
+      },
+      "diffStat": "packages/legacy-api/bootstrap.ts                   |   1 -\n .../src/application/billing/billing-routes.ts      |  44 --------\n .../src/lib/backend-client/proxy-to-nest.ts        |  63 ------------\n .../billing/billing-routes.integration.test.ts     | 113 ---------------------\n .../legacy-api/test/helpers/fake-wallet-server.ts  |  28 +----\n packages/legacy-api/test/route-parity.test.ts      |   2 +-\n packages/web/next.config.ts                        |   6 ++\n packages/web/services/api/upstreams.shared.test.ts |  13 +++\n packages/web/services/api/upstreams.shared.ts      |   6 +-\n 9 files changed, 27 insertions(+), 249 deletions(-)",
+      "finished": "2026-10-06T14:20:47.766Z"
+    },
+    {
+      "id": "P2",
+      "kind": "probe",
+      "branch": "billing-backfill",
+      "head": "90c2a22",
+      "started": "2026-10-06T14:20:47.995Z",
+      "steps": [
+        {
+          "step": "attest",
+          "cmd": "pnpm -s exec architecture campaigns attest billing backfilled --reason x",
+          "exit": 0,
+          "ms": 1037,
+          "stdout": "strangle-hapi: sector billing attested at backfilled by zweidenbach@gmail.com, in .architecture-campaigns/strangle-hapi/sectors/billing.json.\nRun `objectives clear` to move it on.\n",
+          "stderr": ""
+        },
+        {
+          "step": "clear",
+          "cmd": "pnpm -s campaigns:clear",
+          "exit": 0,
+          "ms": 876,
+          "stdout": "strangle-hapi/no-cross-module-reach: nothing to clear; 6 holdouts left.\nstrangle-hapi/no-role-checks-in-routes: nothing to clear; 2 holdouts left.\nstrangle-hapi/has-nest-module: nothing to clear; 1 holdout left.\nstrangle-hapi/no-hapi-routes: nothing to clear; 0 holdouts left.\nstrangle-hapi/no-hapi-models: nothing to clear; 0 holdouts left.\nstrangle-hapi/no-hapi-files: nothing to clear; 0 holdouts left.\nstrangle-hapi/has-internal-write-api: nothing to clear; 0 holdouts left.\nstrangle-hapi/writes-not-mirrored: nothing to clear; 0 holdouts left.\nstrangle-hapi/has-nest-endpoints: 1 sector entered (billing); 1 holdout left.\nstrangle-hapi/routes-still-local: 1 sector entered (billing); 4 holdouts left.\nstrangle-hapi/legacy-writes: 1 sector entered (billing); 4 holdouts left.\nstrangle-hapi/legacy-table-dropped: nothing to clear; 0 holdouts left.\nstrangle-hapi/hapi-lines: nothing to clear; held to 3551.\nstrangle-hapi: billing went back settled → served.\n",
+          "stderr": ""
+        },
+        {
+          "step": "contracts build",
+          "cmd": "pnpm -s -F @org/contracts build",
+          "exit": 0,
+          "ms": 1387
+        }
+      ],
+      "gates": {},
+      "diffStat": ".../strangle-hapi/has-nest-endpoints.json                   | 10 ++++++++++\n .architecture-campaigns/strangle-hapi/legacy-writes.json    | 13 +++++++++++++\n .../strangle-hapi/routes-still-local.json                   | 13 +++++++++++++\n .architecture-campaigns/strangle-hapi/sectors/billing.json  | 13 ++++++++++---\n 4 files changed, 46 insertions(+), 3 deletions(-)",
+      "finished": "2026-10-06T14:20:52.777Z"
+    },
+    {
+      "id": "P3",
+      "kind": "probe",
+      "branch": "billing-serve-read",
+      "head": "0fa988d",
+      "started": "2026-10-06T14:20:52.978Z",
+      "steps": [
+        {
+          "step": "note",
+          "cmd": "pnpm -s exec architecture campaigns note billing \"01234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789END-OF-600\"",
+          "exit": 0,
+          "ms": 880,
+          "stdout": "strangle-hapi: note left on billing, in .architecture-campaigns/strangle-hapi/sectors/billing.json.\n",
+          "stderr": ""
+        },
+        {
+          "step": "contracts build",
+          "cmd": "pnpm -s -F @org/contracts build",
+          "exit": 0,
+          "ms": 411
+        }
+      ],
+      "gates": {},
+      "observation": {
+        "written": 600,
+        "stored": [500],
+        "endsWithMarker": [false]
+      },
+      "diffStat": ".architecture-campaigns/strangle-hapi/sectors/billing.json | 9 ++++++++-\n 1 file changed, 8 insertions(+), 1 deletion(-)",
+      "finished": "2026-10-06T14:20:54.734Z"
+    },
+    {
+      "id": "P4",
+      "kind": "probe",
+      "branch": "billing-serve-read",
+      "head": "0fa988d",
+      "started": "2026-10-06T14:20:54.933Z",
+      "steps": [
+        {
+          "step": "campaigns",
+          "cmd": "pnpm -s campaigns",
+          "exit": 0,
+          "ms": 950,
+          "stdout": "1 campaign under packages\n\n  strangle-hapi   34%     16 left  @dataquail\n    phases: fenced 2 → rebuilt 1 → mirrored 0 → backfilled (attested) 0 → served 1 → routes-moved 0 → data-moved 0 → gone 0 → settled (open) 1  · legacy 53 files  · shared 6 files\n    no-cross-module-reach      14%      6 left  1 cleared  0 conceded\n    no-role-checks-in-routes   50%      2 left  2 cleared  0 conceded\n    has-nest-module            67%      1 left  2 cleared  0 conceded\n    no-hapi-routes            100%      0 left  2 cleared  0 conceded\n    no-hapi-models            100%      0 left  1 cleared  0 conceded\n    no-hapi-files             100%      0 left  0 cleared  0 conceded\n    has-internal-write-api    100%      0 left  2 cleared  0 conceded\n    writes-not-mirrored       100%      0 left  7 cleared  0 conceded\n    has-nest-endpoints        100%      0 left  2 cleared  0 conceded\n    routes-still-local         75%      3 left  9 cleared  0 conceded\n    legacy-writes              50%      4 left  4 cleared  0 conceded\n    legacy-table-dropped      100%      0 left  1 cleared  0 conceded\n    hapi-lines                 39%  measures 3589, held to 3611\n\n  architecture campaigns status --changed [--base <ref>] [--json]   # what a diff touches, and what to do\n  architecture objectives clear [<campaign>[/<objective>]]        # reconcile the ledgers with the code\n  architecture objectives concede <campaign>[/<objective>] --reason \"<why>\"   # record why a count may rise\n  architecture campaigns attest <sector> <phase> --reason \"<why>\" [--evidence <url>]\n  architecture campaigns note <sector> \"<text>\"\n  architecture campaigns history [<campaign>] [--since <ref>]\n",
+          "stderr": ""
+        },
+        {
+          "step": "status --json",
+          "cmd": "pnpm -s exec architecture campaigns status --json packages",
+          "exit": 1,
+          "ms": 585,
+          "stdout": "",
+          "stderr": "\ncampaigns status takes --changed: the nudge is scoped to a diff.\n"
+        },
+        {
+          "step": "campaigns billing",
+          "cmd": "pnpm -s exec architecture campaigns billing packages",
+          "exit": 1,
+          "ms": 575,
+          "stdout": "",
+          "stderr": "\nENOENT: no such file or directory, stat '/private/tmp/claude-501/-Users-zacharyweidenbach-orca-workspaces-hapi-nest-strangler-main-2/1e9353d3-a3f0-4b53-9bd2-7c5b2452170b/scratchpad/wt-faults/billing'\n"
+        },
+        {
+          "step": "campaigns --json",
+          "cmd": "pnpm -s exec architecture campaigns --json packages",
+          "exit": 0,
+          "ms": 917,
+          "stdout": "1 campaign under packages\n\n  strangle-hapi   34%     16 left  @dataquail\n    phases: fenced 2 → rebuilt 1 → mirrored 0 → backfilled (attested) 0 → served 1 → routes-moved 0 → data-moved 0 → gone 0 → settled (open) 1  · legacy 53 files  · shared 6 files\n    no-cross-module-reach      14%      6 left  1 cleared  0 conceded\n    no-role-checks-in-routes   50%      2 left  2 cleared  0 conceded\n    has-nest-module            67%      1 left  2 cleared  0 conceded\n    no-hapi-routes            100%      0 left  2 cleared  0 conceded\n    no-hapi-models            100%      0 left  1 cleared  0 conceded\n    no-hapi-files             100%      0 left  0 cleared  0 conceded\n    has-internal-write-api    100%      0 left  2 cleared  0 conceded\n    writes-not-mirrored       100%      0 left  7 cleared  0 conceded\n    has-nest-endpoints        100%      0 left  2 cleared  0 conceded\n    routes-still-local         75%      3 left  9 cleared  0 conceded\n    legacy-writes              50%      4 left  4 cleared  0 conceded\n    legacy-table-dropped      100%      0 left  1 cleared  0 conceded\n    hapi-lines                 39%  measures 3589, held to 3611\n\n  architecture campaigns status --changed [--base <ref>] [--json]   # what a diff touches, and what to do\n  architecture objectives clear [<campaign>[/<objective>]]        # reconcile the ledgers with the code\n  architecture objectives concede <campaign>[/<objective>] --reason \"<why>\"   # record why a count may rise\n  architecture campaigns attest <sector> <phase> --reason \"<why>\" [--evidence <url>]\n  architecture campaigns note <sector> \"<text>\"\n  architecture campaigns history [<campaign>] [--since <ref>]\n",
+          "stderr": ""
+        },
+        {
+          "step": "contracts build",
+          "cmd": "pnpm -s -F @org/contracts build",
+          "exit": 0,
+          "ms": 418
+        }
+      ],
+      "gates": {},
+      "diffStat": "",
+      "finished": "2026-10-06T14:20:58.840Z"
+    },
+    {
+      "id": "P5",
+      "kind": "probe",
+      "branch": "billing-attest",
+      "head": "3f48de7",
+      "started": "2026-10-06T14:25:16.710Z",
+      "steps": [
+        {
+          "step": "contracts build",
+          "cmd": "pnpm -s -F @org/contracts build",
+          "exit": 0,
+          "ms": 555
+        }
+      ],
+      "gates": {
+        "G1": {
+          "exit": 0,
+          "ms": 1153
+        },
+        "G2": {
+          "exit": 0,
+          "ms": 914
+        },
+        "G3": {
+          "exit": 1,
+          "ms": 919
+        }
+      },
+      "diffStat": ".../legacy-api/src/application/billing/billing-service.ts    | 12 ++++++------\n 1 file changed, 6 insertions(+), 6 deletions(-)",
+      "finished": "2026-10-06T14:25:21.963Z"
+    }
+  ]
+}

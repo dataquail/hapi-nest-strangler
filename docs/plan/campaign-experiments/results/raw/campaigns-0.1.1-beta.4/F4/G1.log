@@ -1,0 +1,21 @@
+$ pnpm -s campaigns:nudge
+exit 0
+
+--- stdout
+strangle-hapi
+  billing — phase backfilled (4 of 9, attested), 1 day here
+    intent: The Nest table has been backfilled from the legacy table once, after every write was mirrored; no detector sees a script run, so whoever ran it attests to it.
+    this phase is attested, not detected: no objective sees it done. When it is, record it —
+      architecture campaigns attest billing backfilled --reason "…" [--evidence <url>] --campaign strangle-hapi
+    hapi-lines: recorded 712 → now 703 (tolerance 20)
+    onTouch: ratchet — ok
+    ask: hold — leave the sector no worse; paydown is welcome in its own commit, not asked for
+  legacy at phase fenced (1 of 9) · nothing in your files, diff neutral
+  shared — held by every sector, on no phase
+    hapi-lines: recorded 97 → now 157 (tolerance 20)  measured, not held
+    onTouch: advise — ok
+    ask: none — the holdouts above are context; paydown is welcome in its own commit, not asked for
+
+ok
+
+--- stderr

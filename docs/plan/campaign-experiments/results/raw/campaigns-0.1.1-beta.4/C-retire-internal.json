@@ -1,0 +1,61 @@
+{
+  "id": "C-retire-internal",
+  "kind": "control",
+  "branch": "billing-retire-internal",
+  "head": "cf4b2fd",
+  "started": "2026-10-06T14:07:39.359Z",
+  "steps": [
+    {
+      "step": "contracts build",
+      "cmd": "pnpm -s -F @org/contracts build",
+      "exit": 0,
+      "ms": 1296
+    }
+  ],
+  "gates": {
+    "G1": {
+      "exit": 0,
+      "ms": 1101
+    },
+    "G2": {
+      "exit": 0,
+      "ms": 1317
+    },
+    "G3": {
+      "exit": 0,
+      "ms": 951
+    },
+    "G4": {
+      "exit": 0,
+      "ms": 2959
+    },
+    "G5": {
+      "exit": 0,
+      "ms": 7795
+    },
+    "G6": {
+      "exit": 0,
+      "ms": 17192
+    },
+    "G7": {
+      "exit": 0,
+      "ms": 26019,
+      "parts": [
+        {
+          "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/server",
+          "exit": 0
+        },
+        {
+          "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/legacy-api",
+          "exit": 0
+        },
+        {
+          "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/database",
+          "exit": 0
+        }
+      ]
+    }
+  },
+  "diffStat": "",
+  "finished": "2026-10-06T14:08:39.696Z"
+}

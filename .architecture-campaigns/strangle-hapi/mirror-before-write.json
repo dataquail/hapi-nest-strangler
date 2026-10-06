@@ -1,0 +1,17 @@
+{
+  "version": 2,
+  "campaign": "strangle-hapi",
+  "objective": "mirror-before-write",
+  "created": "2026-10-06T16:44:20.060Z",
+  "sectors": {
+    "todo": {
+      "entered": "2026-10-06T16:44:20.060Z",
+      "initial": 0,
+      "cleared": 0,
+      "closed": 0,
+      "lastCleared": "2026-10-06T16:44:20.060Z",
+      "holdouts": []
+    }
+  },
+  "concessions": []
+}

@@ -1,0 +1,61 @@
+{
+  "id": "C-mirror-start",
+  "kind": "control",
+  "branch": "billing-mirror-start",
+  "head": "77a9d70",
+  "started": "2026-10-06T14:06:46.666Z",
+  "steps": [
+    {
+      "step": "contracts build",
+      "cmd": "pnpm -s -F @org/contracts build",
+      "exit": 0,
+      "ms": 1375
+    }
+  ],
+  "gates": {
+    "G1": {
+      "exit": 0,
+      "ms": 1074
+    },
+    "G2": {
+      "exit": 0,
+      "ms": 1227
+    },
+    "G3": {
+      "exit": 0,
+      "ms": 907
+    },
+    "G4": {
+      "exit": 0,
+      "ms": 2674
+    },
+    "G5": {
+      "exit": 0,
+      "ms": 7320
+    },
+    "G6": {
+      "exit": 0,
+      "ms": 14884
+    },
+    "G7": {
+      "exit": 0,
+      "ms": 21283,
+      "parts": [
+        {
+          "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/server",
+          "exit": 0
+        },
+        {
+          "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/legacy-api",
+          "exit": 0
+        },
+        {
+          "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/database",
+          "exit": 0
+        }
+      ]
+    }
+  },
+  "diffStat": "",
+  "finished": "2026-10-06T14:07:39.153Z"
+}

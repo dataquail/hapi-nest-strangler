@@ -1,0 +1,61 @@
+{
+  "id": "F2",
+  "kind": "fault",
+  "branch": "billing-serve-read",
+  "head": "0fa988d",
+  "started": "2026-10-06T14:11:21.005Z",
+  "steps": [
+    {
+      "step": "contracts build",
+      "cmd": "pnpm -s -F @org/contracts build",
+      "exit": 0,
+      "ms": 1314
+    }
+  ],
+  "gates": {
+    "G1": {
+      "exit": 1,
+      "ms": 969
+    },
+    "G2": {
+      "exit": 1,
+      "ms": 939
+    },
+    "G3": {
+      "exit": 1,
+      "ms": 923
+    },
+    "G4": {
+      "exit": 1,
+      "ms": 2503
+    },
+    "G5": {
+      "exit": 0,
+      "ms": 7051
+    },
+    "G6": {
+      "exit": 0,
+      "ms": 15955
+    },
+    "G7": {
+      "exit": 0,
+      "ms": 25037,
+      "parts": [
+        {
+          "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/server",
+          "exit": 0
+        },
+        {
+          "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/legacy-api",
+          "exit": 0
+        },
+        {
+          "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/database",
+          "exit": 0
+        }
+      ]
+    }
+  },
+  "diffStat": "packages/contracts/openapi.json                    | 116 +++++++++++++++++++++\n packages/contracts/src/api/BillingContract.ts      |  14 +++\n packages/contracts/src/generated/api.ts            |  83 +++++++++++++++\n .../src/application/billing/billing-routes.ts      |  12 +++\n 4 files changed, 225 insertions(+)",
+  "finished": "2026-10-06T14:12:19.525Z"
+}

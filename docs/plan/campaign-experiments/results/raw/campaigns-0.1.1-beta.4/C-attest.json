@@ -1,0 +1,61 @@
+{
+  "id": "C-attest",
+  "kind": "control",
+  "branch": "billing-attest",
+  "head": "3f48de7",
+  "started": "2026-10-06T14:08:39.909Z",
+  "steps": [
+    {
+      "step": "contracts build",
+      "cmd": "pnpm -s -F @org/contracts build",
+      "exit": 0,
+      "ms": 1433
+    }
+  ],
+  "gates": {
+    "G1": {
+      "exit": 0,
+      "ms": 1105
+    },
+    "G2": {
+      "exit": 0,
+      "ms": 1257
+    },
+    "G3": {
+      "exit": 0,
+      "ms": 913
+    },
+    "G4": {
+      "exit": 0,
+      "ms": 2774
+    },
+    "G5": {
+      "exit": 0,
+      "ms": 7574
+    },
+    "G6": {
+      "exit": 0,
+      "ms": 15731
+    },
+    "G7": {
+      "exit": 0,
+      "ms": 23355,
+      "parts": [
+        {
+          "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/server",
+          "exit": 0
+        },
+        {
+          "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/legacy-api",
+          "exit": 0
+        },
+        {
+          "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/database",
+          "exit": 0
+        }
+      ]
+    }
+  },
+  "diffStat": "",
+  "finished": "2026-10-06T14:09:35.830Z"
+}

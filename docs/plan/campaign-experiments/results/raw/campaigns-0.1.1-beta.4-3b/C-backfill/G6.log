@@ -1,0 +1,38 @@
+$ pnpm -s test
+exit 0
+
+--- stdout
+
+ RUN  v4.1.11 /private/tmp/claude-501/-Users-zacharyweidenbach-orca-workspaces-hapi-nest-strangler-dolphin/124110df-9eca-4fbe-b108-e14b629fa032/scratchpad/wt-faults
+
+
+ Test Files  88 passed (88)
+      Tests  347 passed (347)
+   Start at  09:49:42
+   Duration  15.72s (transform 2.74s, setup 15.95s, import 15.68s, tests 19.52s, environment 15.44s)
+
+
+--- stderr
+(!) Your Vite config uses features that are unsupported by `configLoader: 'native'`, which is planned to become the default in a future major version of Vite:
+  - ESM syntax in a file loaded as CommonJS (vitest.config.ts:4:1). Use a `.mjs` extension or set `"type": "module"` in the closest package.json
+Set `VITE_CONFIG_NATIVE_IGNORE_WARNING=true` to suppress this warning.
+Both esbuild and oxc options were set. oxc options will be used and esbuild options will be ignored. The following esbuild options were set: `{ jsx: 'automatic', target: 'es2020' }`
+(!) Your Vite config uses features that are unsupported by `configLoader: 'native'`, which is planned to become the default in a future major version of Vite:
+  - ESM syntax in a file loaded as CommonJS (vitest.config.ts:1:1). Use a `.mjs` extension or set `"type": "module"` in the closest package.json
+Set `VITE_CONFIG_NATIVE_IGNORE_WARNING=true` to suppress this warning.
+<claude-code-hint v="1" type="plugin" value="stripe@claude-plugins-official" />
+<claude-code-hint v="1" type="plugin" value="stripe@claude-plugins-official" />
+[Nest] 27994  - 10/06/2026, 9:49:53 AM   ERROR [ProblemFilter] Unhandled defect
+Error: boom
+    at /private/tmp/claude-501/-Users-zacharyweidenbach-orca-workspaces-hapi-nest-strangler-dolphin/124110df-9eca-4fbe-b108-e14b629fa032/scratchpad/wt-faults/packages/server/src/platform/http/problem.filter.test.ts:65:31
+    at file:///private/tmp/claude-501/-Users-zacharyweidenbach-orca-workspaces-hapi-nest-strangler-dolphin/124110df-9eca-4fbe-b108-e14b629fa032/scratchpad/wt-faults/node_modules/.pnpm/@vitest+runner@4.1.11/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11
+    at file:///private/tmp/claude-501/-Users-zacharyweidenbach-orca-workspaces-hapi-nest-strangler-dolphin/124110df-9eca-4fbe-b108-e14b629fa032/scratchpad/wt-faults/node_modules/.pnpm/@vitest+runner@4.1.11/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:26
+    at file:///private/tmp/claude-501/-Users-zacharyweidenbach-orca-workspaces-hapi-nest-strangler-dolphin/124110df-9eca-4fbe-b108-e14b629fa032/scratchpad/wt-faults/node_modules/.pnpm/@vitest+runner@4.1.11/node_modules/@vitest/runner/dist/chunk-artifact.js:2326:20
+    at new Promise (<anonymous>)
+    at runWithCancel (file:///private/tmp/claude-501/-Users-zacharyweidenbach-orca-workspaces-hapi-nest-strangler-dolphin/124110df-9eca-4fbe-b108-e14b629fa032/scratchpad/wt-faults/node_modules/.pnpm/@vitest+runner@4.1.11/node_modules/@vitest/runner/dist/chunk-artifact.js:2323:10)
+    at file:///private/tmp/claude-501/-Users-zacharyweidenbach-orca-workspaces-hapi-nest-strangler-dolphin/124110df-9eca-4fbe-b108-e14b629fa032/scratchpad/wt-faults/node_modules/.pnpm/@vitest+runner@4.1.11/node_modules/@vitest/runner/dist/chunk-artifact.js:2305:20
+    at new Promise (<anonymous>)
+    at runWithTimeout (file:///private/tmp/claude-501/-Users-zacharyweidenbach-orca-workspaces-hapi-nest-strangler-dolphin/124110df-9eca-4fbe-b108-e14b629fa032/scratchpad/wt-faults/node_modules/.pnpm/@vitest+runner@4.1.11/node_modules/@vitest/runner/dist/chunk-artifact.js:2272:10)
+    at file:///private/tmp/claude-501/-Users-zacharyweidenbach-orca-workspaces-hapi-nest-strangler-dolphin/124110df-9eca-4fbe-b108-e14b629fa032/scratchpad/wt-faults/node_modules/.pnpm/@vitest+runner@4.1.11/node_modules/@vitest/runner/dist/chunk-artifact.js:2956:64
+[Nest] 27994  - 10/06/2026, 9:49:53 AM   ERROR [ProblemFilter] Unhandled defect
+not even an error

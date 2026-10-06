@@ -1,0 +1,25 @@
+$ pnpm -s exec architecture campaigns status --changed --base 23dae94cb0ea2b93966bd5fd6e18f59ce7e9a9a7 packages
+exit 1
+
+--- stdout
+strangle-hapi
+  billing — phase served (5 of 9), 1 day here
+    intent: The Nest module answers: hapi's routes forward to it operation by operation, and the legacy service writes nothing itself any more.
+    toward the next phase: routes-still-local 2 · legacy-writes 3 · shared-state-split 1
+      shared-state-split — Write operations that share rows leave hapi together: once one is served by the Nest server, the rows it writes stop reaching the legacy table the others still use.
+    in the files you touched, nearest your change (5 of 6; 6 in the sector):
+      packages/legacy-api/src/application/billing/billing-routes.ts#subscription-lifecycle:40  shared-state-split
+      packages/legacy-api/src/application/billing/billing-service.ts#cancelSubscription:69  legacy-writes
+      packages/legacy-api/src/application/billing/billing-routes.ts#billingRoutes:43  routes-still-local
+      packages/legacy-api/src/application/billing/billing-routes.ts#billingRoutes:55  routes-still-local
+      packages/legacy-api/src/application/billing/billing-service.ts#applied:91  legacy-writes
+    this diff: −legacy-writes: billing-service.ts#startSubscription#cff14458 · −routes-still-local: billing-routes.ts#billingRoutes#ad2a056c · +shared-state-split: billing-routes.ts#subscription-lifecycle  mixed
+    hapi-lines: 703 → 603 (recorded 712, tolerance 20)
+    onTouch: ratchet — back
+    ask: hold — leave the sector no worse; paydown is welcome in its own commit, not asked for
+
+not ok
+
+--- stderr
+
+the diff sends a sector back under its onTouch

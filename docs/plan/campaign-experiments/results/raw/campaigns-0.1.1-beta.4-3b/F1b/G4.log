@@ -1,0 +1,7 @@
+$ pnpm -s lint
+exit 1
+
+--- stdout
+packages/legacy-api/src/application/billing/billing-service.ts:109:11: error architecture(campaigns): [campaign/strangle-hapi/writes-not-mirrored] Emit the module's mirror event from the same service method once the row is written; the mirror plugin forwards it to the Nest module's internal API, so the Nest table receives what hapi wrote.
+
+--- stderr

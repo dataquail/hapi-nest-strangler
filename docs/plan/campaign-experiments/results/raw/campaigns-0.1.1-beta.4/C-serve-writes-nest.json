@@ -1,0 +1,65 @@
+{
+  "id": "C-serve-writes-nest",
+  "kind": "control",
+  "branch": "billing-serve-writes-nest",
+  "head": "41fc2e8",
+  "started": "2026-10-06T14:21:18.423Z",
+  "steps": [
+    {
+      "step": "contracts build",
+      "cmd": "pnpm -s -F @org/contracts build",
+      "exit": 0,
+      "ms": 574
+    }
+  ],
+  "gates": {
+    "G1": {
+      "exit": 0,
+      "ms": 1096
+    },
+    "G2": {
+      "exit": 0,
+      "ms": 921
+    },
+    "G3": {
+      "exit": 0,
+      "ms": 926
+    },
+    "G4": {
+      "exit": 0,
+      "ms": 2852
+    },
+    "G5": {
+      "exit": 0,
+      "ms": 6484
+    },
+    "G6": {
+      "exit": 0,
+      "ms": 17937
+    },
+    "G7": {
+      "exit": 0,
+      "ms": 28991,
+      "parts": [
+        {
+          "cmd": "pnpm -s -F @org/legacy-api db:reset:test",
+          "exit": 0
+        },
+        {
+          "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/server",
+          "exit": 0
+        },
+        {
+          "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/legacy-api",
+          "exit": 0
+        },
+        {
+          "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/database",
+          "exit": 0
+        }
+      ]
+    }
+  },
+  "diffStat": "",
+  "finished": "2026-10-06T14:22:18.887Z"
+}

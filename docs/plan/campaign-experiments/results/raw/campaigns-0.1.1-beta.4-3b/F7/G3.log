@@ -1,0 +1,29 @@
+$ pnpm -s lint:architecture
+exit 1
+
+--- stdout
+
+662 files, 0 violations
+
+campaign strangle-hapi: 2 new hits the ledger does not carry. Fix them, or record why the count may rise:
+  no-cross-module-reach · billing · billing-service.ts#imports:../organization/organization-service
+      packages/legacy-api/src/application/billing/billing-service.ts: Reach the peer through the substrate — a port under src/lib the container wires — not by importing its folder or naming its factory id.
+  no-cross-module-reach · billing · billing-service.ts#requires:organization/organization-service
+      packages/legacy-api/src/application/billing/billing-service.ts: Reach the peer through the substrate — a port under src/lib the container wires — not by importing its folder or naming its factory id.
+
+  architecture objectives concede strangle-hapi --reason "<why>"
+
+campaign strangle-hapi: 7 ledger entries no longer fire, or fire past their window. The code was fixed, or the sector moved on; clear them:
+  routes-still-local · billing · billing-routes.ts#billingRoutes#9c1acaf5
+  routes-still-local · billing · billing-routes.ts#billingRoutes#ad2a056c
+  routes-still-local · billing · billing-routes.ts#billingRoutes#c52c2599
+  legacy-writes · billing · billing-service.ts#applied#03ade66f
+  legacy-writes · billing · billing-service.ts#applied#5a2b4f97
+  legacy-writes · billing · billing-service.ts#cancelSubscription#ac56a836
+  legacy-writes · billing · billing-service.ts#startSubscription#cff14458
+
+  architecture objectives clear strangle-hapi
+
+--- stderr
+
+stale ledger entries

@@ -1,0 +1,65 @@
+{
+  "id": "F10",
+  "kind": "fault",
+  "branch": "billing-serve-writes-nest",
+  "head": "41fc2e8",
+  "started": "2026-10-06T14:24:16.106Z",
+  "steps": [
+    {
+      "step": "contracts build",
+      "cmd": "pnpm -s -F @org/contracts build",
+      "exit": 0,
+      "ms": 624
+    }
+  ],
+  "gates": {
+    "G1": {
+      "exit": 0,
+      "ms": 1158
+    },
+    "G2": {
+      "exit": 0,
+      "ms": 924
+    },
+    "G3": {
+      "exit": 0,
+      "ms": 920
+    },
+    "G4": {
+      "exit": 0,
+      "ms": 2870
+    },
+    "G5": {
+      "exit": 0,
+      "ms": 5523
+    },
+    "G6": {
+      "exit": 0,
+      "ms": 18037
+    },
+    "G7": {
+      "exit": 0,
+      "ms": 29650,
+      "parts": [
+        {
+          "cmd": "pnpm -s -F @org/legacy-api db:reset:test",
+          "exit": 0
+        },
+        {
+          "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/server",
+          "exit": 0
+        },
+        {
+          "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/legacy-api",
+          "exit": 0
+        },
+        {
+          "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/database",
+          "exit": 0
+        }
+      ]
+    }
+  },
+  "diffStat": ".../modules/billing/commands/record-subscription.handler.test.ts  | 8 +++++++-\n .../src/modules/billing/commands/record-subscription.handler.ts   | 4 ++++\n 2 files changed, 11 insertions(+), 1 deletion(-)",
+  "finished": "2026-10-06T14:25:16.478Z"
+}

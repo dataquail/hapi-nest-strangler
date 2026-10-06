@@ -1,0 +1,77 @@
+{
+  "id": "F11",
+  "kind": "fault",
+  "branch": "billing-backfill",
+  "head": "90c2a22",
+  "started": "2026-10-06T14:19:47.023Z",
+  "steps": [
+    {
+      "step": "clear",
+      "cmd": "pnpm -s campaigns:clear",
+      "exit": 0,
+      "ms": 1131,
+      "stdout": "strangle-hapi/no-cross-module-reach: nothing to clear; 6 holdouts left.\nstrangle-hapi/no-role-checks-in-routes: nothing to clear; 2 holdouts left.\nstrangle-hapi/has-nest-module: nothing to clear; 1 holdout left.\nstrangle-hapi/no-hapi-routes: nothing to clear; 0 holdouts left.\nstrangle-hapi/no-hapi-models: nothing to clear; 0 holdouts left.\nstrangle-hapi/no-hapi-files: nothing to clear; 0 holdouts left.\nstrangle-hapi/has-internal-write-api: nothing to clear; 0 holdouts left.\nstrangle-hapi/writes-not-mirrored: nothing to clear; 0 holdouts left.\nstrangle-hapi/has-nest-endpoints: nothing to clear; 0 holdouts left.\nstrangle-hapi/routes-still-local: nothing to clear; 0 holdouts left.\nstrangle-hapi/legacy-writes: nothing to clear; 0 holdouts left.\nstrangle-hapi/legacy-table-dropped: nothing to clear; 0 holdouts left.\nstrangle-hapi/hapi-lines: nothing to clear; held to 3551.\nstrangle-hapi: billing went back backfilled → mirrored.\n",
+      "stderr": ""
+    },
+    {
+      "step": "concede",
+      "cmd": "pnpm -s exec architecture objectives concede strangle-hapi/writes-not-mirrored --reason \"temporary\"",
+      "exit": 0,
+      "ms": 873,
+      "stdout": "strangle-hapi/writes-not-mirrored: 1 holdout conceded, recorded by zweidenbach@gmail.com.\n  billing · billing-service.ts#touchSubscription#72849c2e\n",
+      "stderr": ""
+    },
+    {
+      "step": "contracts build",
+      "cmd": "pnpm -s -F @org/contracts build",
+      "exit": 0,
+      "ms": 563
+    }
+  ],
+  "gates": {
+    "G1": {
+      "exit": 0,
+      "ms": 896
+    },
+    "G2": {
+      "exit": 0,
+      "ms": 918
+    },
+    "G3": {
+      "exit": 0,
+      "ms": 915
+    },
+    "G4": {
+      "exit": 0,
+      "ms": 2968
+    },
+    "G5": {
+      "exit": 0,
+      "ms": 5812
+    },
+    "G6": {
+      "exit": 0,
+      "ms": 15855
+    },
+    "G7": {
+      "exit": 0,
+      "ms": 23452,
+      "parts": [
+        {
+          "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/server",
+          "exit": 0
+        },
+        {
+          "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/legacy-api",
+          "exit": 0
+        },
+        {
+          "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/database",
+          "exit": 0
+        }
+      ]
+    }
+  },
+  "diffStat": ".../strangle-hapi/writes-not-mirrored.json                 | 14 +++++++++++++-\n .../legacy-api/src/application/billing/billing-service.ts  |  6 ++++++\n 2 files changed, 19 insertions(+), 1 deletion(-)",
+  "finished": "2026-10-06T14:20:42.251Z"
+}

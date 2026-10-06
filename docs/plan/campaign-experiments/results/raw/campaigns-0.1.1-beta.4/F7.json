@@ -1,0 +1,61 @@
+{
+  "id": "F7",
+  "kind": "fault",
+  "branch": "billing-serve-read",
+  "head": "0fa988d",
+  "started": "2026-10-06T14:15:55.249Z",
+  "steps": [
+    {
+      "step": "contracts build",
+      "cmd": "pnpm -s -F @org/contracts build",
+      "exit": 0,
+      "ms": 1216
+    }
+  ],
+  "gates": {
+    "G1": {
+      "exit": 1,
+      "ms": 949
+    },
+    "G2": {
+      "exit": 1,
+      "ms": 945
+    },
+    "G3": {
+      "exit": 1,
+      "ms": 936
+    },
+    "G4": {
+      "exit": 1,
+      "ms": 2503
+    },
+    "G5": {
+      "exit": 0,
+      "ms": 7076
+    },
+    "G6": {
+      "exit": 0,
+      "ms": 15650
+    },
+    "G7": {
+      "exit": 0,
+      "ms": 25867,
+      "parts": [
+        {
+          "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/server",
+          "exit": 0
+        },
+        {
+          "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/legacy-api",
+          "exit": 0
+        },
+        {
+          "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/database",
+          "exit": 0
+        }
+      ]
+    }
+  },
+  "diffStat": ".../src/application/billing/billing-service.ts       | 20 ++++++++++++++++++--\n 1 file changed, 18 insertions(+), 2 deletions(-)",
+  "finished": "2026-10-06T14:16:51.111Z"
+}

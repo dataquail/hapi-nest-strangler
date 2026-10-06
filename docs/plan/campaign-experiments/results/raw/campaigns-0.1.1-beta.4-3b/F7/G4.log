@@ -1,0 +1,8 @@
+$ pnpm -s lint
+exit 1
+
+--- stdout
+packages/legacy-api/src/application/billing/billing-service.ts:8:35: error architecture(campaigns): [campaign/strangle-hapi/no-cross-module-reach] Reach the peer through the substrate — a port under src/lib the container wires — not by importing its folder or naming its factory id.
+packages/legacy-api/src/application/billing/billing-service.ts:195:27: error architecture(campaigns): [campaign/strangle-hapi/no-cross-module-reach] Reach the peer through the substrate — a port under src/lib the container wires — not by importing its folder or naming its factory id.
+
+--- stderr

@@ -1,0 +1,8 @@
+$ pnpm -s lint
+exit 1
+
+--- stdout
+packages/legacy-api/src/application/billing/subscription-model.ts:1:1: error architecture(campaigns): [campaign/strangle-hapi/no-hapi-models] Move the table into the module's Nest schema and delete the bookshelf model.
+packages/legacy-api/src/application/billing/subscription-model.ts:1:1: error architecture(campaigns): [campaign/strangle-hapi/no-hapi-files] Delete what is left of the module in the hapi package; the marker and the migrations stay.
+
+--- stderr

@@ -1,0 +1,72 @@
+{
+  "id": "F5",
+  "kind": "fault",
+  "branch": "billing-serve-writes-nest",
+  "head": "41fc2e8",
+  "started": "2026-10-06T17:02:39.641Z",
+  "steps": [
+    {
+      "step": "contracts build",
+      "cmd": "pnpm -s -F @org/contracts build",
+      "exit": 0,
+      "ms": 604
+    }
+  ],
+  "gates": {
+    "G1": {
+      "exit": 1,
+      "ms": 1046
+    },
+    "G2": {
+      "exit": 1,
+      "ms": 1370
+    },
+    "G3": {
+      "exit": 1,
+      "ms": 992
+    },
+    "G4": {
+      "exit": 1,
+      "ms": 2994
+    },
+    "G5": {
+      "exit": 0,
+      "ms": 6454
+    },
+    "G6": {
+      "exit": 0,
+      "ms": 18945
+    },
+    "G7": {
+      "exit": 0,
+      "ms": 29716,
+      "parts": [
+        {
+          "cmd": "pnpm -s -F @org/legacy-api db:reset:test",
+          "exit": 0
+        },
+        {
+          "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/server",
+          "exit": 0
+        },
+        {
+          "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/legacy-api",
+          "exit": 0
+        },
+        {
+          "cmd": "TEST_INTEGRATION=true pnpm -s exec vitest run --project=@org/database",
+          "exit": 0
+        }
+      ]
+    }
+  },
+  "overlay": {
+    "from": "campaign/shared-state-objectives",
+    "fromSha": "680421b",
+    "base": "23dae94cb0ea2b93966bd5fd6e18f59ce7e9a9a7",
+    "changed": ".../strangle-hapi/mirror-before-write.json         |  25 ++++\n .architecture-campaigns/strangle-hapi/plan.json    |   8 +-\n .../strangle-hapi/shared-state-split.json          |  25 ++++\n architecture.yaml                                  | 152 ++++++++++++++++++++-\n campaigns/strangle-hapi.mjs                        |  90 ++++++++++++\n 5 files changed, 294 insertions(+), 6 deletions(-)",
+    "clear": "strangle-hapi/no-cross-module-reach: nothing to clear; 6 holdouts left.\nstrangle-hapi/no-role-checks-in-routes: nothing to clear; 2 holdouts left.\nstrangle-hapi/has-nest-module: nothing to clear; 1 holdout left.\nstrangle-hapi/no-hapi-routes: nothing to clear; 0 holdouts left.\nstrangle-hapi/no-hapi-models: nothing to clear; 0 holdouts left.\nstrangle-hapi/no-hapi-files: nothing to clear; 0 holdouts left.\nstrangle-hapi/has-internal-write-api: nothing to clear; 0 holdouts left.\nstrangle-hapi/writes-not-mirrored: nothing to clear; 0 holdouts left.\nstrangle-hapi/has-nest-endpoints: nothing to clear; 0 holdouts left.\nstrangle-hapi/routes-still-local: nothing to clear; 3 holdouts left.\nstrangle-hapi/legacy-writes: nothing to clear; 4 holdouts left.\nstrangle-hapi/mirror-before-write: 2 sectors entered (billing, todo); 0 holdouts left.\nstrangle-hapi/shared-state-split: 2 sectors entered (billing, todo); 0 holdouts left.\nstrangle-hapi/legacy-table-dropped: nothing to clear; 0 holdouts left.\nstrangle-hapi/hapi-lines: nothing to clear; held to 3611.\n"
+  },
+  "diffStat": ".../src/application/billing/billing-routes.ts      |  11 +-\n .../application/billing/billing-service.spec.ts    |  62 -----------\n .../src/application/billing/billing-service.ts     |  42 -------\n .../billing/billing-routes.integration.test.ts     | 123 +++++++--------------\n 4 files changed, 43 insertions(+), 195 deletions(-)",
+  "finished": "2026-10-06T17:03:45.639Z"
+}

@@ -407,6 +407,7 @@ campaigns:
     perimeter:
       marker: "~/legacy-api/src/application/*/sector.ts"
     onTouch: ratchet
+    onAhead: ratchet
     staleAfter: 30d
     onComplete: remove
     phases:
